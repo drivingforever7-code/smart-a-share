@@ -7,6 +7,7 @@ from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from .strategy_backtest_service import run_strategy_backtest
 from .ai_analysis_service import (
@@ -268,9 +269,7 @@ async def refresh_quotes():
     return await run_in_threadpool(market_service.refresh_quotes)
 
 
-@app.get("/", include_in_schema=False)
-async def root():
-    return {
-        "name": settings.app_name,
-        "message": "前端开发地址为 http://127.0.0.1:5173，接口文档为 /docs",
-    }
+# 云端部署时由 FastAPI 同时提供前端静态文件；本地开发仍可使用 Vite。
+frontend_dir = settings.project_dir / "dist"
+if frontend_dir.exists():
+    app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="frontend")

@@ -30,9 +30,15 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 @dataclass(frozen=True)
 class Settings:
+    project_dir: Path = PROJECT_DIR
     app_name: str = "智选 A 股数据服务"
     version: str = "0.1.0"
-    database_url: str = f"sqlite:///{(DATA_DIR / 'smart_a_share.db').as_posix()}"
+    database_url: str = field(
+        default_factory=lambda: os.getenv(
+            "DATABASE_URL",
+            f"sqlite:///{(DATA_DIR / 'smart_a_share.db').as_posix()}",
+        )
+    )
     quote_cache_seconds: int = 8
     quote_stale_seconds: int = 300
     default_history_days: int = 420

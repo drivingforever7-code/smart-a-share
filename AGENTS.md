@@ -316,6 +316,14 @@ ST、北交所、科创板和次新股可以查询；进入建议范围时必须
 - 增加缓存、后台任务、限流、日志、监控和密钥管理
 - 登录、会员和收费不属于当前版本
 
+### 7.1 当前公开部署
+
+- GitHub 公开仓库保存代码并触发自动部署
+- Render 免费 Web Service 使用 Docker 同时运行前端静态文件和 FastAPI
+- DeepSeek 密钥只保存为 Render Secret，不写入仓库或前端
+- 免费实例的 SQLite 属于临时存储，重启后允许重建缓存；升级正式服务时迁移 PostgreSQL
+- 健康检查使用 `/api/health`，服务监听平台提供的 `PORT`
+
 ---
 
 ## 八、核心数据表
@@ -429,3 +437,4 @@ ST、北交所、科创板和次新股可以查询；进入建议范围时必须
 | 2026-07-27 | 确认接入 DeepSeek 可选 AI 联合分析，普通量化功能保持独立 |
 | 2026-07-27 | 确认研究 TradingAgents、daily_stock_analysis、QuantDinger 和 Qlib，并遵守许可证与归因要求 |
 | 2026-07-28 | 确认将完整项目代码上传至 GitHub 公开仓库；密钥、数据库、缓存、虚拟环境和研究源码不得上传 |
+| 2026-07-28 | 确认使用 Render 免费 Web Service 公开部署，采用 Docker 单服务提供 React 与 FastAPI |
