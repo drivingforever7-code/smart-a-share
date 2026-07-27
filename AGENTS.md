@@ -438,3 +438,4 @@ ST、北交所、科创板和次新股可以查询；进入建议范围时必须
 | 2026-07-27 | 确认研究 TradingAgents、daily_stock_analysis、QuantDinger 和 Qlib，并遵守许可证与归因要求 |
 | 2026-07-28 | 确认将完整项目代码上传至 GitHub 公开仓库；密钥、数据库、缓存、虚拟环境和研究源码不得上传 |
 | 2026-07-28 | 确认使用 Render 免费 Web Service 公开部署，采用 Docker 单服务提供 React 与 FastAPI |
+| 2026-07-28 | 修复 Render Node 环境与 npm 锁文件严格校验不兼容导致的首次构建失败 |

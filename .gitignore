@@ -19,3 +19,4 @@ vite.config.d.ts
 
 # 仅供本地研究的上游开源仓库，不随本项目发布
 research_sources/
+.codex-remote-attachments/
