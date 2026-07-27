@@ -1,0 +1,21 @@
+node_modules/
+dist/
+.vite/
+*.log
+.env
+.env.*
+!.env.example
+backend/.venv/
+backend/data/
+backend/**/__pycache__/
+backend/.pytest_cache/
+*.pyc
+.DS_Store
+Thumbs.db
+.pytest_cache/
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+
+# 仅供本地研究的上游开源仓库，不随本项目发布
+research_sources/
