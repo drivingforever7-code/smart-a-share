@@ -11,6 +11,11 @@ from fastapi.staticfiles import StaticFiles
 
 from .strategy_backtest_service import run_strategy_backtest
 from .auto_backtest_service import auto_backtest, capture_mode_snapshot
+from .limit_break_service import (
+    LimitBreakDataError,
+    capture_limit_breaks,
+    limit_break_research,
+)
 from .ai_analysis_service import (
     AiServiceError,
     ai_service_status,
@@ -70,6 +75,11 @@ app.add_middleware(
 )
 
 
+@app.exception_handler(LimitBreakDataError)
+async def limit_break_data_error_handler(_: Request, exc: LimitBreakDataError) -> JSONResponse:
+    return JSONResponse(status_code=503, content={"detail": str(exc)})
+
+
 @app.exception_handler(MarketDataError)
 async def market_data_error_handler(_: Request, exc: MarketDataError) -> JSONResponse:
     return JSONResponse(status_code=503, content={"detail": str(exc)})
@@ -107,6 +117,21 @@ async def automatic_backtest(
     days: int = Query(default=5, ge=1, le=30),
 ):
     return await run_in_threadpool(auto_backtest, days)
+
+
+@app.get("/api/limit-breaks", tags=["炸板研究"])
+async def limit_breaks(
+    days: int = Query(default=5, ge=1, le=30),
+    refresh: bool = True,
+):
+    return await run_in_threadpool(limit_break_research, days, refresh)
+
+
+@app.post("/api/limit-breaks/capture", tags=["炸板研究"])
+async def limit_break_capture(
+    stage: Literal["auto", "midday", "afternoon", "close"] = "auto",
+):
+    return await run_in_threadpool(capture_limit_breaks, stage)
 
 
 @app.get("/api/presets", tags=["选股"])

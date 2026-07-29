@@ -7,7 +7,7 @@ from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 
 from app import auto_backtest_service as service
-from app.database import Base, RankingDiscovery
+from app.database import Base, RankingAdviceSnapshot, RankingDiscovery
 
 
 @pytest.fixture()
@@ -80,5 +80,10 @@ def test_auto_backtest_calculates_return_and_summary(isolated_database, monkeypa
         item for item in result["items"] if item["mode"] == "short" and item["rank"] == 1
     )
     assert short_first["return_pct"] == 10.0
+    assert short_first["action_advice"] in {"加仓", "继续持有", "减仓", "清仓", "观望"}
+    assert short_first["action_date"] == "2026-07-30"
     assert result["summaries"]["short"]["positive_count"] == 1
     assert result["summaries"]["swing"]["priced_count"] == 3
+    with isolated_database() as session:
+        advice_count = len(list(session.scalars(select(RankingAdviceSnapshot))))
+    assert advice_count == 6

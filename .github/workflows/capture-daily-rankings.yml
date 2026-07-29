@@ -24,3 +24,14 @@ jobs:
             --retry-delay 15 \
             --max-time 180 \
             "https://smart-a-share.onrender.com/api/auto-backtest?days=10"
+      - name: Finalize daily limit-break outcomes
+        run: |
+          curl \
+            --fail \
+            --show-error \
+            --retry 8 \
+            --retry-all-errors \
+            --retry-delay 15 \
+            --max-time 180 \
+            --request POST \
+            "https://smart-a-share.onrender.com/api/limit-breaks/capture?stage=close"

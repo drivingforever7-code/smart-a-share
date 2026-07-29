@@ -25,6 +25,7 @@ import type {
 } from './aiTypes'
 import type { StrategyLabResult } from './labTypes'
 import type { AutoBacktestResponse } from './autoBacktestTypes'
+import type { LimitBreakResponse } from './limitBreakTypes'
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? '/api'
 
@@ -70,6 +71,9 @@ export const api = {
 
   autoBacktest: (days = 5) =>
     request<AutoBacktestResponse>(`/auto-backtest?days=${days}`),
+
+  limitBreaks: (days = 5) =>
+    request<LimitBreakResponse>(`/limit-breaks?days=${days}&refresh=true`),
 
   opportunities: (mode: ScoreMode, limit = 20, preset?: string) => {
     const query = new URLSearchParams({ mode, limit: String(limit) })

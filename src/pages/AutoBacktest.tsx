@@ -35,6 +35,19 @@ import { changeClass, formatNumber, formatPercent, formatTime } from '../format'
 import { getSettings } from '../storage'
 import type { ScoreMode } from '../types'
 
+function ActionTag({ value }: { value: string }) {
+  const color = value === '加仓'
+    ? 'gold'
+    : value === '继续持有'
+      ? 'success'
+      : value === '减仓'
+        ? 'warning'
+        : value === '清仓'
+          ? 'error'
+          : 'default'
+  return <Tag color={color}>{value}</Tag>
+}
+
 const modeText: Record<ScoreMode, string> = {
   short: '短线前三',
   swing: '波段前三',
@@ -188,6 +201,20 @@ export default function AutoBacktest({
       render: (value: number) => formatPercent(value),
     },
     {
+      title: '今日操作建议',
+      key: 'dailyAction',
+      width: 148,
+      fixed: 'right',
+      render: (_, item) => (
+        <Space direction="vertical" size={2}>
+          <ActionTag value={item.action_advice} />
+          <Typography.Text type="secondary">
+            仓位 {item.action_position_pct}% · 现评分 {item.current_score?.toFixed(1) ?? '--'}
+          </Typography.Text>
+        </Space>
+      ),
+    },
+    {
       title: '操作',
       key: 'action',
       width: 92,
@@ -279,7 +306,7 @@ export default function AutoBacktest({
                 columns={columns}
                 dataSource={items}
                 pagination={false}
-                scroll={{ x: 1220 }}
+                scroll={{ x: 1380 }}
                 size="middle"
                 expandable={{
                   expandedRowRender: (item) => (
@@ -301,10 +328,35 @@ export default function AutoBacktest({
                         </Space>
                       </Col>
                       <Col xs={24} lg={6}>
-                        <Typography.Text strong>发现数据</Typography.Text>
-                        <Typography.Paragraph type="secondary">
-                          {formatTime(item.quote_time)} · {item.source}
+                        <Typography.Text strong>今日操作依据</Typography.Text>
+                        <Typography.Paragraph>
+                          <ActionTag value={item.action_advice} /> 建议仓位 {item.action_position_pct}%
                         </Typography.Paragraph>
+                        {item.action_reasons.map((reason) => (
+                          <Typography.Paragraph key={reason} type="secondary">· {reason}</Typography.Paragraph>
+                        ))}
+                        <Typography.Text type="danger">{item.action_invalidation}</Typography.Text>
+                      </Col>
+                      <Col xs={24}>
+                        <Typography.Text strong>逐日操作记录</Typography.Text>
+                        <Space size={[8, 8]} wrap style={{ marginTop: 8 }}>
+                          {item.advice_history.length
+                            ? item.advice_history.map((history) => (
+                              <Card key={history.advice_date} size="small" className="daily-advice-card">
+                                <Space direction="vertical" size={3}>
+                                  <Typography.Text strong>{history.advice_date}</Typography.Text>
+                                  <ActionTag value={history.action} />
+                                  <Typography.Text type="secondary">
+                                    仓位 {history.position_pct}% · 涨跌 {formatPercent(history.return_pct, true)}
+                                  </Typography.Text>
+                                  <Typography.Text type="secondary">
+                                    评分 {history.current_score?.toFixed(1) ?? '--'}
+                                  </Typography.Text>
+                                </Space>
+                              </Card>
+                            ))
+                            : <Typography.Text type="secondary">下一交易日起开始记录每日操作建议</Typography.Text>}
+                        </Space>
                       </Col>
                     </Row>
                   ),

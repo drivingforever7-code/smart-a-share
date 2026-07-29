@@ -6,6 +6,7 @@ from sqlalchemy import (
     Boolean,
     DateTime,
     Float,
+    ForeignKey,
     Integer,
     String,
     Text,
@@ -126,6 +127,95 @@ class RankingDiscovery(Base):
     quote_time: Mapped[str | None] = mapped_column(String(32), nullable=True)
     source: Mapped[str] = mapped_column(String(30))
     discovered_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+
+
+class RankingAdviceSnapshot(Base):
+    __tablename__ = "ranking_advice_snapshots"
+    __table_args__ = (
+        UniqueConstraint("discovery_id", "advice_date", name="uq_ranking_daily_advice"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    discovery_id: Mapped[int] = mapped_column(
+        ForeignKey("ranking_discoveries.id"), index=True
+    )
+    advice_date: Mapped[str] = mapped_column(String(10), index=True)
+    current_price: Mapped[float | None] = mapped_column(Float, nullable=True)
+    return_pct: Mapped[float | None] = mapped_column(Float, nullable=True)
+    current_score: Mapped[float | None] = mapped_column(Float, nullable=True)
+    current_recommendation: Mapped[str | None] = mapped_column(String(30), nullable=True)
+    action: Mapped[str] = mapped_column(String(20))
+    position_pct: Mapped[int] = mapped_column(Integer, default=0)
+    confidence: Mapped[float] = mapped_column(Float, default=0)
+    reasons_json: Mapped[str] = mapped_column(Text)
+    risks_json: Mapped[str] = mapped_column(Text)
+    invalidation: Mapped[str] = mapped_column(Text)
+    quote_time: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    source: Mapped[str] = mapped_column(String(30))
+    model_version: Mapped[str] = mapped_column(String(30), default="daily-position-v1")
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+
+
+class LimitBreakEvent(Base):
+    __tablename__ = "limit_break_events"
+    __table_args__ = (
+        UniqueConstraint(
+            "trade_date", "code", "prediction_stage", name="uq_limit_break_observation"
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    trade_date: Mapped[str] = mapped_column(String(10), index=True)
+    code: Mapped[str] = mapped_column(String(6), index=True)
+    name: Mapped[str] = mapped_column(String(40))
+    industry: Mapped[str | None] = mapped_column(String(60), nullable=True)
+    prediction_stage: Mapped[str] = mapped_column(String(20), index=True)
+    observed_at: Mapped[datetime] = mapped_column(DateTime, index=True)
+    first_limit_time: Mapped[str | None] = mapped_column(String(8), nullable=True)
+    last_limit_time: Mapped[str | None] = mapped_column(String(8), nullable=True)
+    price: Mapped[float] = mapped_column(Float)
+    limit_price: Mapped[float] = mapped_column(Float)
+    change_pct: Mapped[float] = mapped_column(Float)
+    distance_to_limit_pct: Mapped[float] = mapped_column(Float)
+    amount: Mapped[float] = mapped_column(Float)
+    circulating_market_cap: Mapped[float] = mapped_column(Float)
+    turnover_rate: Mapped[float] = mapped_column(Float)
+    amplitude: Mapped[float] = mapped_column(Float)
+    speed: Mapped[float] = mapped_column(Float)
+    break_count: Mapped[int] = mapped_column(Integer)
+    limit_statistics: Mapped[str] = mapped_column(String(20))
+    streak_count: Mapped[int] = mapped_column(Integer, default=0)
+    market_seal_rate: Mapped[float] = mapped_column(Float)
+    industry_heat: Mapped[int] = mapped_column(Integer)
+    features_json: Mapped[str] = mapped_column(Text)
+    predicted_probability: Mapped[float] = mapped_column(Float)
+    recommendation: Mapped[str] = mapped_column(String(30))
+    position_pct: Mapped[int] = mapped_column(Integer, default=0)
+    reasons_json: Mapped[str] = mapped_column(Text)
+    risks_json: Mapped[str] = mapped_column(Text)
+    invalidation: Mapped[str] = mapped_column(Text)
+    model_version: Mapped[str] = mapped_column(String(50), index=True)
+    outcome: Mapped[str] = mapped_column(String(20), default="pending", index=True)
+    outcome_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    review_json: Mapped[str | None] = mapped_column(Text, nullable=True)
+    eligible_for_evaluation: Mapped[bool] = mapped_column(Boolean, default=True)
+    source: Mapped[str] = mapped_column(String(60))
+
+
+class LimitBreakModelVersion(Base):
+    __tablename__ = "limit_break_model_versions"
+
+    version: Mapped[str] = mapped_column(String(50), primary_key=True)
+    model_type: Mapped[str] = mapped_column(String(30))
+    parameters_json: Mapped[str] = mapped_column(Text)
+    trained_through: Mapped[str] = mapped_column(String(10), index=True)
+    train_samples: Mapped[int] = mapped_column(Integer)
+    validation_samples: Mapped[int] = mapped_column(Integer)
+    validation_brier: Mapped[float] = mapped_column(Float)
+    validation_accuracy: Mapped[float] = mapped_column(Float)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 
 
 class DataUpdateJob(Base):

@@ -1,0 +1,28 @@
+name: Capture intraday limit-break predictions
+
+on:
+  schedule:
+    # 北京时间工作日 11:35 与 14:25，保存当时可见特征，供收盘后无泄漏复盘。
+    - cron: "35 3 * * 1-5"
+    - cron: "25 6 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Wake service and capture limit-break snapshot
+        run: |
+          curl \
+            --fail \
+            --show-error \
+            --retry 8 \
+            --retry-all-errors \
+            --retry-delay 15 \
+            --max-time 180 \
+            --request POST \
+            "https://smart-a-share.onrender.com/api/limit-breaks/capture?stage=auto"

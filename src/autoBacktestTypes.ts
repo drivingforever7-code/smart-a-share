@@ -1,5 +1,20 @@
 import type { DataMeta, Recommendation, ScoreMode } from './types'
 
+export interface DailyActionHistory {
+  advice_date: string
+  current_price: number | null
+  return_pct: number | null
+  current_score: number | null
+  action: string
+  position_pct: number
+  confidence: number
+  reasons: string[]
+  risks: string[]
+  invalidation: string
+  quote_time?: string | null
+  source: string
+}
+
 export interface AutoBacktestItem {
   id: number
   discovery_date: string
@@ -22,6 +37,16 @@ export interface AutoBacktestItem {
   current_quote_time?: string | null
   current_source?: string | null
   is_cached: boolean
+  action_date: string
+  action_advice: string
+  action_position_pct: number
+  current_score: number | null
+  current_recommendation?: Recommendation | null
+  action_confidence: number
+  action_reasons: string[]
+  action_risks: string[]
+  action_invalidation: string
+  advice_history: DailyActionHistory[]
 }
 
 export interface AutoBacktestLeader {

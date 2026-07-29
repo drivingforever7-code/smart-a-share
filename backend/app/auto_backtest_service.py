@@ -8,12 +8,14 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import desc, select
 from sqlalchemy.exc import IntegrityError
 
-from .database import RankingDiscovery, SessionLocal
+from .database import RankingAdviceSnapshot, RankingDiscovery, SessionLocal
 from .market_service import market_service
 from .reliable_data_source import data_source
 
 
 MODES = ("short", "swing")
+SHANGHAI = ZoneInfo("Asia/Shanghai")
+ADVICE_MODEL_VERSION = "daily-position-v1"
 
 
 def _snapshot_date(items: list[dict[str, Any]]) -> date:
@@ -29,6 +31,17 @@ def _snapshot_date(items: list[dict[str, Any]]) -> date:
             except ValueError:
                 continue
     raise ValueError("榜单缺少有效行情日期，无法生成发现快照")
+
+
+def _meta_date(meta: dict[str, Any]) -> date:
+    for key in ("quote_time", "fetched_at"):
+        value = str(meta.get(key) or "").strip()
+        if len(value) >= 10:
+            try:
+                return date.fromisoformat(value[:10])
+            except ValueError:
+                continue
+    return datetime.now(SHANGHAI).date()
 
 
 def capture_mode_snapshot(mode: str, items: list[dict[str, Any]]) -> bool:
@@ -70,13 +83,140 @@ def capture_mode_snapshot(mode: str, items: list[dict[str, Any]]) -> bool:
                         risks_json=json.dumps(item.get("risks") or [], ensure_ascii=False),
                         quote_time=meta.get("quote_time"),
                         source=str(meta.get("source") or "未知"),
-                        discovered_at=datetime.now(ZoneInfo("Asia/Shanghai")).replace(tzinfo=None),
+                        discovered_at=datetime.now(SHANGHAI).replace(tzinfo=None),
                     )
                 )
     except IntegrityError:
-        # 并发请求可能同时尝试写入，唯一约束保证只保留第一份真实快照。
         return False
     return True
+
+
+def _daily_action(
+    row: RankingDiscovery,
+    current: dict[str, Any] | None,
+    current_price: float | None,
+    return_pct: float | None,
+    tracking_days: int,
+) -> dict[str, Any]:
+    if current_price is None or current is None:
+        return {
+            "action": "观望",
+            "position_pct": 0,
+            "confidence": 30.0,
+            "current_score": None,
+            "current_recommendation": None,
+            "reasons": ["当前行情或评分不完整，不能生成高置信度操作"],
+            "risks": ["数据不足时不应继续加仓或假设可以卖出"],
+            "invalidation": "待最新行情和评分恢复后重新评估",
+        }
+
+    score = float(current.get("score") or 0)
+    confidence = float(current.get("confidence") or 0)
+    recommendation = str(current.get("recommendation") or "建议观察")
+    risks = list(current.get("risks") or [])
+    mode_name = "短线" if row.mode == "short" else "波段"
+    stop_line = -5.0 if row.mode == "short" else -8.0
+    max_days = 8 if row.mode == "short" else 30
+    profit_lock = 10.0 if row.mode == "short" else 18.0
+    return_value = return_pct or 0.0
+
+    if recommendation == "建议回避" or score < 55 or return_value <= stop_line:
+        action, position = "清仓", 0
+        reasons = [
+            f"当前{mode_name}评分 {score:.1f}，已低于继续持有门槛",
+            f"发现后涨跌 {return_value:+.2f}%，止损参考 {stop_line:.1f}%",
+        ]
+    elif tracking_days >= max_days and score < 72:
+        action, position = "清仓", 0
+        reasons = [
+            f"已跟踪 {tracking_days} 天，超过{mode_name}默认观察周期",
+            f"当前评分 {score:.1f} 未能维持强势",
+        ]
+    elif return_value >= profit_lock and score < 76:
+        action, position = "减仓", 25
+        reasons = [
+            f"发现后已有 {return_value:+.2f}% 浮盈，进入保护利润区",
+            f"当前评分 {score:.1f}，动能不足以支持满仓继续持有",
+        ]
+    elif score >= 82 and confidence >= 72 and -2 <= return_value <= 8:
+        action, position = "加仓", 60
+        reasons = [
+            f"当前{mode_name}评分 {score:.1f} 且置信度 {confidence:.1f}%",
+            f"发现后涨跌 {return_value:+.2f}%，尚未明显偏离关注区",
+        ]
+    elif score >= 70:
+        action, position = "继续持有", 50
+        reasons = [
+            f"当前{mode_name}评分 {score:.1f}，核心信号仍成立",
+            f"发现后涨跌 {return_value:+.2f}%，暂未触发退出条件",
+        ]
+    else:
+        action, position = "减仓", 25
+        reasons = [
+            f"当前{mode_name}评分降至 {score:.1f}，信号完整度下降",
+            "保留少量观察仓，等待趋势重新确认",
+        ]
+
+    return {
+        "action": action,
+        "position_pct": position,
+        "confidence": min(confidence, 90.0),
+        "current_score": score,
+        "current_recommendation": recommendation,
+        "reasons": reasons,
+        "risks": risks[:3] or ["市场环境与个股信号可能在下一交易日发生变化"],
+        "invalidation": (
+            f"跌破发现价止损线 {stop_line:.1f}%、当前评分低于 55，"
+            "或出现停牌、涨跌停无法成交及重大数据异常"
+        ),
+    }
+
+
+def _save_advice(
+    session,
+    row: RankingDiscovery,
+    advice_date: date,
+    current_price: float | None,
+    return_pct: float | None,
+    action: dict[str, Any],
+    meta: dict[str, Any],
+) -> None:
+    if advice_date <= date.fromisoformat(row.discovery_date):
+        return
+    snapshot = session.scalar(
+        select(RankingAdviceSnapshot).where(
+            RankingAdviceSnapshot.discovery_id == row.id,
+            RankingAdviceSnapshot.advice_date == advice_date.isoformat(),
+        )
+    )
+    values = {
+        "current_price": current_price,
+        "return_pct": return_pct,
+        "current_score": action["current_score"],
+        "current_recommendation": action["current_recommendation"],
+        "action": action["action"],
+        "position_pct": action["position_pct"],
+        "confidence": action["confidence"],
+        "reasons_json": json.dumps(action["reasons"], ensure_ascii=False),
+        "risks_json": json.dumps(action["risks"], ensure_ascii=False),
+        "invalidation": action["invalidation"],
+        "quote_time": meta.get("quote_time"),
+        "source": str(meta.get("source") or "未知"),
+        "model_version": ADVICE_MODEL_VERSION,
+        "updated_at": datetime.now(SHANGHAI).replace(tzinfo=None),
+    }
+    if snapshot is None:
+        session.add(
+            RankingAdviceSnapshot(
+                discovery_id=row.id,
+                advice_date=advice_date.isoformat(),
+                created_at=datetime.now(SHANGHAI).replace(tzinfo=None),
+                **values,
+            )
+        )
+    else:
+        for key, value in values.items():
+            setattr(snapshot, key, value)
 
 
 def _mode_summary(items: list[dict[str, Any]]) -> dict[str, Any]:
@@ -96,33 +236,31 @@ def _mode_summary(items: list[dict[str, Any]]) -> dict[str, Any]:
         "count": len(items),
         "priced_count": len(valid),
         "average_return_pct": round(
-            sum(item["return_pct"] for item in valid) / len(valid),
-            2,
+            sum(item["return_pct"] for item in valid) / len(valid), 2
         ),
         "positive_count": sum(item["return_pct"] > 0 for item in valid),
-        "best": {
-            "code": best["code"],
-            "name": best["name"],
-            "return_pct": best["return_pct"],
-        },
-        "worst": {
-            "code": worst["code"],
-            "name": worst["name"],
-            "return_pct": worst["return_pct"],
-        },
+        "best": {"code": best["code"], "name": best["name"], "return_pct": best["return_pct"]},
+        "worst": {"code": worst["code"], "name": worst["name"], "return_pct": worst["return_pct"]},
     }
 
 
 def auto_backtest(days: int = 5) -> dict[str, Any]:
-    """留存今日榜单并返回最近若干真实发现日截至当前的表现。"""
-    for mode in MODES:
-        opportunities = market_service.opportunities(mode, limit=3)
-        capture_mode_snapshot(mode, opportunities)
+    """留存今日榜单，并给历史发现标的生成当日操作建议。"""
+    opportunity_lists = {
+        mode: market_service.opportunities(mode, limit=500) for mode in MODES
+    }
+    for mode, opportunities in opportunity_lists.items():
+        capture_mode_snapshot(mode, opportunities[:3])
+    opportunity_maps = {
+        mode: {str(item["code"]): item for item in items}
+        for mode, items in opportunity_lists.items()
+    }
 
     quotes, current_meta = data_source.get_spot_quotes()
     quote_map = {str(item["code"]): item for item in quotes}
+    advice_date = _meta_date(current_meta)
 
-    with SessionLocal() as session:
+    with SessionLocal.begin() as session:
         discovery_dates = list(
             session.scalars(
                 select(RankingDiscovery.discovery_date)
@@ -131,8 +269,8 @@ def auto_backtest(days: int = 5) -> dict[str, Any]:
                 .limit(days)
             )
         )
-        if discovery_dates:
-            rows = list(
+        rows = (
+            list(
                 session.scalars(
                     select(RankingDiscovery)
                     .where(RankingDiscovery.discovery_date.in_(discovery_dates))
@@ -143,45 +281,98 @@ def auto_backtest(days: int = 5) -> dict[str, Any]:
                     )
                 )
             )
-        else:
-            rows = []
-
-    today = datetime.now(ZoneInfo("Asia/Shanghai")).date()
-    items: list[dict[str, Any]] = []
-    for row in rows:
-        quote = quote_map.get(row.code)
-        current_price = float(quote["price"]) if quote and quote.get("price") else None
-        return_pct = (
-            round((current_price / row.discovery_price - 1) * 100, 2)
-            if current_price is not None and row.discovery_price > 0
-            else None
+            if discovery_dates
+            else []
         )
-        discovered = date.fromisoformat(row.discovery_date)
-        items.append(
-            {
-                "id": row.id,
-                "discovery_date": row.discovery_date,
-                "mode": row.mode,
-                "rank": row.rank,
-                "code": row.code,
-                "name": row.name,
-                "industry": row.industry,
-                "discovery_price": row.discovery_price,
-                "current_price": current_price,
-                "return_pct": return_pct,
-                "tracking_days": max((today - discovered).days, 0) + 1,
-                "discovery_score": row.discovery_score,
-                "recommendation": row.recommendation,
-                "confidence": row.confidence,
-                "reasons": json.loads(row.reasons_json),
-                "risks": json.loads(row.risks_json),
-                "quote_time": row.quote_time,
-                "source": row.source,
-                "current_quote_time": current_meta.get("quote_time"),
-                "current_source": current_meta.get("source"),
-                "is_cached": bool(current_meta.get("is_cached")),
-            }
-        )
+        items: list[dict[str, Any]] = []
+        for row in rows:
+            quote = quote_map.get(row.code)
+            current_price = float(quote["price"]) if quote and quote.get("price") else None
+            return_pct = (
+                round((current_price / row.discovery_price - 1) * 100, 2)
+                if current_price is not None and row.discovery_price > 0
+                else None
+            )
+            discovered = date.fromisoformat(row.discovery_date)
+            tracking_days = max((advice_date - discovered).days, 0) + 1
+            current = opportunity_maps[row.mode].get(row.code)
+            action = _daily_action(row, current, current_price, return_pct, tracking_days)
+            if advice_date <= discovered:
+                action = {
+                    **action,
+                    "action": "等待次日评估",
+                    "position_pct": 0,
+                    "reasons": ["发现当日只记录榜单快照，下一交易日起生成持仓建议"],
+                }
+            _save_advice(
+                session, row, advice_date, current_price, return_pct, action, current_meta
+            )
+            items.append(
+                {
+                    "id": row.id,
+                    "discovery_date": row.discovery_date,
+                    "mode": row.mode,
+                    "rank": row.rank,
+                    "code": row.code,
+                    "name": row.name,
+                    "industry": row.industry,
+                    "discovery_price": row.discovery_price,
+                    "current_price": current_price,
+                    "return_pct": return_pct,
+                    "tracking_days": tracking_days,
+                    "discovery_score": row.discovery_score,
+                    "recommendation": row.recommendation,
+                    "confidence": row.confidence,
+                    "reasons": json.loads(row.reasons_json),
+                    "risks": json.loads(row.risks_json),
+                    "quote_time": row.quote_time,
+                    "source": row.source,
+                    "current_quote_time": current_meta.get("quote_time"),
+                    "current_source": current_meta.get("source"),
+                    "is_cached": bool(current_meta.get("is_cached")),
+                    "action_date": advice_date.isoformat(),
+                    "action_advice": action["action"],
+                    "action_position_pct": action["position_pct"],
+                    "current_score": action["current_score"],
+                    "current_recommendation": action["current_recommendation"],
+                    "action_confidence": action["confidence"],
+                    "action_reasons": action["reasons"],
+                    "action_risks": action["risks"],
+                    "action_invalidation": action["invalidation"],
+                    "advice_history": [],
+                }
+            )
+        session.flush()
+        histories = list(
+            session.scalars(
+                select(RankingAdviceSnapshot)
+                .where(RankingAdviceSnapshot.discovery_id.in_([row.id for row in rows]))
+                .order_by(
+                    RankingAdviceSnapshot.discovery_id,
+                    desc(RankingAdviceSnapshot.advice_date),
+                )
+            )
+        ) if rows else []
+        history_map: dict[int, list[dict[str, Any]]] = {}
+        for snapshot in histories:
+            history_map.setdefault(snapshot.discovery_id, []).append(
+                {
+                    "advice_date": snapshot.advice_date,
+                    "current_price": snapshot.current_price,
+                    "return_pct": snapshot.return_pct,
+                    "current_score": snapshot.current_score,
+                    "action": snapshot.action,
+                    "position_pct": snapshot.position_pct,
+                    "confidence": snapshot.confidence,
+                    "reasons": json.loads(snapshot.reasons_json),
+                    "risks": json.loads(snapshot.risks_json),
+                    "invalidation": snapshot.invalidation,
+                    "quote_time": snapshot.quote_time,
+                    "source": snapshot.source,
+                }
+            )
+        for item in items:
+            item["advice_history"] = history_map.get(item["id"], [])
 
     return {
         "days": days,
@@ -193,6 +384,7 @@ def auto_backtest(days: int = 5) -> dict[str, Any]:
         },
         "meta": current_meta,
         "history_note": (
-            "自动回测只展示功能启用后真实保存的发现快照，不会伪造启用前的历史排名。"
+            "自动回测只展示功能启用后真实保存的发现快照，不会伪造启用前历史；"
+            "从下一交易日起保存每日操作建议。"
         ),
     }

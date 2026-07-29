@@ -1817,3 +1817,30 @@ a {
     justify-content: space-between;
   }
 }
+
+.daily-advice-card {
+  min-width: 176px;
+  border-color: rgba(53, 208, 186, 0.18) !important;
+  background: rgba(8, 20, 34, 0.72) !important;
+}
+
+.limit-break-page .ant-progress-text {
+  color: var(--text-primary, #eef8ff) !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.limit-break-page .metric-card {
+  min-height: 138px;
+}
+
+.limit-review-strip {
+  border-color: rgba(245, 185, 66, 0.28) !important;
+  background:
+    linear-gradient(100deg, rgba(245, 185, 66, 0.08), transparent 50%),
+    rgba(7, 17, 30, 0.76) !important;
+}
+
+.limit-break-detail .ant-typography {
+  display: block;
+  margin-bottom: 8px;
+}
