@@ -1,14 +1,25 @@
 from __future__ import annotations
 
 from datetime import datetime
+from functools import lru_cache
 from statistics import median
 from typing import Any
+
+from pypinyin import Style, lazy_pinyin
 
 from .config import DATA_DIR
 from .data_source import MarketDataError
 from .reliable_data_source import data_source
 from .schemas import ScreenerRequest
 from .scoring import PRESETS, analyze, matches_preset, number
+
+
+@lru_cache(maxsize=10000)
+def _stock_search_terms(name: str) -> tuple[str, str]:
+    """缓存股票名称的完整拼音与首字母，避免每次搜索重复转换。"""
+    full = "".join(lazy_pinyin(name, style=Style.NORMAL)).lower()
+    initials = "".join(lazy_pinyin(name, style=Style.FIRST_LETTER)).lower()
+    return full, initials
 
 
 class MarketService:
@@ -59,20 +70,27 @@ class MarketService:
         return [self._public(item) for item in filtered[: max(1, min(limit, 500))]]
 
     def search(self, query: str, limit: int = 20) -> list[dict[str, Any]]:
-        query = query.strip().lower()
+        query = query.strip().lower().replace(" ", "")
         if not query:
             return []
         items, _ = self._analyzed_market("short")
-        exact: list[dict[str, Any]] = []
-        fuzzy: list[dict[str, Any]] = []
+        ranked: list[tuple[int, dict[str, Any]]] = []
         for item in items:
             code = item["code"]
             name = item["name"].lower()
-            if code == query or name == query:
-                exact.append(item)
-            elif query in code or query in name:
-                fuzzy.append(item)
-        return [self._public(item) for item in (exact + fuzzy)[:limit]]
+            full_pinyin, initials = _stock_search_terms(name)
+            terms = (code, name, full_pinyin, initials)
+            if query in terms:
+                rank = 0
+            elif any(term.startswith(query) for term in terms):
+                rank = 1
+            elif any(query in term for term in terms):
+                rank = 2
+            else:
+                continue
+            ranked.append((rank, item))
+        ranked.sort(key=lambda pair: (pair[0], pair[1]["code"]))
+        return [self._public(item) for _, item in ranked[:limit]]
 
     def stock_analysis(self, code: str, mode: str) -> dict[str, Any]:
         quotes, meta = data_source.get_spot_quotes()

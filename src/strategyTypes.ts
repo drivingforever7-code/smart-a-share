@@ -24,6 +24,8 @@ export interface RiskConfig {
   take_profit_pct: number
   max_holding_days: number
   commission_pct: number
+  slippage_pct: number
+  stamp_duty_pct: number
 }
 
 export interface RuleStrategyConfig {

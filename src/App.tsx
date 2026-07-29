@@ -13,8 +13,10 @@ import {
   SearchOutlined,
   StarOutlined,
 } from '@ant-design/icons'
-import { Button, Grid, Input, Layout, Menu, Space, Tag, Typography } from 'antd'
+import { Button, Grid, Layout, Menu, Space, Tag, Typography } from 'antd'
 import type { MenuProps } from 'antd'
+import StockSearchInput from './components/StockSearchInput'
+import LoadingExperience from './components/LoadingExperience'
 import type { PageKey } from './types'
 
 const Dashboard = lazy(() => import('./pages/Dashboard'))
@@ -106,14 +108,6 @@ export default function App() {
       : `#/${next}`
   }
 
-  const submitQuickSearch = () => {
-    const normalized = quickCode.trim()
-    if (/^\d{6}$/.test(normalized)) {
-      navigate('detail', normalized)
-      setQuickCode('')
-    }
-  }
-
   const pageContent = {
     dashboard: <Dashboard onOpenStock={(code) => navigate('detail', code)} />,
     screener: <Screener onOpenStock={(code) => navigate('detail', code)} />,
@@ -176,18 +170,29 @@ export default function App() {
               <Typography.Text type="secondary">{titles[page].subtitle}</Typography.Text>
             </div>
           </Space>
-          <Input.Search
+          <StockSearchInput
             value={quickCode}
-            onChange={(event) => setQuickCode(event.target.value)}
-            onSearch={submitQuickSearch}
-            placeholder="输入 6 位股票代码"
+            onChange={setQuickCode}
+            onSelect={(code) => {
+              navigate('detail', code)
+              setQuickCode('')
+            }}
             className="header-search"
-            enterButton="查看"
           />
         </Header>
         <Content className="app-content">
-          <Suspense fallback={<div className="page-loading">正在加载页面…</div>}>
-            {pageContent}
+          <Suspense
+            fallback={(
+              <LoadingExperience
+                fullscreen
+                label="正在加载页面模块"
+                detail="正在连接量化引擎与界面组件"
+              />
+            )}
+          >
+            <div className="page-transition" key={`${page}-${selectedCode}`}>
+              {pageContent}
+            </div>
           </Suspense>
         </Content>
       </Layout>

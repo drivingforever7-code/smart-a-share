@@ -35,6 +35,8 @@ class RiskConfig(BaseModel):
     take_profit_pct: float = Field(default=15, gt=0, le=200)
     max_holding_days: int = Field(default=10, ge=1, le=250)
     commission_pct: float = Field(default=0.1, ge=0, le=2)
+    slippage_pct: float = Field(default=0.05, ge=0, le=2)
+    stamp_duty_pct: float = Field(default=0.05, ge=0, le=2)
 
 
 class StrategyComponent(BaseModel):
@@ -95,6 +97,8 @@ class StrategyBacktestRequest(BaseModel):
     stop_loss_pct: float | None = Field(default=None, gt=0, le=50)
     take_profit_pct: float | None = Field(default=None, gt=0, le=200)
     commission_pct: float | None = Field(default=None, ge=0, le=2)
+    slippage_pct: float | None = Field(default=None, ge=0, le=2)
+    stamp_duty_pct: float | None = Field(default=None, ge=0, le=2)
 
     @field_validator("code")
     @classmethod
@@ -119,7 +123,13 @@ class StrategyBacktestRequest(BaseModel):
         holding = self.max_holding_days or self.holding_days
         if holding is not None:
             result["max_holding_days"] = holding
-        for key in ["stop_loss_pct", "take_profit_pct", "commission_pct"]:
+        for key in [
+            "stop_loss_pct",
+            "take_profit_pct",
+            "commission_pct",
+            "slippage_pct",
+            "stamp_duty_pct",
+        ]:
             value = getattr(self, key)
             if value is not None:
                 result[key] = value

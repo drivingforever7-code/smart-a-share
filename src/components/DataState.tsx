@@ -1,4 +1,5 @@
-import { Alert, Button, Empty, Result, Skeleton, Space, Typography } from 'antd'
+import { Alert, Button, Empty, Result, Space, Typography } from 'antd'
+import LoadingExperience from './LoadingExperience'
 
 interface DataStateProps {
   loading?: boolean
@@ -20,7 +21,11 @@ export default function DataState({
   if (loading) {
     return (
       <div className="state-card">
-        <Skeleton active paragraph={{ rows: 6 }} />
+        <LoadingExperience
+          label="正在读取量化数据"
+          detail="正在同步行情、评分与风险状态"
+          rows={6}
+        />
       </div>
     )
   }

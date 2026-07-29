@@ -42,6 +42,8 @@ const defaultRisk: RiskConfig = {
   take_profit_pct: 15,
   max_holding_days: 10,
   commission_pct: 0.1,
+  slippage_pct: 0.05,
+  stamp_duty_pct: 0.05,
 }
 
 const newCondition = (): StrategyCondition => ({
@@ -106,11 +108,13 @@ function RiskEditor({
     { key: 'take_profit_pct', label: '止盈', suffix: '%', min: 0.1, max: 200 },
     { key: 'max_holding_days', label: '最长持有', suffix: '天', min: 1, max: 250 },
     { key: 'commission_pct', label: '单边费用', suffix: '%', min: 0, max: 2 },
+    { key: 'slippage_pct', label: '单边滑点', suffix: '%', min: 0, max: 2 },
+    { key: 'stamp_duty_pct', label: '卖出印花税', suffix: '%', min: 0, max: 2 },
   ]
   return (
     <Row gutter={[12, 12]}>
       {fields.map((field) => (
-        <Col xs={12} lg={6} key={field.key}>
+        <Col xs={12} lg={4} key={field.key}>
           <Typography.Text type="secondary">{field.label}</Typography.Text>
           <InputNumber
             value={value[field.key]}

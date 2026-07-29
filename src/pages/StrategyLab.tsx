@@ -24,6 +24,7 @@ import dayjs, { type Dayjs } from 'dayjs'
 import { useEffect, useState } from 'react'
 import { api } from '../api'
 import DataState from '../components/DataState'
+import { resolveStockQuery } from '../components/StockSearchInput'
 import Disclaimer from '../components/Disclaimer'
 import type { LabRow, StrategyLabResult } from '../labTypes'
 import type { StrategyDefinition } from '../strategyTypes'
@@ -55,13 +56,22 @@ export default function StrategyLab() {
   }, [])
 
   const run = async (values: LabForm) => {
-    const codes = values.codes
+    const queries = values.codes
       .split(/[\s,，;；]+/)
       .map((item) => item.trim())
       .filter(Boolean)
     setLoading(true)
     setError(null)
     try {
+      const resolved = await Promise.all(
+        queries.map(async (query) => {
+          if (/^\d{6}$/.test(query)) return query
+          const match = await resolveStockQuery(query)
+          if (!match) throw new Error(`没有找到股票：${query}`)
+          return match.code
+        }),
+      )
+      const codes = [...new Set(resolved)]
       setResult(
         await api.strategyLab({
           codes,
@@ -187,7 +197,7 @@ export default function StrategyLab() {
                 label="测试股票篮子（最多12只）"
                 rules={[{ required: true, message: '请填写至少一只股票' }]}
               >
-                <Input.TextArea rows={2} placeholder="用逗号或空格分隔，例如 600519, 000858" />
+                <Input.TextArea rows={2} placeholder="支持代码、名称或拼音，用逗号分隔，例如 600519, 贵州茅台, gzmt" />
               </Form.Item>
             </Col>
             <Col xs={24} lg={8}>

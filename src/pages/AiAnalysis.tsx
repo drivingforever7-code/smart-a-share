@@ -11,7 +11,6 @@ import {
   Col,
   Collapse,
   Divider,
-  Input,
   List,
   Progress,
   Row,
@@ -25,6 +24,7 @@ import {
 } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '../api'
+import StockSearchInput, { resolveStockQuery } from '../components/StockSearchInput'
 import type {
   AiAnalysisResult,
   AiDepth,
@@ -77,9 +77,13 @@ export default function AiAnalysis({ defaultCode }: { defaultCode: string }) {
     }
   }
 
-  const loadHistory = async () => {
+  const loadHistory = async (targetCode = code) => {
+    if (!/^\d{6}$/.test(targetCode)) {
+      setHistory([])
+      return
+    }
     try {
-      setHistory(await api.aiHistory(code, 20))
+      setHistory(await api.aiHistory(targetCode, 20))
     } catch {
       setHistory([])
     }
@@ -97,15 +101,18 @@ export default function AiAnalysis({ defaultCode }: { defaultCode: string }) {
   }, [code])
 
   const analyze = async () => {
-    if (!/^\d{6}$/.test(code)) {
-      notice.warning('请输入6位股票代码')
-      return
-    }
     setLoading(true)
     try {
-      const next = await api.aiAnalyze(code, depth)
+      const match = await resolveStockQuery(code)
+      if (!match) {
+        notice.warning('没有找到这只股票，请输入6位代码、名称或拼音')
+        return
+      }
+      const resolvedCode = match.code
+      setCode(resolvedCode)
+      const next = await api.aiAnalyze(resolvedCode, depth)
       setResult(next)
-      await loadHistory()
+      await loadHistory(resolvedCode)
       notice.success('AI联合分析完成')
     } catch (reason) {
       notice.error(reason instanceof Error ? reason.message : 'AI分析失败')
@@ -156,13 +163,13 @@ export default function AiAnalysis({ defaultCode }: { defaultCode: string }) {
       <Card>
         <Row gutter={[16, 16]} align="middle">
           <Col xs={24} md={7}>
-            <Typography.Text type="secondary">股票代码</Typography.Text>
-            <Input
+            <Typography.Text type="secondary">股票（代码、名称或拼音）</Typography.Text>
+            <StockSearchInput
               value={code}
-              maxLength={6}
+              onChange={setCode}
+              onSelect={setCode}
               prefix={<RobotOutlined />}
-              style={{ marginTop: 6 }}
-              onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))}
+              enterButton={false}
             />
           </Col>
           <Col xs={24} md={8}>

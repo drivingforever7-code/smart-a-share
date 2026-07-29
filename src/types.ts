@@ -141,6 +141,8 @@ export interface BacktestRequest {
   stop_loss_pct?: number
   take_profit_pct?: number
   commission_pct?: number
+  slippage_pct?: number
+  stamp_duty_pct?: number
 }
 
 export interface BacktestTrade {
@@ -150,6 +152,9 @@ export interface BacktestTrade {
   entry_price: number
   exit_price: number
   return_pct: number
+  gross_return_pct?: number
+  cost_pct?: number
+  estimated_exit?: boolean
   exit_reason: string
   entry_score?: number
   exit_score?: number

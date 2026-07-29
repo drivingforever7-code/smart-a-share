@@ -9,7 +9,6 @@ import {
 } from '@ant-design/icons'
 import {
   Alert,
-  AutoComplete,
   Button,
   Card,
   Checkbox,
@@ -28,6 +27,8 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { api } from '../api'
 import StockPriceChart from '../components/StockPriceChart'
+import LoadingExperience from '../components/LoadingExperience'
+import StockSearchInput from '../components/StockSearchInput'
 import DataState, { DataNotice } from '../components/DataState'
 import Disclaimer from '../components/Disclaimer'
 import { RecommendationTag, ScoreBadge } from '../components/ScoreBadge'
@@ -44,7 +45,6 @@ import type { IntradayResponse, StrategyDefinition } from '../strategyTypes'
 import type {
   BacktestResult,
   BarResponse,
-  Opportunity,
   ScoreMode,
   StockAnalysis,
 } from '../types'
@@ -84,7 +84,6 @@ export default function StockDetailV2({
   const [backtesting, setBacktesting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [searchText, setSearchText] = useState('')
-  const [searchOptions, setSearchOptions] = useState<{ value: string; label: React.ReactNode }[]>([])
   const [watched, setWatched] = useState(getWatchlist().includes(code))
 
   const loadChart = useCallback(async () => {
@@ -137,30 +136,29 @@ export default function StockDetailV2({
   }, [loadChart])
 
   useEffect(() => {
-    if (!searchText.trim()) {
-      setSearchOptions([])
-      return
-    }
-    const timer = window.setTimeout(() => {
+    if (timeframe !== 'intraday') return
+    let active = true
+    let refreshing = false
+    const refreshTimer = window.setInterval(() => {
+      if (refreshing) return
+      refreshing = true
       api
-        .searchStocks(searchText.trim())
-        .then((items: Opportunity[]) =>
-          setSearchOptions(
-            items.map((item) => ({
-              value: item.code,
-              label: (
-                <div className="search-option">
-                  <strong>{item.name}</strong>
-                  <span>{item.code} · {item.board}</span>
-                </div>
-              ),
-            })),
-          ),
-        )
-        .catch(() => setSearchOptions([]))
-    }, 300)
-    return () => window.clearTimeout(timer)
-  }, [searchText])
+        .intraday(code)
+        .then((next) => {
+          if (active) setIntraday(next)
+        })
+        .catch(() => undefined)
+        .finally(() => {
+          refreshing = false
+        })
+    }, 10_000)
+    return () => {
+      active = false
+      window.clearInterval(refreshTimer)
+    }
+  }, [code, timeframe])
+
+
 
   const strategyOptions = useMemo(
     () =>
@@ -207,22 +205,15 @@ export default function StockDetailV2({
   return (
     <div className="page-stack">
       <div className="page-toolbar detail-toolbar">
-        <AutoComplete
+        <StockSearchInput
           value={searchText}
-          options={searchOptions}
-          onSearch={setSearchText}
+          onChange={setSearchText}
           onSelect={(value) => {
             onCodeChange(value)
             setSearchText('')
           }}
           className="stock-autocomplete"
-        >
-          <input
-            className="ant-input"
-            placeholder="输入股票代码或名称搜索"
-            aria-label="股票搜索"
-          />
-        </AutoComplete>
+        />
         <Space>
           <Segmented
             value={mode}
@@ -326,6 +317,12 @@ export default function StockDetailV2({
                   onChange={(value) => setTimeframe(String(value))}
                   options={timeframeOptions}
                 />
+                {timeframe === 'intraday' && intraday && (
+                  <Typography.Text type="secondary">
+                    分时日期 {intraday.date ?? '未知'} · {intraday.meta.is_cached ? '缓存数据' : '最新获取'}
+                    {' · '}来源 {intraday.meta.source}
+                  </Typography.Text>
+                )}
                 {timeframe !== 'intraday' && (
                   <Checkbox.Group
                     value={visibleMa}
@@ -338,7 +335,11 @@ export default function StockDetailV2({
                 )}
               </div>
               {chartLoading ? (
-                <div className="chart-loading">正在加载走势图…</div>
+                <LoadingExperience
+                  compact
+                  label="正在同步走势图"
+                  detail="正在校验分时价格、均价线与成交量"
+                />
               ) : chartEmpty ? (
                 <Alert
                   type="warning"

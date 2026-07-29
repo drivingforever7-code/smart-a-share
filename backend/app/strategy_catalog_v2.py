@@ -70,6 +70,8 @@ BASE_RISK = {
     "take_profit_pct": 16,
     "max_holding_days": 15,
     "commission_pct": 0.1,
+    "slippage_pct": 0.05,
+    "stamp_duty_pct": 0.05,
 }
 
 

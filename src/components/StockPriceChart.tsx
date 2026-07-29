@@ -36,17 +36,23 @@ export default function StockPriceChart({
   const option = useMemo(() => {
     if (timeframe === 'intraday') {
       const times = intraday.map((item) => item.time.slice(11, 16))
+      const intradayVolumes = intraday.map((item, index) => ({
+        value: item.volume,
+        itemStyle: {
+          color: item.price >= (intraday[index - 1]?.price ?? item.price) ? '#d92d20' : '#039855',
+        },
+      }))
       return {
         animation: false,
-        legend: { top: 0, data: ['分时价格', '均价'] },
-        tooltip: { trigger: 'axis', axisPointer: { type: 'cross' } },
+        legend: { top: 0, data: ['分时价格', '均价'], textStyle: { color: '#9fb8cc' } },
+        tooltip: { trigger: 'axis', axisPointer: { type: 'cross' }, backgroundColor: 'rgba(7, 16, 30, .94)', borderColor: '#24506f', textStyle: { color: '#e8f3ff' } },
         axisPointer: { link: [{ xAxisIndex: 'all' }] },
         grid: [
           { left: 58, right: 26, top: 42, height: '60%' },
           { left: 58, right: 26, top: '73%', height: '14%' },
         ],
         xAxis: [
-          { type: 'category', data: times, boundaryGap: false, axisLabel: { hideOverlap: true } },
+          { type: 'category', data: times, boundaryGap: false, axisLabel: { color: '#7894aa', hideOverlap: true }, axisLine: { lineStyle: { color: '#24445e' } } },
           {
             type: 'category',
             gridIndex: 1,
@@ -57,7 +63,11 @@ export default function StockPriceChart({
           },
         ],
         yAxis: [
-          { scale: true, splitLine: { lineStyle: { color: '#eaecf0', type: 'dashed' } } },
+          {
+            scale: true,
+            axisLabel: { color: '#7894aa', formatter: (value: number) => value.toFixed(2) },
+            splitLine: { lineStyle: { color: 'rgba(91, 145, 184, .2)', type: 'dashed' } },
+          },
           { scale: true, gridIndex: 1, splitLine: { show: false }, axisLabel: { show: false } },
         ],
         series: [
@@ -83,7 +93,7 @@ export default function StockPriceChart({
             xAxisIndex: 1,
             yAxisIndex: 1,
             itemStyle: { color: '#98a2b3' },
-            data: intraday.map((item) => item.volume),
+            data: intradayVolumes,
           },
         ],
       }
@@ -115,15 +125,15 @@ export default function StockPriceChart({
     }))
     return {
       animation: false,
-      legend: { top: 0, data: ['K线', ...visibleMa.map((days) => `MA${days}`)] },
-      tooltip: { trigger: 'axis', axisPointer: { type: 'cross' } },
+      legend: { top: 0, data: ['K线', ...visibleMa.map((days) => `MA${days}`)], textStyle: { color: '#9fb8cc' } },
+      tooltip: { trigger: 'axis', axisPointer: { type: 'cross' }, backgroundColor: 'rgba(7, 16, 30, .94)', borderColor: '#24506f', textStyle: { color: '#e8f3ff' } },
       axisPointer: { link: [{ xAxisIndex: 'all' }] },
       grid: [
         { left: 58, right: 26, top: 42, height: '58%' },
         { left: 58, right: 26, top: '72%', height: '15%' },
       ],
       xAxis: [
-        { type: 'category', data: dates, boundaryGap: true, axisLabel: { hideOverlap: true } },
+        { type: 'category', data: dates, boundaryGap: true, axisLabel: { color: '#7894aa', hideOverlap: true }, axisLine: { lineStyle: { color: '#24445e' } } },
         {
           type: 'category',
           gridIndex: 1,
@@ -134,7 +144,7 @@ export default function StockPriceChart({
         },
       ],
       yAxis: [
-        { scale: true, splitLine: { lineStyle: { color: '#eaecf0', type: 'dashed' } } },
+        { scale: true, axisLabel: { color: '#7894aa' }, splitLine: { lineStyle: { color: 'rgba(91, 145, 184, .2)', type: 'dashed' } } },
         { scale: true, gridIndex: 1, splitLine: { show: false }, axisLabel: { show: false } },
       ],
       dataZoom: [
