@@ -28,6 +28,7 @@ export interface AutoBacktestItem {
   return_pct: number | null
   tracking_days: number
   discovery_score: number
+  strategy_version: string
   recommendation: Recommendation
   confidence: number
   reasons: string[]
@@ -64,11 +65,57 @@ export interface AutoBacktestSummary {
   worst: AutoBacktestLeader | null
 }
 
+export interface RankingOptimizationRun {
+  run_date: string
+  status: 'waiting' | 'activated' | 'rejected'
+  candidate_version?: string | null
+  sample_count: number
+  trading_days: number
+  metrics: Record<string, unknown>
+  reason: string
+}
+
+export interface RankingStrategyVersion {
+  version: string
+  status: string
+  is_active: boolean
+  trained_through?: string | null
+  train_samples: number
+  validation_samples: number
+  validation_mean_return?: number | null
+  validation_mean_drawdown?: number | null
+  validation_positive_rate?: number | null
+  activated_at?: string | null
+  notes: string
+}
+
+export interface RankingStrategyStatus {
+  active_version: string
+  horizon_observations: number
+  matured_samples: number
+  pending_samples: number
+  trading_days: number
+  required_samples: number
+  required_days: number
+  sample_progress_pct: number
+  day_progress_pct: number
+  ready_for_optimization: boolean
+  recent_runs: RankingOptimizationRun[]
+  versions: RankingStrategyVersion[]
+}
+
 export interface AutoBacktestResponse {
   days: number
   available_dates: string[]
   items: AutoBacktestItem[]
   summaries: Record<ScoreMode, AutoBacktestSummary>
   meta: DataMeta
+  training_cycle: {
+    trade_date: string
+    created_samples: number
+    created_observations: number
+    optimization: Record<ScoreMode, { mode: ScoreMode; status: string; reason?: string }>
+  }
+  strategy_optimization: Record<ScoreMode, RankingStrategyStatus>
   history_note: string
 }

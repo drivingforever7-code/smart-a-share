@@ -11,6 +11,11 @@ from sqlalchemy.exc import IntegrityError
 from .database import RankingAdviceSnapshot, RankingDiscovery, SessionLocal
 from .market_service import market_service
 from .reliable_data_source import data_source
+from .ranking_optimizer_service import (
+    discovery_version_map,
+    process_training_cycle,
+    ranking_strategy_status,
+)
 
 
 MODES = ("short", "swing")
@@ -259,6 +264,7 @@ def auto_backtest(days: int = 5) -> dict[str, Any]:
     quotes, current_meta = data_source.get_spot_quotes()
     quote_map = {str(item["code"]): item for item in quotes}
     advice_date = _meta_date(current_meta)
+    training_cycle = process_training_cycle(opportunity_lists, quotes, current_meta)
 
     with SessionLocal.begin() as session:
         discovery_dates = list(
@@ -284,6 +290,7 @@ def auto_backtest(days: int = 5) -> dict[str, Any]:
             if discovery_dates
             else []
         )
+        version_map = discovery_version_map(rows)
         items: list[dict[str, Any]] = []
         for row in rows:
             quote = quote_map.get(row.code)
@@ -321,6 +328,7 @@ def auto_backtest(days: int = 5) -> dict[str, Any]:
                     "return_pct": return_pct,
                     "tracking_days": tracking_days,
                     "discovery_score": row.discovery_score,
+                    "strategy_version": version_map.get(row.id, f"{row.mode}-v1.0"),
                     "recommendation": row.recommendation,
                     "confidence": row.confidence,
                     "reasons": json.loads(row.reasons_json),
@@ -383,6 +391,8 @@ def auto_backtest(days: int = 5) -> dict[str, Any]:
             for mode in MODES
         },
         "meta": current_meta,
+        "training_cycle": training_cycle,
+        "strategy_optimization": ranking_strategy_status(),
         "history_note": (
             "自动回测只展示功能启用后真实保存的发现快照，不会伪造启用前历史；"
             "从下一交易日起保存每日操作建议。"

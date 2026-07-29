@@ -218,6 +218,90 @@ class LimitBreakModelVersion(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 
 
+class RankingStrategyVersion(Base):
+    __tablename__ = "ranking_strategy_versions"
+
+    version: Mapped[str] = mapped_column(String(30), primary_key=True)
+    mode: Mapped[str] = mapped_column(String(10), index=True)
+    parameters_json: Mapped[str] = mapped_column(Text)
+    trained_through: Mapped[str | None] = mapped_column(String(10), nullable=True)
+    train_samples: Mapped[int] = mapped_column(Integer, default=0)
+    validation_samples: Mapped[int] = mapped_column(Integer, default=0)
+    validation_mean_return: Mapped[float | None] = mapped_column(Float, nullable=True)
+    validation_mean_drawdown: Mapped[float | None] = mapped_column(Float, nullable=True)
+    validation_positive_rate: Mapped[float | None] = mapped_column(Float, nullable=True)
+    status: Mapped[str] = mapped_column(String(20), index=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+    activated_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    notes: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+
+
+class RankingTrainingSample(Base):
+    __tablename__ = "ranking_training_samples"
+    __table_args__ = (
+        UniqueConstraint("sample_date", "mode", "code", name="uq_ranking_training_sample"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    sample_date: Mapped[str] = mapped_column(String(10), index=True)
+    mode: Mapped[str] = mapped_column(String(10), index=True)
+    code: Mapped[str] = mapped_column(String(6), index=True)
+    name: Mapped[str] = mapped_column(String(40))
+    candidate_rank: Mapped[int] = mapped_column(Integer)
+    discovery_price: Mapped[float] = mapped_column(Float)
+    base_score: Mapped[float] = mapped_column(Float)
+    strategy_score: Mapped[float] = mapped_column(Float)
+    strategy_version: Mapped[str] = mapped_column(String(30), index=True)
+    features_json: Mapped[str] = mapped_column(Text)
+    target_observations: Mapped[int] = mapped_column(Integer)
+    matured: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+    label_return_pct: Mapped[float | None] = mapped_column(Float, nullable=True)
+    label_max_drawdown_pct: Mapped[float | None] = mapped_column(Float, nullable=True)
+    label_positive: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    matured_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    quote_time: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    source: Mapped[str] = mapped_column(String(40))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+
+
+class RankingTrainingObservation(Base):
+    __tablename__ = "ranking_training_observations"
+    __table_args__ = (
+        UniqueConstraint("sample_id", "observation_date", name="uq_ranking_training_observation"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    sample_id: Mapped[int] = mapped_column(
+        ForeignKey("ranking_training_samples.id"), index=True
+    )
+    observation_date: Mapped[str] = mapped_column(String(10), index=True)
+    price: Mapped[float] = mapped_column(Float)
+    return_pct: Mapped[float] = mapped_column(Float)
+    quote_time: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+
+
+class RankingOptimizationRun(Base):
+    __tablename__ = "ranking_optimization_runs"
+    __table_args__ = (
+        UniqueConstraint("mode", "run_date", name="uq_ranking_optimization_run"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    mode: Mapped[str] = mapped_column(String(10), index=True)
+    run_date: Mapped[str] = mapped_column(String(10), index=True)
+    incumbent_version: Mapped[str] = mapped_column(String(30))
+    candidate_version: Mapped[str | None] = mapped_column(String(30), nullable=True)
+    sample_count: Mapped[int] = mapped_column(Integer)
+    trading_days: Mapped[int] = mapped_column(Integer)
+    metrics_json: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(String(20), index=True)
+    accepted: Mapped[bool] = mapped_column(Boolean, default=False)
+    reason: Mapped[str] = mapped_column(Text)
+    completed_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+
+
 class DataUpdateJob(Base):
     __tablename__ = "data_update_jobs"
 

@@ -13,6 +13,7 @@ import {
   Card,
   Col,
   Row,
+  Progress,
   Segmented,
   Space,
   Statistic,
@@ -27,6 +28,7 @@ import type {
   AutoBacktestItem,
   AutoBacktestResponse,
   AutoBacktestSummary,
+  RankingStrategyStatus,
 } from '../autoBacktestTypes'
 import DataState, { DataNotice } from '../components/DataState'
 import Disclaimer from '../components/Disclaimer'
@@ -34,6 +36,10 @@ import { RecommendationTag, ScoreBadge } from '../components/ScoreBadge'
 import { changeClass, formatNumber, formatPercent, formatTime } from '../format'
 import { getSettings } from '../storage'
 import type { ScoreMode } from '../types'
+
+function strategyVersionLabel(value: string) {
+  return value.replace('short-', '短线 ').replace('swing-', '波段 ')
+}
 
 function ActionTag({ value }: { value: string }) {
   const color = value === '加仓'
@@ -51,6 +57,73 @@ function ActionTag({ value }: { value: string }) {
 const modeText: Record<ScoreMode, string> = {
   short: '短线前三',
   swing: '波段前三',
+}
+
+function EvolutionCard({
+  mode,
+  status,
+}: {
+  mode: ScoreMode
+  status: RankingStrategyStatus
+}) {
+  const latest = status.recent_runs[0]
+  const modeName = mode === 'short' ? '短线' : '波段'
+  return (
+    <Card className={`content-card strategy-evolution strategy-evolution--${mode}`}>
+      <Space direction="vertical" size={10} style={{ width: '100%' }}>
+        <Space wrap>
+          <Typography.Text strong>{modeName}策略进化</Typography.Text>
+          <Tag color={mode === 'short' ? 'cyan' : 'purple'}>{strategyVersionLabel(status.active_version)}</Tag>
+          <Tag color={status.ready_for_optimization ? 'processing' : 'default'}>
+            {status.ready_for_optimization ? '已达到训练门槛' : '积累中'}
+          </Tag>
+        </Space>
+        <div>
+          <Space style={{ width: '100%', justifyContent: 'space-between' }}>
+            <Typography.Text type="secondary">成熟样本</Typography.Text>
+            <Typography.Text>{status.matured_samples}/{status.required_samples}</Typography.Text>
+          </Space>
+          <Progress percent={status.sample_progress_pct} size="small" showInfo={false} />
+        </div>
+        <div>
+          <Space style={{ width: '100%', justifyContent: 'space-between' }}>
+            <Typography.Text type="secondary">交易日</Typography.Text>
+            <Typography.Text>{status.trading_days}/{status.required_days}</Typography.Text>
+          </Space>
+          <Progress
+            percent={status.day_progress_pct}
+            size="small"
+            showInfo={false}
+            strokeColor={mode === 'short' ? '#35d0ba' : '#8b7cff'}
+          />
+        </div>
+        <Typography.Text type="secondary">
+          每日留存前 20 · 后续 {status.horizon_observations} 个有效观察日成熟 · 待成熟 {status.pending_samples}
+        </Typography.Text>
+        {latest && (
+          <Alert
+            type={latest.status === 'activated' ? 'success' : latest.status === 'rejected' ? 'warning' : 'info'}
+            showIcon
+            message={
+              latest.status === 'activated'
+                ? `已升级到 ${latest.candidate_version}`
+                : latest.status === 'rejected'
+                  ? `候选 ${latest.candidate_version || ''} 未通过`
+                  : '尚在积累训练样本'
+            }
+            description={latest.reason}
+          />
+        )}
+        <Space size={[6, 6]} wrap>
+          {status.versions.slice(0, 5).map((version) => (
+            <Tag key={version.version} color={version.is_active ? 'success' : version.status === 'rejected' ? 'error' : 'default'}>
+              {strategyVersionLabel(version.version)} · {version.is_active ? '使用中' : version.status === 'rejected' ? '未通过' : '历史'}
+            </Tag>
+          ))}
+        </Space>
+      </Space>
+    </Card>
+  )
 }
 
 function SummaryCard({
@@ -183,9 +256,14 @@ export default function AutoBacktest({
     {
       title: '发现时评分',
       dataIndex: 'discovery_score',
-      width: 106,
+      width: 118,
       align: 'center',
-      render: (value: number) => <ScoreBadge score={value} compact />,
+      render: (value: number, item) => (
+        <Space direction="vertical" size={2}>
+          <ScoreBadge score={value} compact />
+          <Tag color={item.mode === 'short' ? 'cyan' : 'purple'}>{strategyVersionLabel(item.strategy_version)}</Tag>
+        </Space>
+      ),
     },
     {
       title: '发现时建议',
@@ -264,6 +342,17 @@ export default function AutoBacktest({
       {data && (
         <Row gutter={[16, 16]}>
           <Col xs={24} lg={12}>
+            <EvolutionCard mode="short" status={data.strategy_optimization.short} />
+          </Col>
+          <Col xs={24} lg={12}>
+            <EvolutionCard mode="swing" status={data.strategy_optimization.swing} />
+          </Col>
+        </Row>
+      )}
+
+      {data && (
+        <Row gutter={[16, 16]}>
+          <Col xs={24} lg={12}>
             <SummaryCard mode="short" summary={data.summaries.short} />
           </Col>
           <Col xs={24} lg={12}>
@@ -306,7 +395,7 @@ export default function AutoBacktest({
                 columns={columns}
                 dataSource={items}
                 pagination={false}
-                scroll={{ x: 1380 }}
+                scroll={{ x: 1410 }}
                 size="middle"
                 expandable={{
                   expandedRowRender: (item) => (

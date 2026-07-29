@@ -27,6 +27,10 @@ from .ai_schemas import AiAnalysisRequest
 from .config import settings
 from .data_source import MarketDataError
 from .database import init_database
+from .ranking_optimizer_service import (
+    ensure_baseline_versions,
+    ranking_strategy_status,
+)
 from .intraday_service import get_intraday
 from .market_service import market_service, presets
 from .reliable_data_source import data_source
@@ -50,6 +54,7 @@ from .strategy_service import (
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     init_database()
+    ensure_baseline_versions()
     initialize_strategy_catalog()
     yield
 
@@ -117,6 +122,11 @@ async def automatic_backtest(
     days: int = Query(default=5, ge=1, le=30),
 ):
     return await run_in_threadpool(auto_backtest, days)
+
+
+@app.get("/api/ranking-strategies/status", tags=["自动回测"])
+async def ranking_strategy_versions():
+    return await run_in_threadpool(ranking_strategy_status)
 
 
 @app.get("/api/limit-breaks", tags=["炸板研究"])

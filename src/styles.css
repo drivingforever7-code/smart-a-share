@@ -1844,3 +1844,32 @@ a {
   display: block;
   margin-bottom: 8px;
 }
+
+.strategy-evolution {
+  min-height: 286px;
+  overflow: hidden;
+}
+
+.strategy-evolution::after {
+  content: '';
+  position: absolute;
+  inset: auto -70px -90px auto;
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  filter: blur(12px);
+  pointer-events: none;
+  opacity: 0.28;
+}
+
+.strategy-evolution--short::after {
+  background: radial-gradient(circle, rgba(53, 208, 186, 0.5), transparent 68%);
+}
+
+.strategy-evolution--swing::after {
+  background: radial-gradient(circle, rgba(139, 124, 255, 0.5), transparent 68%);
+}
+
+.strategy-evolution .ant-progress-inner {
+  background: rgba(255, 255, 255, 0.08);
+}

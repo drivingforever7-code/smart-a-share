@@ -16,6 +16,24 @@ def isolated_database(monkeypatch):
     Base.metadata.create_all(engine)
     session_local = sessionmaker(bind=engine, expire_on_commit=False)
     monkeypatch.setattr(service, "SessionLocal", session_local)
+    monkeypatch.setattr(
+        service,
+        "process_training_cycle",
+        lambda *_: {"trade_date": "2026-07-30", "optimization": {}},
+    )
+    monkeypatch.setattr(
+        service,
+        "ranking_strategy_status",
+        lambda: {
+            "short": {"active_version": "short-v1.0"},
+            "swing": {"active_version": "swing-v1.0"},
+        },
+    )
+    monkeypatch.setattr(
+        service,
+        "discovery_version_map",
+        lambda rows: {row.id: f"{row.mode}-v1.0" for row in rows},
+    )
     return session_local
 
 

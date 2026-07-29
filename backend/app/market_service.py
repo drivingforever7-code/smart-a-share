@@ -12,6 +12,7 @@ from .data_source import MarketDataError
 from .reliable_data_source import data_source
 from .schemas import ScreenerRequest
 from .scoring import PRESETS, analyze, matches_preset, number
+from .ranking_optimizer_service import apply_active_version
 
 
 @lru_cache(maxsize=10000)
@@ -66,6 +67,7 @@ class MarketService:
             and item.get("_status") == "正常"
             and matches_preset(item, preset)
         ]
+        filtered = apply_active_version(mode, filtered)
         filtered.sort(key=lambda item: (item["score"], item["confidence"]), reverse=True)
         return [self._public(item) for item in filtered[: max(1, min(limit, 500))]]
 
@@ -111,10 +113,11 @@ class MarketService:
             result["confidence"] = min(result["confidence"], 68)
             if result["recommendation"] == "建议买入":
                 result["recommendation"] = "建议小仓位试买"
-        return self._public(result)
+        return self._public(apply_active_version(mode, [result])[0])
 
     def screen(self, filters: ScreenerRequest) -> dict[str, Any]:
         items, meta = self._analyzed_market(filters.mode)
+        items = apply_active_version(filters.mode, items)
         result = []
         for item in items:
             if not filters.include_st and item.get("_is_st"):
