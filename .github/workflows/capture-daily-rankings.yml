@@ -1,0 +1,26 @@
+name: Capture daily ranking discoveries
+
+on:
+  schedule:
+    # 北京时间工作日 15:20。节假日行情日期不变，后端唯一约束会阻止重复记录。
+    - cron: "20 7 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Wake service and capture top-three rankings
+        run: |
+          curl \
+            --fail \
+            --show-error \
+            --retry 8 \
+            --retry-all-errors \
+            --retry-delay 15 \
+            --max-time 180 \
+            "https://smart-a-share.onrender.com/api/auto-backtest?days=10"
