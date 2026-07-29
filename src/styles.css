@@ -1766,3 +1766,54 @@ a {
     animation: none !important;
   }
 }
+
+
+/* === 自动回测 === */
+.auto-backtest-page .ant-alert {
+  border-color: rgba(53, 217, 255, 0.2);
+  background: linear-gradient(100deg, rgba(53, 217, 255, 0.08), rgba(139, 92, 246, 0.06));
+}
+
+.auto-summary {
+  position: relative;
+  overflow: hidden;
+}
+
+.auto-summary::after {
+  content: "";
+  position: absolute;
+  inset: auto -20% -65% 35%;
+  height: 150px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(53, 217, 255, 0.13), transparent 68%);
+}
+
+.auto-summary--swing::after {
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.15), transparent 68%);
+}
+
+.auto-result-card .ant-table-expanded-row > td {
+  background: rgba(4, 12, 24, 0.72) !important;
+}
+
+.auto-detail-row {
+  padding: 8px 12px;
+}
+
+.auto-detail-row .ant-typography strong,
+.auto-detail-row > .ant-col > .ant-typography:first-child {
+  display: block;
+  margin-bottom: 8px;
+  color: #dceeff;
+}
+
+@media (max-width: 768px) {
+  .auto-backtest-page .page-toolbar {
+    align-items: stretch;
+  }
+
+  .auto-backtest-page .page-toolbar > .ant-space {
+    justify-content: space-between;
+  }
+}

@@ -216,6 +216,7 @@ export interface DataStatus {
 
 export type PageKey =
   | 'dashboard'
+  | 'autoBacktest'
   | 'screener'
   | 'ranking'
   | 'detail'

@@ -99,6 +99,35 @@ class ScoreSnapshot(Base):
     version: Mapped[str] = mapped_column(String(20), default="v1")
 
 
+class RankingDiscovery(Base):
+    __tablename__ = "ranking_discoveries"
+    __table_args__ = (
+        UniqueConstraint(
+            "discovery_date",
+            "mode",
+            "rank",
+            name="uq_ranking_discovery",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    discovery_date: Mapped[str] = mapped_column(String(10), index=True)
+    mode: Mapped[str] = mapped_column(String(10), index=True)
+    rank: Mapped[int] = mapped_column(Integer)
+    code: Mapped[str] = mapped_column(String(6), index=True)
+    name: Mapped[str] = mapped_column(String(40))
+    industry: Mapped[str | None] = mapped_column(String(60), nullable=True)
+    discovery_price: Mapped[float] = mapped_column(Float)
+    discovery_score: Mapped[float] = mapped_column(Float)
+    recommendation: Mapped[str] = mapped_column(String(30))
+    confidence: Mapped[float] = mapped_column(Float)
+    reasons_json: Mapped[str] = mapped_column(Text)
+    risks_json: Mapped[str] = mapped_column(Text)
+    quote_time: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    source: Mapped[str] = mapped_column(String(30))
+    discovered_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+
+
 class DataUpdateJob(Base):
     __tablename__ = "data_update_jobs"
 

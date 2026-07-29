@@ -24,6 +24,7 @@ import type {
   AiServiceStatus,
 } from './aiTypes'
 import type { StrategyLabResult } from './labTypes'
+import type { AutoBacktestResponse } from './autoBacktestTypes'
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? '/api'
 
@@ -66,6 +67,9 @@ export const api = {
   health: () => request<{ status: string; version: string }>('/health'),
 
   overview: () => request<MarketOverview>('/market/overview'),
+
+  autoBacktest: (days = 5) =>
+    request<AutoBacktestResponse>(`/auto-backtest?days=${days}`),
 
   opportunities: (mode: ScoreMode, limit = 20, preset?: string) => {
     const query = new URLSearchParams({ mode, limit: String(limit) })

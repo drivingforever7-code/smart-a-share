@@ -6,6 +6,7 @@ import {
   DatabaseOutlined,
   ExperimentOutlined,
   FundOutlined,
+  HistoryOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   RadarChartOutlined,
@@ -20,6 +21,7 @@ import LoadingExperience from './components/LoadingExperience'
 import type { PageKey } from './types'
 
 const Dashboard = lazy(() => import('./pages/Dashboard'))
+const AutoBacktest = lazy(() => import('./pages/AutoBacktest'))
 const Screener = lazy(() => import('./pages/Screener'))
 const Ranking = lazy(() => import('./pages/Ranking'))
 const StockDetail = lazy(() => import('./pages/StockDetailV2'))
@@ -33,6 +35,7 @@ const { Header, Sider, Content } = Layout
 
 const items: MenuProps['items'] = [
   { key: 'dashboard', icon: <RadarChartOutlined />, label: '今日机会' },
+  { key: 'autoBacktest', icon: <HistoryOutlined />, label: '自动回测' },
   { key: 'screener', icon: <SearchOutlined />, label: '条件选股' },
   { key: 'ranking', icon: <BarChartOutlined />, label: '评分榜' },
   { key: 'detail', icon: <FundOutlined />, label: '股票详情' },
@@ -46,6 +49,7 @@ const items: MenuProps['items'] = [
 
 const titles: Record<PageKey, { title: string; subtitle: string }> = {
   dashboard: { title: '今日机会', subtitle: '从全市场信号中发现短线与波段机会' },
+  autoBacktest: { title: '自动回测', subtitle: '跟踪每日短线与波段前三从发现至今的真实表现' },
   screener: { title: '条件选股', subtitle: '组合条件，找到符合你交易思路的股票' },
   ranking: { title: '综合评分榜', subtitle: '比较短线强度与波段质量' },
   detail: { title: '股票详情', subtitle: '核对行情、评分依据和风险条件' },
@@ -61,6 +65,7 @@ function parseHash(): { page: PageKey; code: string } {
   const [path, query = ''] = hash.split('?')
   const validPages: PageKey[] = [
     'dashboard',
+    'autoBacktest',
     'screener',
     'ranking',
     'detail',
@@ -110,6 +115,7 @@ export default function App() {
 
   const pageContent = {
     dashboard: <Dashboard onOpenStock={(code) => navigate('detail', code)} />,
+    autoBacktest: <AutoBacktest onOpenStock={(code) => navigate('detail', code)} />,
     screener: <Screener onOpenStock={(code) => navigate('detail', code)} />,
     ranking: <Ranking onOpenStock={(code) => navigate('detail', code)} />,
     detail: <StockDetail code={selectedCode} onCodeChange={(code) => navigate('detail', code)} />,

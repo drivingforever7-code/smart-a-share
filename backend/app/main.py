@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from .strategy_backtest_service import run_strategy_backtest
+from .auto_backtest_service import auto_backtest, capture_mode_snapshot
 from .ai_analysis_service import (
     AiServiceError,
     ai_service_status,
@@ -90,12 +91,22 @@ async def opportunities(
     limit: int = Query(default=20, ge=1, le=500),
     preset: str | None = None,
 ):
-    return await run_in_threadpool(
+    result = await run_in_threadpool(
         market_service.opportunities,
         mode,
         limit=limit,
         preset=preset,
     )
+    if preset is None:
+        await run_in_threadpool(capture_mode_snapshot, mode, result)
+    return result
+
+
+@app.get("/api/auto-backtest", tags=["自动回测"])
+async def automatic_backtest(
+    days: int = Query(default=5, ge=1, le=30),
+):
+    return await run_in_threadpool(auto_backtest, days)
 
 
 @app.get("/api/presets", tags=["选股"])
