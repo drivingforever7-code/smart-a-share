@@ -31,11 +31,20 @@ class BackgroundRefreshingDataSource(ResilientAkshareDataSource):
                 self._spot_cache = cached
                 self._spot_fetched_at = fetched_at
                 self._last_provider = "database"
+                now = datetime.now()
+                cache_age = max(0, (now - fetched_at).total_seconds())
+                verified_date = self._resolve_trade_date(fetched_at)
+                self._spot_trade_date = (
+                    verified_date
+                    if verified_date == fetched_at.date().isoformat() and cache_age <= 1800
+                    else None
+                )
                 self._start_background_refresh()
                 return cached, _meta(
                     fetched_at,
                     cached=True,
                     source="本地 SQLite（后台正在刷新）",
+                    trade_date=self._spot_trade_date,
                 )
 
         if self._spot_cache and self._spot_fetched_at:
@@ -49,6 +58,7 @@ class BackgroundRefreshingDataSource(ResilientAkshareDataSource):
                 cached=age > 0,
                 source=self._cache_source_name()
                 + ("；后台刷新中" if self._refreshing else ""),
+                trade_date=self._spot_trade_date,
             )
 
         return super().get_spot_quotes(force=False)

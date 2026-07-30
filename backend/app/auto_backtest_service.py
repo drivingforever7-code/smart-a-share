@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import json
-from datetime import date, datetime
+from datetime import date, datetime, time
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import desc, select
+from sqlalchemy import delete, desc, select
 from sqlalchemy.exc import IntegrityError
 
 from .database import RankingAdviceSnapshot, RankingDiscovery, SessionLocal
@@ -24,18 +24,81 @@ ADVICE_MODEL_VERSION = "daily-position-v1"
 
 
 def _snapshot_date(items: list[dict[str, Any]]) -> date:
-    """优先使用行情日期，禁止把服务器时间冒充交易日期。"""
+    """只接受明确行情时间，禁止把抓取时间或服务器时间冒充交易日期。"""
     if not items:
         raise ValueError("没有可用于留存的榜单数据")
-    meta = items[0].get("meta") or {}
-    for key in ("quote_time", "fetched_at"):
-        value = str(meta.get(key) or "").strip()
-        if len(value) >= 10:
-            try:
-                return date.fromisoformat(value[:10])
-            except ValueError:
+    dates: set[date] = set()
+    for item in items:
+        meta = item.get("meta") or {}
+        value = str(meta.get("trade_date") or meta.get("quote_time") or "").strip()
+        if len(value) < 10:
+            raise ValueError("榜单缺少经校验的交易日期，本次不生成发现快照")
+        try:
+            dates.add(date.fromisoformat(value[:10]))
+        except ValueError as exc:
+            raise ValueError("榜单行情时间格式无效，本次不生成发现快照") from exc
+    if len(dates) != 1:
+        raise ValueError("榜单股票行情日期不一致，本次不生成发现快照")
+    result = dates.pop()
+    now = datetime.now(SHANGHAI)
+    if result == now.date() and now.time() < time(15, 5):
+        raise ValueError("当日 15:05 前不冻结收盘机会榜")
+    return result
+
+
+def _unique_ranked(items: list[dict[str, Any]], limit: int) -> list[dict[str, Any]]:
+    """保持原排名顺序按股票代码去重，避免同一股票占据两个名次。"""
+    result: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for item in items:
+        code = str(item.get("code") or "")
+        if not code or code in seen:
+            continue
+        seen.add(code)
+        result.append(item)
+        if len(result) >= limit:
+            break
+    return result
+
+
+def repair_repeated_cached_discoveries() -> int:
+    """清理缺少行情时间且照搬上一发现日的缓存重复榜单。"""
+    removed = 0
+    with SessionLocal.begin() as session:
+        rows = list(
+            session.scalars(
+                select(RankingDiscovery).order_by(
+                    RankingDiscovery.mode,
+                    RankingDiscovery.discovery_date,
+                    RankingDiscovery.rank,
+                )
+            )
+        )
+        groups: dict[tuple[str, str], list[RankingDiscovery]] = {}
+        for row in rows:
+            groups.setdefault((row.mode, row.discovery_date), []).append(row)
+        previous_codes: dict[str, tuple[str, ...]] = {}
+        for (mode, _), group in groups.items():
+            codes = tuple(row.code for row in sorted(group, key=lambda item: item.rank))
+            unverified = all(
+                not str(row.quote_time or "").strip()
+                and "交易日历确认" not in str(row.source or "")
+                for row in group
+            )
+            if unverified and previous_codes.get(mode) == codes:
+                ids = [row.id for row in group]
+                session.execute(
+                    delete(RankingAdviceSnapshot).where(
+                        RankingAdviceSnapshot.discovery_id.in_(ids)
+                    )
+                )
+                session.execute(
+                    delete(RankingDiscovery).where(RankingDiscovery.id.in_(ids))
+                )
+                removed += len(ids)
                 continue
-    raise ValueError("榜单缺少有效行情日期，无法生成发现快照")
+            previous_codes[mode] = codes
+    return removed
 
 
 def _meta_date(meta: dict[str, Any]) -> date:
@@ -50,14 +113,19 @@ def _meta_date(meta: dict[str, Any]) -> date:
 
 
 def capture_mode_snapshot(mode: str, items: list[dict[str, Any]]) -> bool:
-    """首次看到某交易日榜单时冻结前三，之后不回写历史排名。"""
-    if mode not in MODES or len(items) < 3:
+    """北京时间 15:05 后冻结当日收盘前三，之后不回写历史排名。"""
+    if mode not in MODES:
         return False
-    top_three = items[:3]
+    top_three = _unique_ranked(items, 3)
+    if len(top_three) < 3:
+        return False
     if any(not item.get("price") or float(item["price"]) <= 0 for item in top_three):
         return False
 
-    discovery_date = _snapshot_date(top_three)
+    try:
+        discovery_date = _snapshot_date(top_three)
+    except ValueError:
+        return False
     with SessionLocal() as session:
         exists = session.scalar(
             select(RankingDiscovery.id).where(
@@ -87,7 +155,11 @@ def capture_mode_snapshot(mode: str, items: list[dict[str, Any]]) -> bool:
                         reasons_json=json.dumps(item.get("reasons") or [], ensure_ascii=False),
                         risks_json=json.dumps(item.get("risks") or [], ensure_ascii=False),
                         quote_time=meta.get("quote_time"),
-                        source=str(meta.get("source") or "未知"),
+                        source=(
+                            f"交易日历确认；{str(meta.get('source') or '未知')}"[:30]
+                            if meta.get("trade_date") and not meta.get("quote_time")
+                            else str(meta.get("source") or "未知")[:30]
+                        ),
                         discovered_at=datetime.now(SHANGHAI).replace(tzinfo=None),
                     )
                 )
@@ -251,6 +323,7 @@ def _mode_summary(items: list[dict[str, Any]]) -> dict[str, Any]:
 
 def auto_backtest(days: int = 5) -> dict[str, Any]:
     """留存今日榜单，并给历史发现标的生成当日操作建议。"""
+    repaired_discoveries = repair_repeated_cached_discoveries()
     opportunity_lists = {
         mode: market_service.opportunities(mode, limit=500) for mode in MODES
     }
@@ -391,7 +464,10 @@ def auto_backtest(days: int = 5) -> dict[str, Any]:
             for mode in MODES
         },
         "meta": current_meta,
-        "training_cycle": training_cycle,
+        "training_cycle": {
+            **training_cycle,
+            "repaired_discoveries": repaired_discoveries,
+        },
         "strategy_optimization": ranking_strategy_status(),
         "history_note": (
             "自动回测只展示功能启用后真实保存的发现快照，不会伪造启用前历史；"

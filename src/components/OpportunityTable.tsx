@@ -1,10 +1,11 @@
-import { EyeOutlined, StarFilled, StarOutlined } from '@ant-design/icons'
-import { Button, Space, Table, Tag, Tooltip, Typography } from 'antd'
+import { DeleteOutlined, EyeOutlined, StarFilled, StarOutlined } from '@ant-design/icons'
+import { Button, Popconfirm, Space, Table, Tag, Tooltip, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useEffect, useState } from 'react'
 import { changeClass, formatAmount, formatNumber, formatPercent } from '../format'
 import { getWatchlist, toggleWatchlist } from '../storage'
 import type { Opportunity } from '../types'
+import { useDismissedRows } from '../useDismissedRows'
 import { RecommendationTag, ScoreBadge } from './ScoreBadge'
 
 interface OpportunityTableProps {
@@ -13,6 +14,8 @@ interface OpportunityTableProps {
   loading?: boolean
   pagination?: false | { current: number; pageSize: number; total: number; onChange: (page: number, pageSize: number) => void }
   scoreLabel?: string
+  dismissScope?: string
+  onDismiss?: (item: Opportunity) => void
 }
 
 export default function OpportunityTable({
@@ -21,8 +24,12 @@ export default function OpportunityTable({
   loading,
   pagination = false,
   scoreLabel = '评分',
+  dismissScope = 'opportunities',
+  onDismiss,
 }: OpportunityTableProps) {
   const [watchlist, setWatchlist] = useState(getWatchlist)
+  const { dismissed, dismiss } = useDismissedRows(dismissScope)
+  const visibleItems = items.filter((item) => !dismissed.has(item.code))
 
   useEffect(() => {
     const listener = () => setWatchlist(getWatchlist())
@@ -124,7 +131,7 @@ export default function OpportunityTable({
       title: '操作',
       key: 'actions',
       fixed: 'right',
-      width: 100,
+      width: 142,
       render: (_, item) => {
         const watched = watchlist.includes(item.code)
         return (
@@ -139,6 +146,20 @@ export default function OpportunityTable({
             <Tooltip title="查看详情">
               <Button type="text" icon={<EyeOutlined />} onClick={() => onOpenStock(item.code)} />
             </Tooltip>
+            <Popconfirm
+              title="从当前列表删除这只股票？"
+              description="只影响当前浏览器中的这个列表，其余股票保持原顺序。"
+              okText="删除"
+              cancelText="取消"
+              onConfirm={() => {
+                dismiss(item.code)
+                onDismiss?.(item)
+              }}
+            >
+              <Tooltip title="删除">
+                <Button danger type="text" icon={<DeleteOutlined />} />
+              </Tooltip>
+            </Popconfirm>
           </Space>
         )
       },
@@ -149,7 +170,7 @@ export default function OpportunityTable({
     <Table
       rowKey="code"
       columns={columns}
-      dataSource={items}
+      dataSource={visibleItems}
       loading={loading}
       pagination={pagination}
       scroll={{ x: 1500 }}

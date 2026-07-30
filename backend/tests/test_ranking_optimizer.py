@@ -137,3 +137,71 @@ def test_candidate_activates_only_after_out_of_time_improvement(isolated_databas
         )
     assert active is not None
     assert active.version == "short-v1.1"
+
+def test_training_skips_fetch_time_without_real_quote_time(isolated_database):
+    opportunities = {
+        "short": [opportunity("000001")],
+        "swing": [opportunity("600001")],
+    }
+    meta = {
+        "quote_time": None,
+        "fetched_at": "2026-07-30T15:01:00",
+        "source": "缓存；后台刷新中",
+    }
+
+    result = service.process_training_cycle(opportunities, [], meta)
+
+    assert result["skipped"] is True
+    assert result["trade_date"] is None
+    with isolated_database() as session:
+        assert list(session.scalars(select(RankingTrainingSample))) == []
+
+
+def test_training_deduplicates_candidates_and_keeps_order(isolated_database):
+    repeated = opportunity("000001", 90)
+    opportunities = {
+        "short": [repeated, repeated, opportunity("000002", 80)],
+        "swing": [opportunity("600001", 85)],
+    }
+    meta = {
+        "quote_time": "2026-07-30 15:00:00",
+        "fetched_at": "2026-07-30T15:01:00",
+        "source": "测试源",
+    }
+
+    result = service.process_training_cycle(opportunities, [], meta)
+
+    assert result["skipped"] is False
+    with isolated_database() as session:
+        rows = list(
+            session.scalars(
+                select(RankingTrainingSample)
+                .where(RankingTrainingSample.mode == "short")
+                .order_by(RankingTrainingSample.candidate_rank)
+            )
+        )
+    assert [(row.candidate_rank, row.code) for row in rows] == [
+        (1, "000001"),
+        (2, "000002"),
+    ]
+
+def test_verified_trade_date_samples_survive_cleanup(isolated_database):
+    items = [opportunity("000001")]
+    items[0]["meta"]["quote_time"] = None
+    items[0]["meta"]["trade_date"] = "2026-07-30"
+    opportunities = {"short": items, "swing": []}
+    meta = {
+        "quote_time": None,
+        "trade_date": "2026-07-30",
+        "fetched_at": "2026-07-30T15:01:00",
+        "source": "测试源",
+    }
+
+    result = service.process_training_cycle(opportunities, [], meta)
+
+    assert result["skipped"] is False
+    assert service.repair_unverified_training_samples() == 0
+    with isolated_database() as session:
+        samples = list(session.scalars(select(RankingTrainingSample)))
+    assert len(samples) == 1
+    assert "交易日历确认" in samples[0].source

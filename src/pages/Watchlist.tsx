@@ -5,7 +5,7 @@ import { api } from '../api'
 import DataState from '../components/DataState'
 import Disclaimer from '../components/Disclaimer'
 import OpportunityTable from '../components/OpportunityTable'
-import { getWatchlist } from '../storage'
+import { getWatchlist, toggleWatchlist } from '../storage'
 import type { Opportunity } from '../types'
 
 export default function Watchlist({ onOpenStock }: { onOpenStock: (code: string) => void }) {
@@ -70,7 +70,15 @@ export default function Watchlist({ onOpenStock }: { onOpenStock: (code: string)
             empty={!items.length}
             onRetry={() => void load()}
           >
-            <OpportunityTable items={items} onOpenStock={onOpenStock} scoreLabel="短线分" />
+            <OpportunityTable
+              items={items}
+              onOpenStock={onOpenStock}
+              scoreLabel="短线分"
+              dismissScope="watchlist"
+              onDismiss={(item) => {
+                if (getWatchlist().includes(item.code)) toggleWatchlist(item.code)
+              }}
+            />
           </DataState>
         )}
       </Card>

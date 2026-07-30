@@ -180,6 +180,7 @@ export default function Dashboard({ onOpenStock }: { onOpenStock: (code: string)
             items={items}
             onOpenStock={onOpenStock}
             scoreLabel={mode === 'short' ? '短线分' : '波段分'}
+            dismissScope={`dashboard-${mode}-${activePreset || 'all'}`}
           />
         </DataState>
       </Card>

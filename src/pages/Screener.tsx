@@ -349,6 +349,7 @@ export default function Screener({ onOpenStock }: { onOpenStock: (code: string) 
                   items={result.items}
                   onOpenStock={onOpenStock}
                   scoreLabel={mode === 'short' ? '短线分' : '波段分'}
+                  dismissScope={`screener-${mode}`}
                   pagination={{
                     current: result.page,
                     pageSize: result.page_size,

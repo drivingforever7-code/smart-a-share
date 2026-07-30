@@ -1,6 +1,7 @@
 import {
   AimOutlined,
   ClockCircleOutlined,
+  DeleteOutlined,
   ExperimentOutlined,
   FireOutlined,
   SafetyCertificateOutlined,
@@ -11,6 +12,7 @@ import {
   Button,
   Card,
   Col,
+  Popconfirm,
   Progress,
   Row,
   Segmented,
@@ -27,6 +29,7 @@ import DataState from '../components/DataState'
 import Disclaimer from '../components/Disclaimer'
 import { changeClass, formatNumber, formatPercent, formatTime } from '../format'
 import type { LimitBreakItem, LimitBreakResponse } from '../limitBreakTypes'
+import { useDismissedRows } from '../useDismissedRows'
 
 const stageText = {
   midday: '午盘观测',
@@ -49,6 +52,7 @@ export default function LimitBreakResearch({
   const [data, setData] = useState<LimitBreakResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { dismissed, dismiss } = useDismissedRows('limit-breaks')
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -191,7 +195,24 @@ export default function LimitBreakResearch({
       align: 'right',
       render: (value: number) => formatPercent(value),
     },
-  ], [onOpenStock])
+    {
+      title: '操作',
+      key: 'actions',
+      width: 72,
+      fixed: 'right',
+      render: (_, item) => (
+        <Popconfirm
+          title="从炸板列表删除这只股票？"
+          description="只在当前浏览器隐藏，历史研究样本仍保留。"
+          okText="删除"
+          cancelText="取消"
+          onConfirm={() => dismiss(item.id)}
+        >
+          <Button danger type="text" icon={<DeleteOutlined />} aria-label="删除股票" />
+        </Popconfirm>
+      ),
+    },
+  ], [dismiss, onOpenStock])
 
   const latestReview = data?.daily_reviews[0]
 
@@ -313,7 +334,9 @@ export default function LimitBreakResearch({
           <Table
             rowKey={(item) => `${item.trade_date}-${item.code}`}
             columns={columns}
-            dataSource={data?.items ?? []}
+            dataSource={(data?.items ?? []).filter(
+              (item) => !dismissed.has(String(item.id)),
+            )}
             pagination={false}
             size="middle"
             scroll={{ x: 1390 }}

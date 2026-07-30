@@ -10,7 +10,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 import numpy as np
-from sqlalchemy import desc, select
+from sqlalchemy import delete, desc, or_, select
 
 from .database import (
     RankingOptimizationRun,
@@ -75,14 +75,53 @@ def _clamp(value: float, low: float = 0.0, high: float = 1.0) -> float:
 
 
 def _trade_date(meta: dict[str, Any]) -> date:
-    for key in ("quote_time", "fetched_at"):
-        value = str(meta.get(key) or "").strip()
-        if len(value) >= 10:
-            try:
-                return date.fromisoformat(value[:10])
-            except ValueError:
-                continue
-    raise ValueError("行情缺少有效交易日期，不能留存训练样本")
+    value = str(meta.get("trade_date") or meta.get("quote_time") or "").strip()
+    if len(value) >= 10:
+        try:
+            return date.fromisoformat(value[:10])
+        except ValueError:
+            pass
+    raise ValueError("行情缺少真实行情时间，不能留存训练样本")
+
+
+def repair_unverified_training_samples() -> int:
+    """移除旧逻辑用抓取时间生成、但没有真实行情时间的未成熟样本。"""
+    removed = 0
+    with SessionLocal.begin() as session:
+        invalid = list(
+            session.scalars(
+                select(RankingTrainingSample).where(
+                    RankingTrainingSample.matured.is_(False),
+                    or_(
+                        RankingTrainingSample.quote_time.is_(None),
+                        RankingTrainingSample.quote_time == "",
+                    ),
+                    RankingTrainingSample.source.not_like("%交易日历确认%"),
+                )
+            )
+        )
+        if not invalid:
+            return 0
+        ids = [item.id for item in invalid]
+        affected = {(item.mode, item.sample_date) for item in invalid}
+        session.execute(
+            delete(RankingTrainingObservation).where(
+                RankingTrainingObservation.sample_id.in_(ids)
+            )
+        )
+        session.execute(
+            delete(RankingTrainingSample).where(RankingTrainingSample.id.in_(ids))
+        )
+        for mode, sample_date in affected:
+            session.execute(
+                delete(RankingOptimizationRun).where(
+                    RankingOptimizationRun.mode == mode,
+                    RankingOptimizationRun.run_date == sample_date,
+                    RankingOptimizationRun.status == "waiting",
+                )
+            )
+        removed = len(ids)
+    return removed
 
 
 def _baseline_version(mode: str) -> str:
@@ -521,7 +560,19 @@ def process_training_cycle(
     meta: dict[str, Any],
 ) -> dict[str, Any]:
     ensure_baseline_versions()
-    current_date = _trade_date(meta)
+    repaired_samples = repair_unverified_training_samples()
+    try:
+        current_date = _trade_date(meta)
+    except ValueError as exc:
+        return {
+            "trade_date": None,
+            "created_samples": 0,
+            "created_observations": 0,
+            "repaired_samples": repaired_samples,
+            "skipped": True,
+            "reason": str(exc),
+            "optimization": {},
+        }
     current_date_text = current_date.isoformat()
     quote_map = {str(item.get("code")): item for item in quotes}
     created_samples = 0
@@ -536,7 +587,17 @@ def process_training_cycle(
                 )
             )
             if already_saved is None:
-                for rank, item in enumerate(opportunities.get(mode, [])[:20], start=1):
+                unique_items: list[dict[str, Any]] = []
+                seen_codes: set[str] = set()
+                for item in opportunities.get(mode, []):
+                    code = str(item.get("code") or "")
+                    if not code or code in seen_codes:
+                        continue
+                    seen_codes.add(code)
+                    unique_items.append(item)
+                    if len(unique_items) >= 20:
+                        break
+                for rank, item in enumerate(unique_items, start=1):
                     price = _number(item.get("price"))
                     if price <= 0:
                         continue
@@ -558,7 +619,12 @@ def process_training_cycle(
                             target_observations=MODE_RULES[mode]["horizon"],
                             matured=False,
                             quote_time=(item.get("meta") or {}).get("quote_time"),
-                            source=str((item.get("meta") or {}).get("source") or "未知"),
+                            source=(
+                                f"{str((item.get('meta') or {}).get('source') or '未知')}；交易日历确认"
+                                if (item.get("meta") or {}).get("trade_date")
+                                and not (item.get("meta") or {}).get("quote_time")
+                                else str((item.get("meta") or {}).get("source") or "未知")
+                            ),
                             created_at=_now(),
                         )
                     )
@@ -626,6 +692,8 @@ def process_training_cycle(
         "trade_date": current_date_text,
         "created_samples": created_samples,
         "created_observations": created_observations,
+        "repaired_samples": repaired_samples,
+        "skipped": False,
         "optimization": results,
     }
 

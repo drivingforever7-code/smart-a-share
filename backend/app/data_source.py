@@ -61,11 +61,13 @@ def _meta(
     cached: bool,
     source: str = "AKShare / 东方财富",
     quote_time: str | None = None,
+    trade_date: str | None = None,
 ) -> dict[str, Any]:
     age = max(0, int((datetime.now() - fetched_at).total_seconds()))
     return {
         "source": source,
         "quote_time": quote_time,
+        "trade_date": trade_date,
         "fetched_at": fetched_at.isoformat(timespec="seconds"),
         "is_cached": cached,
         "cache_age_seconds": age if cached else 0,

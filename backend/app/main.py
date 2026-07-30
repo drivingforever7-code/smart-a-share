@@ -10,7 +10,11 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from .strategy_backtest_service import run_strategy_backtest
-from .auto_backtest_service import auto_backtest, capture_mode_snapshot
+from .auto_backtest_service import (
+    auto_backtest,
+    capture_mode_snapshot,
+    repair_repeated_cached_discoveries,
+)
 from .limit_break_service import (
     LimitBreakDataError,
     capture_limit_breaks,
@@ -30,6 +34,7 @@ from .database import init_database
 from .ranking_optimizer_service import (
     ensure_baseline_versions,
     ranking_strategy_status,
+    repair_unverified_training_samples,
 )
 from .intraday_service import get_intraday
 from .market_service import market_service, presets
@@ -54,6 +59,8 @@ from .strategy_service import (
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     init_database()
+    repair_repeated_cached_discoveries()
+    repair_unverified_training_samples()
     ensure_baseline_versions()
     initialize_strategy_catalog()
     yield

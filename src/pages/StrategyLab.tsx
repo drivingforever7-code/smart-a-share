@@ -50,6 +50,11 @@ export default function StrategyLab() {
   const [result, setResult] = useState<StrategyLabResult | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const basketText = Form.useWatch('codes', form) || ''
+  const basketItems = basketText
+    .split(/[\s,，;；]+/)
+    .map((item) => item.trim())
+    .filter(Boolean)
 
   useEffect(() => {
     api.strategies().then(setStrategies).catch(() => setStrategies([]))
@@ -199,6 +204,23 @@ export default function StrategyLab() {
               >
                 <Input.TextArea rows={2} placeholder="支持代码、名称或拼音，用逗号分隔，例如 600519, 贵州茅台, gzmt" />
               </Form.Item>
+              <Space size={[4, 4]} wrap>
+                {basketItems.map((item, index) => (
+                  <Tag
+                    key={`${item}-${index}`}
+                    closable
+                    onClose={(event) => {
+                      event.preventDefault()
+                      form.setFieldValue(
+                        'codes',
+                        basketItems.filter((_, itemIndex) => itemIndex !== index).join(', '),
+                      )
+                    }}
+                  >
+                    {item}
+                  </Tag>
+                ))}
+              </Space>
             </Col>
             <Col xs={24} lg={8}>
               <Form.Item

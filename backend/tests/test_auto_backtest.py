@@ -105,3 +105,75 @@ def test_auto_backtest_calculates_return_and_summary(isolated_database, monkeypa
     with isolated_database() as session:
         advice_count = len(list(session.scalars(select(RankingAdviceSnapshot))))
     assert advice_count == 6
+
+def test_snapshot_rejects_missing_quote_time(isolated_database):
+    items = [opportunity(f"00000{rank}", rank, "short") for rank in range(1, 4)]
+    for item in items:
+        item["meta"]["quote_time"] = None
+        item["meta"]["fetched_at"] = "2026-07-30T15:01:00"
+
+    assert service.capture_mode_snapshot("short", items) is False
+    with isolated_database() as session:
+        assert list(session.scalars(select(RankingDiscovery))) == []
+
+
+def test_snapshot_deduplicates_codes_before_ranking(isolated_database):
+    first = opportunity("000001", 1, "short")
+    duplicate = {**first, "name": "重复股票"}
+    items = [
+        first,
+        duplicate,
+        opportunity("000002", 2, "short"),
+        opportunity("000003", 3, "short"),
+    ]
+
+    assert service.capture_mode_snapshot("short", items) is True
+    with isolated_database() as session:
+        rows = list(session.scalars(select(RankingDiscovery).order_by(RankingDiscovery.rank)))
+    assert [(row.rank, row.code) for row in rows] == [
+        (1, "000001"),
+        (2, "000002"),
+        (3, "000003"),
+    ]
+
+
+def test_repair_removes_later_unverified_duplicate_day(isolated_database):
+    with isolated_database.begin() as session:
+        for day in ("2026-07-29", "2026-07-30"):
+            for rank in range(1, 4):
+                item = opportunity(f"00000{rank}", rank, "short")
+                session.add(
+                    RankingDiscovery(
+                        discovery_date=day,
+                        mode="short",
+                        rank=rank,
+                        code=item["code"],
+                        name=item["name"],
+                        industry=item["industry"],
+                        discovery_price=item["price"],
+                        discovery_score=item["score"],
+                        recommendation=item["recommendation"],
+                        confidence=item["confidence"],
+                        reasons_json="[]",
+                        risks_json="[]",
+                        quote_time=None,
+                        source="缓存；后台刷新中",
+                    )
+                )
+
+    assert service.repair_repeated_cached_discoveries() == 3
+    with isolated_database() as session:
+        rows = list(session.scalars(select(RankingDiscovery)))
+    assert {row.discovery_date for row in rows} == {"2026-07-29"}
+
+def test_snapshot_accepts_independently_verified_trade_date(isolated_database):
+    items = [opportunity(f"00000{rank}", rank, "short") for rank in range(1, 4)]
+    for item in items:
+        item["meta"]["quote_time"] = None
+        item["meta"]["trade_date"] = "2026-07-30"
+
+    assert service.capture_mode_snapshot("short", items) is True
+    with isolated_database() as session:
+        rows = list(session.scalars(select(RankingDiscovery)))
+    assert len(rows) == 3
+    assert all("交易日历确认" in row.source for row in rows)

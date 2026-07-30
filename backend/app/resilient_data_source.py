@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-from datetime import datetime
+from datetime import datetime, time
 from typing import Any
 
 import pandas as pd
@@ -17,6 +17,9 @@ class ResilientAkshareDataSource(OptimizedAkshareDataSource):
     def __init__(self) -> None:
         super().__init__()
         self._last_provider = "eastmoney"
+        self._spot_trade_date: str | None = None
+        self._calendar_checked_on: str | None = None
+        self._calendar_trade_date: str | None = None
 
     def get_spot_quotes(
         self,
@@ -35,6 +38,7 @@ class ResilientAkshareDataSource(OptimizedAkshareDataSource):
                 self._spot_fetched_at,
                 cached=True,
                 source=self._cache_source_name(),
+                trade_date=self._spot_trade_date,
             )
 
         with self._lock:
@@ -50,6 +54,7 @@ class ResilientAkshareDataSource(OptimizedAkshareDataSource):
                     self._spot_fetched_at,
                     cached=True,
                     source=self._cache_source_name(),
+                    trade_date=self._spot_trade_date,
                 )
 
             errors: list[str] = []
@@ -61,8 +66,14 @@ class ResilientAkshareDataSource(OptimizedAkshareDataSource):
                 records = self._normalize_spot_frame(frame, now)
                 if not records:
                     raise MarketDataError("东方财富返回空数据")
-                self._save_success(records, now, "eastmoney")
-                return records, _meta(now, cached=False, source="AKShare / 东方财富")
+                trade_date = self._resolve_trade_date(now)
+                self._save_success(records, now, "eastmoney", trade_date)
+                return records, _meta(
+                    now,
+                    cached=False,
+                    source="AKShare / 东方财富",
+                    trade_date=trade_date,
+                )
             except Exception as exc:
                 errors.append(f"东方财富：{exc}")
 
@@ -71,8 +82,14 @@ class ResilientAkshareDataSource(OptimizedAkshareDataSource):
                 records = self._normalize_tx_frame(frame, now)
                 if not records:
                     raise MarketDataError("腾讯行情返回空数据")
-                self._save_success(records, now, "tencent")
-                return records, _meta(now, cached=False, source="AKShare / 腾讯证券（备用）")
+                trade_date = self._resolve_trade_date(now)
+                self._save_success(records, now, "tencent", trade_date)
+                return records, _meta(
+                    now,
+                    cached=False,
+                    source="AKShare / 腾讯证券（备用）",
+                    trade_date=trade_date,
+                )
             except Exception as exc:
                 errors.append(f"腾讯证券：{exc}")
 
@@ -81,10 +98,18 @@ class ResilientAkshareDataSource(OptimizedAkshareDataSource):
                 self._spot_cache = cached
                 self._spot_fetched_at = fetched_at
                 self._last_provider = "database"
+                cache_age = max(0, (now - fetched_at).total_seconds())
+                verified_date = self._resolve_trade_date(fetched_at)
+                self._spot_trade_date = (
+                    verified_date
+                    if verified_date == fetched_at.date().isoformat() and cache_age <= 1800
+                    else None
+                )
                 return cached, _meta(
                     fetched_at,
                     cached=True,
                     source="本地 SQLite（两个免费行情源均失败）",
+                    trade_date=self._spot_trade_date,
                 )
             raise MarketDataError("实时行情获取失败；" + "；".join(errors))
 
@@ -93,11 +118,39 @@ class ResilientAkshareDataSource(OptimizedAkshareDataSource):
         records: list[dict[str, Any]],
         fetched_at: datetime,
         provider: str,
+        trade_date: str | None,
     ) -> None:
         self._persist_quotes(records, fetched_at)
         self._spot_cache = records
         self._spot_fetched_at = fetched_at
         self._last_provider = provider
+        self._spot_trade_date = trade_date
+
+    def _resolve_trade_date(self, fetched_at: datetime) -> str | None:
+        """用独立交易日历确认快照所属交易日；校验失败就不允许入榜。"""
+        checked_on = fetched_at.date().isoformat()
+        if self._calendar_checked_on == checked_on:
+            return self._calendar_trade_date
+        self._calendar_checked_on = checked_on
+        self._calendar_trade_date = None
+        try:
+            frame = ak.tool_trade_date_hist_sina()
+            if frame is None or frame.empty:
+                return None
+            column = "trade_date" if "trade_date" in frame.columns else frame.columns[0]
+            dates = pd.to_datetime(frame[column], errors="coerce").dropna().dt.date
+            candidates = [value for value in dates if value <= fetched_at.date()]
+            if not candidates:
+                return None
+            latest = max(candidates)
+            if latest == fetched_at.date() and fetched_at.time() < time(9, 30):
+                earlier = [value for value in candidates if value < latest]
+                if earlier:
+                    latest = max(earlier)
+            self._calendar_trade_date = latest.isoformat()
+        except Exception:
+            self._calendar_trade_date = None
+        return self._calendar_trade_date
 
     def _cache_source_name(self) -> str:
         if self._last_provider == "tencent":

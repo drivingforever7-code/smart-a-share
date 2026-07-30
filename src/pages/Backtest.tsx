@@ -1,4 +1,5 @@
 import {
+  DeleteOutlined,
   ExperimentOutlined,
   FallOutlined,
   LineChartOutlined,
@@ -15,6 +16,7 @@ import {
   Form,
   Input,
   InputNumber,
+  Popconfirm,
   Row,
   Select,
   Space,
@@ -287,6 +289,16 @@ export default function Backtest({ defaultCode }: { defaultCode: string }) {
                   <span>{result.name}（{result.code}）收益曲线</span>
                   <Tag>{result.start_date} 至 {result.end_date}</Tag>
                 </Space>
+              }
+              extra={
+                <Popconfirm
+                  title="删除这只股票的回测结果？"
+                  okText="删除"
+                  cancelText="取消"
+                  onConfirm={() => setResult(null)}
+                >
+                  <Button danger type="text" icon={<DeleteOutlined />}>删除结果</Button>
+                </Popconfirm>
               }
             >
               <ReactECharts option={chartOption} style={{ height: 420 }} />

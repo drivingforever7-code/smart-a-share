@@ -1,6 +1,7 @@
 import {
   CalendarOutlined,
   ClockCircleOutlined,
+  DeleteOutlined,
   EyeOutlined,
   FallOutlined,
   RiseOutlined,
@@ -12,6 +13,7 @@ import {
   Button,
   Card,
   Col,
+  Popconfirm,
   Row,
   Progress,
   Segmented,
@@ -36,6 +38,7 @@ import { RecommendationTag, ScoreBadge } from '../components/ScoreBadge'
 import { changeClass, formatNumber, formatPercent, formatTime } from '../format'
 import { getSettings } from '../storage'
 import type { ScoreMode } from '../types'
+import { useDismissedRows } from '../useDismissedRows'
 
 function strategyVersionLabel(value: string) {
   return value.replace('short-', '短线 ').replace('swing-', '波段 ')
@@ -169,6 +172,7 @@ export default function AutoBacktest({
   const [data, setData] = useState<AutoBacktestResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { dismissed, dismiss } = useDismissedRows('auto-backtest')
 
   const load = useCallback(async (silent = false) => {
     if (!silent) setLoading(true)
@@ -295,15 +299,26 @@ export default function AutoBacktest({
     {
       title: '操作',
       key: 'action',
-      width: 92,
+      width: 150,
       fixed: 'right',
       render: (_, item) => (
-        <Button type="text" icon={<EyeOutlined />} onClick={() => onOpenStock(item.code)}>
-          详情
-        </Button>
+        <Space>
+          <Button type="text" icon={<EyeOutlined />} onClick={() => onOpenStock(item.code)}>
+            详情
+          </Button>
+          <Popconfirm
+            title="隐藏这条发现记录？"
+            description="不会删除历史审计和训练样本，其他记录保持原顺序。"
+            okText="删除"
+            cancelText="取消"
+            onConfirm={() => dismiss(item.id)}
+          >
+            <Button danger type="text" icon={<DeleteOutlined />} aria-label="删除股票" />
+          </Popconfirm>
+        </Space>
       ),
     },
-  ], [onOpenStock])
+  ], [dismiss, onOpenStock])
 
   return (
     <div className="page-stack auto-backtest-page">
@@ -376,7 +391,9 @@ export default function AutoBacktest({
         onRetry={() => void load()}
       >
         {(['short', 'swing'] as ScoreMode[]).map((mode) => {
-          const items = data?.items.filter((item) => item.mode === mode) ?? []
+          const items = data?.items.filter(
+            (item) => item.mode === mode && !dismissed.has(String(item.id)),
+          ) ?? []
           return (
             <Card
               key={mode}
