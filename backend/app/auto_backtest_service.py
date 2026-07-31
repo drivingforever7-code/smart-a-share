@@ -9,7 +9,10 @@ from sqlalchemy import delete, desc, select
 from sqlalchemy.exc import IntegrityError
 
 from .database import RankingAdviceSnapshot, RankingDiscovery, SessionLocal
+from .research_models import AiAnalysisRun
 from .market_service import market_service
+from .config import settings
+from .ai_analysis_service import AiServiceError, _chat_json
 from .reliable_data_source import data_source
 from .ranking_optimizer_service import (
     discovery_version_map,
@@ -177,7 +180,7 @@ def _daily_action(
 ) -> dict[str, Any]:
     if current_price is None or current is None:
         return {
-            "action": "观望",
+            "action": "清仓",
             "position_pct": 0,
             "confidence": 30.0,
             "current_score": None,
@@ -210,7 +213,7 @@ def _daily_action(
             f"当前评分 {score:.1f} 未能维持强势",
         ]
     elif return_value >= profit_lock and score < 76:
-        action, position = "减仓", 25
+        action, position = "清仓", 0
         reasons = [
             f"发现后已有 {return_value:+.2f}% 浮盈，进入保护利润区",
             f"当前评分 {score:.1f}，动能不足以支持满仓继续持有",
@@ -228,10 +231,10 @@ def _daily_action(
             f"发现后涨跌 {return_value:+.2f}%，暂未触发退出条件",
         ]
     else:
-        action, position = "减仓", 25
+        action, position = "清仓", 0
         reasons = [
             f"当前{mode_name}评分降至 {score:.1f}，信号完整度下降",
-            "保留少量观察仓，等待趋势重新确认",
+            "信号已低于继续持有门槛，执行纪律退出",
         ]
 
     return {
@@ -321,20 +324,80 @@ def _mode_summary(items: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def _apply_daily_ai_ranking(
+    opportunity_lists: dict[str, list[dict[str, Any]]], meta: dict[str, Any]
+) -> dict[str, Any]:
+    """收盘后每个模式仅请求一次 AI；同日结果从数据库复用。"""
+    quote_time = str(meta.get("quote_time") or "")
+    if len(quote_time) < 16 or quote_time[11:16] < "15:05" or not settings.deepseek_api_key:
+        return {"status": "indicator_only", "reason": "未到收盘批处理时间或 AI 未配置"}
+    trade_date = quote_time[:10]
+    result = {"status": "cached", "trade_date": trade_date, "modes": {}}
+    for mode, items in opportunity_lists.items():
+        candidates = items[:20]
+        code = "990001" if mode == "short" else "990002"
+        depth = f"ranking-{mode}-{trade_date}"
+        with SessionLocal() as session:
+            cached = session.scalar(
+                select(AiAnalysisRun).where(
+                    AiAnalysisRun.code == code,
+                    AiAnalysisRun.depth == depth,
+                    AiAnalysisRun.status == "success",
+                ).order_by(desc(AiAnalysisRun.id))
+            )
+        payload = json.loads(cached.result_json) if cached and cached.result_json else None
+        if payload is None:
+            compact = [{
+                "code": item["code"], "name": item["name"],
+                "indicator_score": item.get("score"), "change_pct": item.get("change_pct"),
+                "reasons": (item.get("reasons") or [])[:3], "risks": (item.get("risks") or [])[:2],
+            } for item in candidates]
+            try:
+                payload = _chat_json(
+                    "你是A股量化复核员。只基于输入，为每只股票给0到100的ai_score；风险高则降分。返回JSON对象，格式为{scores:[{code,ai_score,reason}]}。不得保证收益。",
+                    json.dumps({"mode": mode, "trade_date": trade_date, "candidates": compact}, ensure_ascii=False),
+                )
+                with SessionLocal.begin() as session:
+                    session.add(AiAnalysisRun(
+                        code=code, name=f"每日{mode}候选AI复核", model=settings.deepseek_model,
+                        depth=depth, status="success",
+                        input_snapshot_json=json.dumps({"trade_date": trade_date, "count": len(compact)}, ensure_ascii=False),
+                        result_json=json.dumps(payload, ensure_ascii=False),
+                    ))
+                result["status"] = "updated"
+            except AiServiceError as exc:
+                result["modes"][mode] = {"status": "fallback", "reason": str(exc)}
+                continue
+        scores = {str(row.get("code")): float(row.get("ai_score", 50)) for row in payload.get("scores", [])}
+        for item in candidates:
+            ai_score = max(0.0, min(100.0, scores.get(str(item["code"]), 50.0)))
+            item["indicator_score"] = float(item.get("score") or 0)
+            item["ai_score"] = ai_score
+            item["score"] = round(item["indicator_score"] * 0.7 + ai_score * 0.3, 2)
+        candidates.sort(key=lambda item: item["score"], reverse=True)
+        opportunity_lists[mode] = candidates + items[20:]
+        result["modes"][mode] = {"status": "applied", "count": len(candidates)}
+    return result
+
 def auto_backtest(days: int = 5) -> dict[str, Any]:
     """留存今日榜单，并给历史发现标的生成当日操作建议。"""
     repaired_discoveries = repair_repeated_cached_discoveries()
     opportunity_lists = {
         mode: market_service.opportunities(mode, limit=500) for mode in MODES
     }
-    for mode, opportunities in opportunity_lists.items():
-        capture_mode_snapshot(mode, opportunities[:3])
     opportunity_maps = {
         mode: {str(item["code"]): item for item in items}
         for mode, items in opportunity_lists.items()
     }
 
     quotes, current_meta = data_source.get_spot_quotes()
+    ai_ranking = _apply_daily_ai_ranking(opportunity_lists, current_meta)
+    for mode, opportunities in opportunity_lists.items():
+        capture_mode_snapshot(mode, opportunities[:3])
+    opportunity_maps = {
+        mode: {str(item["code"]): item for item in items}
+        for mode, items in opportunity_lists.items()
+    }
     quote_map = {str(item["code"]): item for item in quotes}
     advice_date = _meta_date(current_meta)
     training_cycle = process_training_cycle(opportunity_lists, quotes, current_meta)
@@ -452,8 +515,15 @@ def auto_backtest(days: int = 5) -> dict[str, Any]:
                     "source": snapshot.source,
                 }
             )
+        archived_count = 0
         for item in items:
             item["advice_history"] = history_map.get(item["id"], [])
+            recent_actions = [entry["action"] for entry in item["advice_history"][:3]]
+            item["archived_after_clear"] = len(recent_actions) == 3 and all(
+                action == "清仓" for action in recent_actions
+            )
+            archived_count += int(item["archived_after_clear"])
+        items = [item for item in items if not item["archived_after_clear"]]
 
     return {
         "days": days,
@@ -467,6 +537,8 @@ def auto_backtest(days: int = 5) -> dict[str, Any]:
         "training_cycle": {
             **training_cycle,
             "repaired_discoveries": repaired_discoveries,
+            "archived_after_clear": archived_count,
+            "ai_ranking": ai_ranking,
         },
         "strategy_optimization": ranking_strategy_status(),
         "history_note": (

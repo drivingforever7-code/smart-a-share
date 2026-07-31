@@ -317,6 +317,12 @@ async def data_status():
     return await run_in_threadpool(market_service.data_status)
 
 
+@app.post("/api/data/warmup", tags=["数据"])
+async def warmup_data():
+    """使用缓存立即响应，并按数据层冷却规则更新。"""
+    quotes, meta = await run_in_threadpool(data_source.get_spot_quotes)
+    return {"message": "行情缓存已检查", "count": len(quotes), "meta": meta}
+
 @app.post("/api/data/refresh/quotes", tags=["数据"])
 async def refresh_quotes():
     return await run_in_threadpool(market_service.refresh_quotes)

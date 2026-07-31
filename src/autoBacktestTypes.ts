@@ -114,6 +114,7 @@ export interface AutoBacktestResponse {
     trade_date: string
     created_samples: number
     created_observations: number
+    archived_after_clear?: number
     optimization: Record<ScoreMode, { mode: ScoreMode; status: string; reason?: string }>
   }
   strategy_optimization: Record<ScoreMode, RankingStrategyStatus>

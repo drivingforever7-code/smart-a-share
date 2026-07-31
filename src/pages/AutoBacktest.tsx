@@ -251,39 +251,7 @@ export default function AutoBacktest({
       ),
     },
     {
-      title: '跟踪',
-      dataIndex: 'tracking_days',
-      width: 80,
-      align: 'center',
-      render: (value: number) => `${value} 天`,
-    },
-    {
-      title: '发现时评分',
-      dataIndex: 'discovery_score',
-      width: 118,
-      align: 'center',
-      render: (value: number, item) => (
-        <Space direction="vertical" size={2}>
-          <ScoreBadge score={value} compact />
-          <Tag color={item.mode === 'short' ? 'cyan' : 'purple'}>{strategyVersionLabel(item.strategy_version)}</Tag>
-        </Space>
-      ),
-    },
-    {
-      title: '发现时建议',
-      dataIndex: 'recommendation',
-      width: 132,
-      render: (value) => <RecommendationTag value={value} />,
-    },
-    {
-      title: '置信度',
-      dataIndex: 'confidence',
-      width: 88,
-      align: 'right',
-      render: (value: number) => formatPercent(value),
-    },
-    {
-      title: '今日操作建议',
+      title: '当前操作',
       key: 'dailyAction',
       width: 148,
       fixed: 'right',
@@ -353,27 +321,13 @@ export default function AutoBacktest({
         message="每日自动记录两个榜单的前三名"
         description={`${data?.history_note || '只记录真实发现快照，不使用今天的结果伪造过去排名。'} 这里跟踪榜单发现价到现价，不假设真实成交，也不扣交易成本；完整成交验证请使用策略实验室。`}
       />
-
       {data && (
-        <Row gutter={[16, 16]}>
-          <Col xs={24} lg={12}>
-            <EvolutionCard mode="short" status={data.strategy_optimization.short} />
-          </Col>
-          <Col xs={24} lg={12}>
-            <EvolutionCard mode="swing" status={data.strategy_optimization.swing} />
-          </Col>
-        </Row>
-      )}
-
-      {data && (
-        <Row gutter={[16, 16]}>
-          <Col xs={24} lg={12}>
-            <SummaryCard mode="short" summary={data.summaries.short} />
-          </Col>
-          <Col xs={24} lg={12}>
-            <SummaryCard mode="swing" summary={data.summaries.swing} />
-          </Col>
-        </Row>
+        <Alert
+          type="success"
+          showIcon
+          message={`短线 ${strategyVersionLabel(data.strategy_optimization.short.active_version)} · 波段 ${strategyVersionLabel(data.strategy_optimization.swing.active_version)}`}
+          description={`每日持续登记与验证；达到样本外升级门槛才自动升级。连续清仓 3 个交易日后主列表隐藏，本次已归档 ${data.training_cycle.archived_after_clear ?? 0} 条。`}
+        />
       )}
 
       {data && (
@@ -412,8 +366,8 @@ export default function AutoBacktest({
                 columns={columns}
                 dataSource={items}
                 pagination={false}
-                scroll={{ x: 1410 }}
-                size="middle"
+                scroll={{ x: 900 }}
+                size="small"
                 expandable={{
                   expandedRowRender: (item) => (
                     <Row gutter={[24, 12]} className="auto-detail-row">

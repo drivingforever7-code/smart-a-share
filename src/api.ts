@@ -165,6 +165,8 @@ export const api = {
 
   dataStatus: () => request<DataStatus>('/data/status'),
 
+  warmup: () => request('/data/warmup', { method: 'POST' }),
+
   refreshQuotes: () =>
     request<{ message: string; count: number; fetched_at: string }>('/data/refresh/quotes', {
       method: 'POST',

@@ -1873,3 +1873,6 @@ a {
 .strategy-evolution .ant-progress-inner {
   background: rgba(255, 255, 255, 0.08);
 }
+
+/* 顶部导航避让 */
+.app-header { height: 88px; padding-top: 10px; }

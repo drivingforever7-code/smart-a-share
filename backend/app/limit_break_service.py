@@ -217,7 +217,7 @@ def _advice(
         risks.append("炸板股波动和成交失败风险显著高于普通股票")
 
     if (
-        probability >= 70
+        probability >= 75
         and distance <= 2.5
         and break_count <= 3
         and turnover <= 25
@@ -225,7 +225,7 @@ def _advice(
     ):
         recommendation = "建议小仓位试买"
         position_pct = 10
-    elif probability >= 52:
+    elif probability >= 65:
         recommendation = "建议观察"
         position_pct = 0
     else:
@@ -677,6 +677,15 @@ def limit_break_research(days: int = 5, refresh: bool = True) -> dict[str, Any]:
             }
         )
 
+    # 只展示高概率且通过基础风险约束的候选，已回封记录仍按原概率顺序保留
+    items = [
+        item for item in items
+        if item["predicted_probability"] >= 65
+        and item["distance_to_limit_pct"] <= 3.0
+        and item["break_count"] <= 3
+        and item["turnover_rate"] <= 25
+        and item["amplitude"] <= 20
+    ]
     items.sort(key=lambda item: (item["trade_date"], item["predicted_probability"]), reverse=True)
     rank_by_date: dict[str, int] = defaultdict(int)
     for item in items:

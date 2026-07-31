@@ -20,6 +20,7 @@ import type { MenuProps } from 'antd'
 import StockSearchInput from './components/StockSearchInput'
 import LoadingExperience from './components/LoadingExperience'
 import type { PageKey } from './types'
+import { api } from './api'
 
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const AutoBacktest = lazy(() => import('./pages/AutoBacktest'))
@@ -52,7 +53,7 @@ const items: MenuProps['items'] = [
 
 const titles: Record<PageKey, { title: string; subtitle: string }> = {
   dashboard: { title: '今日机会', subtitle: '从全市场信号中发现短线与波段机会' },
-  autoBacktest: { title: '自动回测', subtitle: '跟踪榜单表现与每天的加仓、持有、减仓、清仓建议' },
+  autoBacktest: { title: '自动回测', subtitle: '跟踪榜单表现与每天的加仓、继续持有与清仓建议' },
   limitBreaks: { title: '炸板研究', subtitle: '记录每日炸板、回封概率排名与收盘复盘' },
   screener: { title: '条件选股', subtitle: '组合条件，找到符合你交易思路的股票' },
   ranking: { title: '综合评分榜', subtitle: '比较短线强度与波段质量' },
