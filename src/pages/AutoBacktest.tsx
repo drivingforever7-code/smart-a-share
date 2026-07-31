@@ -322,6 +322,19 @@ export default function AutoBacktest({
         description={`${data?.history_note || '只记录真实发现快照，不使用今天的结果伪造过去排名。'} 这里跟踪榜单发现价到现价，不假设真实成交，也不扣交易成本；完整成交验证请使用策略实验室。`}
       />
       {data && (
+        <Row gutter={[16, 16]}>
+          <Col xs={24} lg={12}><SummaryCard mode="short" summary={data.summaries.short} /></Col>
+          <Col xs={24} lg={12}><SummaryCard mode="swing" summary={data.summaries.swing} /></Col>
+        </Row>
+      )}
+
+      {data && (
+        <Row gutter={[16, 16]}>
+          <Col xs={24} lg={12}><EvolutionCard mode="short" status={data.strategy_optimization.short} /></Col>
+          <Col xs={24} lg={12}><EvolutionCard mode="swing" status={data.strategy_optimization.swing} /></Col>
+        </Row>
+      )}
+      {data && (
         <Alert closable
           type="success"
           showIcon
