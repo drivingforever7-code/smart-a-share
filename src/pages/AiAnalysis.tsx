@@ -1,3 +1,4 @@
+import DailyAlert from '../components/DailyAlert'
 import {
   ApiOutlined,
   HistoryOutlined,
@@ -153,7 +154,7 @@ export default function AiAnalysis({ defaultCode }: { defaultCode: string }) {
   return (
     <div className="page-stack">
       {contextHolder}
-      <Alert closable
+      <DailyAlert noticeKey="aianalysis-1"
         type="warning"
         showIcon
         message="AI意见与量化策略分开"
@@ -226,7 +227,7 @@ export default function AiAnalysis({ defaultCode }: { defaultCode: string }) {
                   <Typography.Paragraph type="secondary">
                     {result.horizon} · {result.method.model} · 用时 {(result.duration_ms / 1000).toFixed(1)} 秒
                   </Typography.Paragraph>
-                  <Alert closable type="info" message="角色分歧" description={result.disagreement || '角色意见较为一致'} />
+                  <DailyAlert noticeKey="aianalysis-2" type="info" message="角色分歧" description={result.disagreement || '角色意见较为一致'} />
                 </Col>
               </Row>
             </Card>
@@ -256,7 +257,7 @@ export default function AiAnalysis({ defaultCode }: { defaultCode: string }) {
             <Card title={<Space><SafetyCertificateOutlined />操作前检查清单</Space>}>
               <EvidenceList items={result.checklist} empty="没有生成检查清单" />
               {result.data_snapshot.limitations.length > 0 && (
-                <Alert closable
+                <DailyAlert noticeKey="aianalysis-3"
                   style={{ marginTop: 16 }}
                   type="warning"
                   showIcon

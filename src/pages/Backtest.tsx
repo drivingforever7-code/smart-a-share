@@ -1,3 +1,4 @@
+import DailyAlert from '../components/DailyAlert'
 import {
   DeleteOutlined,
   ExperimentOutlined,
@@ -221,7 +222,7 @@ export default function Backtest({ defaultCode }: { defaultCode: string }) {
             </Col>
           </Row>
         </Form>
-        <Alert closable
+        <DailyAlert noticeKey="backtest-1"
           type="info"
           showIcon
           message="信号在收盘后确认，最早使用下一交易日开盘价买入，避免偷看未来数据。"

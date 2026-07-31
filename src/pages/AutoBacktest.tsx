@@ -1,3 +1,4 @@
+import DailyAlert from '../components/DailyAlert'
 import {
   CalendarOutlined,
   ClockCircleOutlined,
@@ -104,7 +105,7 @@ function EvolutionCard({
           每日留存前 20 · 后续 {status.horizon_observations} 个有效观察日成熟 · 待成熟 {status.pending_samples}
         </Typography.Text>
         {latest && (
-          <Alert closable
+          <DailyAlert noticeKey="autobacktest-1"
             type={latest.status === 'activated' ? 'success' : latest.status === 'rejected' ? 'warning' : 'info'}
             showIcon
             message={
@@ -315,7 +316,7 @@ export default function AutoBacktest({
         </Space>
       </div>
 
-      <Alert closable
+      <DailyAlert noticeKey="autobacktest-2"
         type="info"
         showIcon
         message="每日自动记录两个榜单的前三名"
@@ -335,7 +336,7 @@ export default function AutoBacktest({
         </Row>
       )}
       {data && (
-        <Alert closable
+        <DailyAlert noticeKey="autobacktest-3"
           type="success"
           showIcon
           message={`短线 ${strategyVersionLabel(data.strategy_optimization.short.active_version)} · 波段 ${strategyVersionLabel(data.strategy_optimization.swing.active_version)}`}

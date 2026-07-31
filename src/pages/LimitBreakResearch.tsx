@@ -1,3 +1,4 @@
+import DailyAlert from '../components/DailyAlert'
 import {
   AimOutlined,
   ClockCircleOutlined,
@@ -237,14 +238,14 @@ export default function LimitBreakResearch({
         </Button>
       </div>
 
-      <Alert closable
+      <DailyAlert noticeKey="limitbreakresearch-1"
         type="warning"
         showIcon
         message="炸板研究是高风险事件研究，不是回封或收益保证"
         description="概率只使用观测时可见字段；午盘和尾盘前预测用于收盘复盘，盘后补录样本不参与准确率。即使回封，也可能无法按显示价格成交或次日出现大幅低开。"
       />
 
-      {data?.warning && <Alert closable type="error" showIcon message={data.warning} />}
+      {data?.warning && <DailyAlert noticeKey="limitbreakresearch-2" type="error" showIcon message={data.warning} />}
 
       {data && (
         <Row gutter={[16, 16]}>
@@ -374,7 +375,7 @@ export default function LimitBreakResearch({
       </DataState>
 
       {data && (
-        <Alert closable
+        <DailyAlert noticeKey="limitbreakresearch-3"
           type="info"
           showIcon
           message={`当前模型 ${data.model_stats.active_model}`}

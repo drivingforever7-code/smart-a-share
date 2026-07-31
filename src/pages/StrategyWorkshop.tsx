@@ -1,3 +1,4 @@
+import DailyAlert from '../components/DailyAlert'
 import {
   CopyOutlined,
   DeleteOutlined,
@@ -355,7 +356,7 @@ export default function StrategyWorkshop() {
     <Spin spinning={loading}>
       {contextHolder}
       <div className="page-stack">
-        <Alert closable
+        <DailyAlert noticeKey="strategyworkshop-1"
           type="info"
           showIcon
           message="这里不用写代码"

@@ -1,3 +1,4 @@
+import DailyAlert from '../components/DailyAlert'
 import {
   ExperimentOutlined,
   SafetyCertificateOutlined,
@@ -170,7 +171,7 @@ export default function StrategyLab() {
 
   return (
     <div className="page-stack">
-      <Alert closable
+      <DailyAlert noticeKey="strategylab-1"
         type="info"
         showIcon
         icon={<SafetyCertificateOutlined />}
@@ -274,7 +275,7 @@ export default function StrategyLab() {
                 scroll={{ x: 1300 }}
               />
             </Card>
-            <Alert closable
+            <DailyAlert noticeKey="strategylab-2"
               type="warning"
               showIcon
               icon={<WarningOutlined />}

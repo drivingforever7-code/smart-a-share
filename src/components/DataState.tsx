@@ -1,3 +1,4 @@
+import DailyAlert from './DailyAlert'
 import { Alert, Button, Empty, Result, Space, Typography } from 'antd'
 import LoadingExperience from './LoadingExperience'
 
@@ -67,7 +68,7 @@ export function DataNotice({
   text: string
 }) {
   return (
-    <Alert closable
+    <DailyAlert noticeKey="datastate-1"
       type={cached ? 'warning' : 'info'}
       showIcon
       message={cached ? '当前展示缓存数据' : '数据时间'}
