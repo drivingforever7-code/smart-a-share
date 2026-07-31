@@ -372,7 +372,7 @@ export default function Screener({ onOpenStock }: { onOpenStock: (code: string) 
       </Row>
 
       <Disclaimer />
-      <Modal
+      <Modal closable
         title="保存筛选方案"
         open={saveOpen}
         onOk={confirmSave}

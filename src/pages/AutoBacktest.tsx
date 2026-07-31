@@ -104,7 +104,7 @@ function EvolutionCard({
           每日留存前 20 · 后续 {status.horizon_observations} 个有效观察日成熟 · 待成熟 {status.pending_samples}
         </Typography.Text>
         {latest && (
-          <Alert
+          <Alert closable
             type={latest.status === 'activated' ? 'success' : latest.status === 'rejected' ? 'warning' : 'info'}
             showIcon
             message={
@@ -315,14 +315,14 @@ export default function AutoBacktest({
         </Space>
       </div>
 
-      <Alert
+      <Alert closable
         type="info"
         showIcon
         message="每日自动记录两个榜单的前三名"
         description={`${data?.history_note || '只记录真实发现快照，不使用今天的结果伪造过去排名。'} 这里跟踪榜单发现价到现价，不假设真实成交，也不扣交易成本；完整成交验证请使用策略实验室。`}
       />
       {data && (
-        <Alert
+        <Alert closable
           type="success"
           showIcon
           message={`短线 ${strategyVersionLabel(data.strategy_optimization.short.active_version)} · 波段 ${strategyVersionLabel(data.strategy_optimization.swing.active_version)}`}

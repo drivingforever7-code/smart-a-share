@@ -170,7 +170,7 @@ export default function StrategyLab() {
 
   return (
     <div className="page-stack">
-      <Alert
+      <Alert closable
         type="info"
         showIcon
         icon={<SafetyCertificateOutlined />}
@@ -274,7 +274,7 @@ export default function StrategyLab() {
                 scroll={{ x: 1300 }}
               />
             </Card>
-            <Alert
+            <Alert closable
               type="warning"
               showIcon
               icon={<WarningOutlined />}

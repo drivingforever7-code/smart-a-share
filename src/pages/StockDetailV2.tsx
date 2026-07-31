@@ -341,7 +341,7 @@ export default function StockDetailV2({
                   detail="正在校验分时价格、均价线与成交量"
                 />
               ) : chartEmpty ? (
-                <Alert
+                <Alert closable
                   type="warning"
                   showIcon
                   message={timeframe === 'intraday' ? '当前没有可用分时数据' : '当前周期没有K线数据'}
@@ -383,7 +383,7 @@ export default function StockDetailV2({
                   />
                 </Col>
                 <Col xs={24} lg={8}>
-                  <Alert
+                  <Alert closable
                     type="info"
                     showIcon
                     message="默认验证最近 3 年"
@@ -426,7 +426,7 @@ export default function StockDetailV2({
                     <Col xs={12} md={4}><Statistic title="夏普比率" value={backtestResult.sharpe_ratio} /></Col>
                     <Col xs={12} md={4}><Statistic title="交易次数" value={backtestResult.trade_count} /></Col>
                   </Row>
-                  <Alert
+                  <Alert closable
                     style={{ marginTop: 16 }}
                     type="warning"
                     showIcon

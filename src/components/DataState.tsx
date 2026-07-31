@@ -67,7 +67,7 @@ export function DataNotice({
   text: string
 }) {
   return (
-    <Alert
+    <Alert closable
       type={cached ? 'warning' : 'info'}
       showIcon
       message={cached ? '当前展示缓存数据' : '数据时间'}

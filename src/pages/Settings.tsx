@@ -108,7 +108,7 @@ export default function Settings() {
             <DataState loading={loading} error={error} onRetry={() => void loadStatus()}>
               {status && (
                 <>
-                  <Alert
+                  <Alert closable
                     type={status.akshare_available ? 'success' : 'error'}
                     showIcon
                     message={status.akshare_available ? 'AKShare 数据接口已安装' : 'AKShare 尚未安装'}
@@ -204,7 +204,7 @@ export default function Settings() {
           </Card>
           <Card className="content-card" title={<><ApiOutlined /> DeepSeek AI 服务</>} style={{ marginTop: 16 }}>
             <Space direction="vertical" style={{ width: '100%' }}>
-              <Alert
+              <Alert closable
                 type={aiStatus?.configured ? 'success' : 'warning'}
                 showIcon
                 message={aiStatus?.configured ? '密钥已安全配置' : '尚未配置密钥'}
@@ -245,7 +245,7 @@ export default function Settings() {
         </Col>
       </Row>
 
-      <Alert
+      <Alert closable
         type="warning"
         showIcon
         message="关于实时行情"

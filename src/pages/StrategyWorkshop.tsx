@@ -355,7 +355,7 @@ export default function StrategyWorkshop() {
     <Spin spinning={loading}>
       {contextHolder}
       <div className="page-stack">
-        <Alert
+        <Alert closable
           type="info"
           showIcon
           message="这里不用写代码"

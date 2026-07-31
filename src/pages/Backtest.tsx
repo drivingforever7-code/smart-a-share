@@ -221,7 +221,7 @@ export default function Backtest({ defaultCode }: { defaultCode: string }) {
             </Col>
           </Row>
         </Form>
-        <Alert
+        <Alert closable
           type="info"
           showIcon
           message="信号在收盘后确认，最早使用下一交易日开盘价买入，避免偷看未来数据。"
