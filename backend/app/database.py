@@ -302,6 +302,66 @@ class RankingOptimizationRun(Base):
     completed_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 
 
+class RankingOptimizationAudit(Base):
+    __tablename__ = "ranking_optimization_audits"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    run_id: Mapped[int] = mapped_column(
+        ForeignKey("ranking_optimization_runs.id"), index=True
+    )
+    mode: Mapped[str] = mapped_column(String(10), index=True)
+    sample_date: Mapped[str] = mapped_column(String(10), index=True)
+    split: Mapped[str] = mapped_column(String(12), index=True)
+    code: Mapped[str] = mapped_column(String(6), index=True)
+    name: Mapped[str] = mapped_column(String(40))
+    features_json: Mapped[str] = mapped_column(Text)
+    observations_json: Mapped[str] = mapped_column(Text)
+    labels_json: Mapped[str] = mapped_column(Text)
+    candidate_score: Mapped[float | None] = mapped_column(Float, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+
+
+class BoardPoolEvent(Base):
+    __tablename__ = "board_pool_events"
+    __table_args__ = (
+        UniqueConstraint("trade_date", "pool_type", "code", name="uq_board_pool_event"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    trade_date: Mapped[str] = mapped_column(String(10), index=True)
+    pool_type: Mapped[str] = mapped_column(String(16), index=True)
+    code: Mapped[str] = mapped_column(String(6), index=True)
+    name: Mapped[str] = mapped_column(String(40))
+    industry: Mapped[str | None] = mapped_column(String(60), nullable=True)
+    rank: Mapped[int] = mapped_column(Integer)
+    predicted_at: Mapped[datetime] = mapped_column(DateTime, index=True)
+    predicted_probability: Mapped[float] = mapped_column(Float)
+    recommendation: Mapped[str] = mapped_column(String(30))
+    reasons_json: Mapped[str] = mapped_column(Text)
+    risks_json: Mapped[str] = mapped_column(Text)
+    features_json: Mapped[str] = mapped_column(Text)
+    model_version: Mapped[str] = mapped_column(String(40), index=True)
+    outcome: Mapped[str] = mapped_column(String(20), default="pending", index=True)
+    outcome_date: Mapped[str | None] = mapped_column(String(10), nullable=True)
+    review_json: Mapped[str | None] = mapped_column(Text, nullable=True)
+    source: Mapped[str] = mapped_column(String(60), default="AKShare")
+
+
+class BoardPoolModelVersion(Base):
+    __tablename__ = "board_pool_model_versions"
+
+    version: Mapped[str] = mapped_column(String(40), primary_key=True)
+    pool_type: Mapped[str] = mapped_column(String(16), index=True)
+    parameters_json: Mapped[str] = mapped_column(Text)
+    trained_through: Mapped[str] = mapped_column(String(10), index=True)
+    train_samples: Mapped[int] = mapped_column(Integer, default=0)
+    validation_samples: Mapped[int] = mapped_column(Integer, default=0)
+    validation_brier: Mapped[float | None] = mapped_column(Float, nullable=True)
+    validation_accuracy: Mapped[float | None] = mapped_column(Float, nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+
+
 class DataUpdateJob(Base):
     __tablename__ = "data_update_jobs"
 

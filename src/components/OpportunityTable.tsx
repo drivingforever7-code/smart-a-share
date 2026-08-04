@@ -33,8 +33,8 @@ export default function OpportunityTable({
 
   useEffect(() => {
     const listener = () => setWatchlist(getWatchlist())
-    window.addEventListener('watchlist-change', listener)
-    return () => window.removeEventListener('watchlist-change', listener)
+    window.addEventListener('purchased-change', listener)
+    return () => window.removeEventListener('purchased-change', listener)
   }, [])
 
   const columns: ColumnsType<Opportunity> = [
@@ -136,7 +136,7 @@ export default function OpportunityTable({
         const watched = watchlist.includes(item.code)
         return (
           <Space>
-            <Tooltip title={watched ? '移出自选' : '加入自选'}>
+            <Tooltip placement="topLeft" title={watched ? '取消已购入' : '标记已购入'}>
               <Button
                 type="text"
                 icon={watched ? <StarFilled className="star-active" /> : <StarOutlined />}

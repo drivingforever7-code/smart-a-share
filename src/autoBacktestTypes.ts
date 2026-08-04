@@ -73,6 +73,16 @@ export interface RankingOptimizationRun {
   trading_days: number
   metrics: Record<string, unknown>
   reason: string
+  audit_samples?: Array<{
+    sample_date: string
+    split: 'train' | 'validation'
+    code: string
+    name: string
+    features: Record<string, number>
+    observations: Array<{ date: string; price: number; return_pct: number }>
+    labels: { return_pct?: number | null; max_drawdown_pct?: number | null; positive?: boolean | null }
+    candidate_score?: number | null
+  }>
 }
 
 export interface RankingStrategyVersion {

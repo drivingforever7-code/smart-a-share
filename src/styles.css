@@ -268,7 +268,12 @@ input {
   background: transparent;
   text-align: left;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
+
+.ant-table-cell-fix-right { z-index: 4 !important; }
+.ant-tooltip { pointer-events: none; max-width: 260px; }
 
 .stock-link strong {
   overflow: hidden;
@@ -1832,6 +1837,9 @@ a {
 .limit-break-page .metric-card {
   min-height: 138px;
 }
+
+.metric-card--clickable { cursor: pointer; }
+.metric-card--clickable:hover { transform: translateY(-2px); border-color: rgba(53, 208, 186, .55); }
 
 .limit-review-strip {
   border-color: rgba(245, 185, 66, 0.28) !important;

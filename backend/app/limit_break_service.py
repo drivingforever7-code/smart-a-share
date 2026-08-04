@@ -355,7 +355,23 @@ def _evaluation_events(session) -> list[LimitBreakEvent]:
     latest: dict[tuple[str, str], LimitBreakEvent] = {}
     for row in rows:
         latest[(row.trade_date, row.code)] = row
-    return list(latest.values())
+    qualified = [
+        row for row in latest.values()
+        if row.predicted_probability >= 65
+        and row.distance_to_limit_pct <= 3.0
+        and row.break_count <= 3
+        and row.turnover_rate <= 25
+        and row.amplitude <= 20
+    ]
+    selected: list[LimitBreakEvent] = []
+    for trade_date in sorted({row.trade_date for row in qualified}):
+        day_rows = sorted(
+            (row for row in qualified if row.trade_date == trade_date),
+            key=lambda row: row.predicted_probability,
+            reverse=True,
+        )
+        selected.extend(day_rows[:10])
+    return selected
 
 
 def _fit_candidate(session, trained_through: str) -> None:
@@ -478,8 +494,24 @@ def capture_limit_breaks(
     created = 0
     with SessionLocal.begin() as session:
         model_version, parameters = _active_model(session)
-        for item in candidates:
-            code = _text(item.get("代码"))
+        ranked_values: list[dict[str, Any]] = []
+        if resolved_stage != "close":
+            for item in candidates:
+                values = _event_values(
+                    item,
+                    trade_date=resolved_date,
+                    stage=resolved_stage,
+                    market_seal_rate=market_seal_rate,
+                    industry_heat_count=industry_counts[_text(item.get("所属行业"), "行业未知")],
+                    model_version=model_version,
+                    parameters=parameters,
+                )
+                if values["predicted_probability"] >= 60:
+                    ranked_values.append(values)
+            ranked_values.sort(key=lambda row: row["predicted_probability"], reverse=True)
+            ranked_values = ranked_values[:10]
+        for values in ranked_values:
+            code = values["code"]
             if not code:
                 continue
             exists = session.scalar(
@@ -491,15 +523,6 @@ def capture_limit_breaks(
             )
             if exists is not None:
                 continue
-            values = _event_values(
-                item,
-                trade_date=resolved_date,
-                stage=resolved_stage,
-                market_seal_rate=market_seal_rate,
-                industry_heat_count=industry_counts[_text(item.get("所属行业"), "行业未知")],
-                model_version=model_version,
-                parameters=parameters,
-            )
             session.add(LimitBreakEvent(**values))
             created += 1
         session.flush()
@@ -687,6 +710,10 @@ def limit_break_research(days: int = 5, refresh: bool = True) -> dict[str, Any]:
         and item["amplitude"] <= 20
     ]
     items.sort(key=lambda item: (item["trade_date"], item["predicted_probability"]), reverse=True)
+    limited_items: list[dict[str, Any]] = []
+    for trade_date in dates:
+        limited_items.extend([item for item in items if item["trade_date"] == trade_date][:10])
+    items = limited_items
     rank_by_date: dict[str, int] = defaultdict(int)
     for item in items:
         rank_by_date[item["trade_date"]] += 1

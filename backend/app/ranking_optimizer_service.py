@@ -13,6 +13,7 @@ import numpy as np
 from sqlalchemy import delete, desc, or_, select
 
 from .database import (
+    RankingOptimizationAudit,
     RankingOptimizationRun,
     RankingStrategyVersion,
     RankingTrainingObservation,
@@ -520,8 +521,7 @@ def _optimize_mode(session, mode: str, run_date: str) -> dict[str, Any]:
             created_at=_now(),
         )
     )
-    session.add(
-        RankingOptimizationRun(
+    optimization_run = RankingOptimizationRun(
             mode=mode,
             run_date=run_date,
             incumbent_version=active_version,
@@ -543,7 +543,33 @@ def _optimize_mode(session, mode: str, run_date: str) -> dict[str, Any]:
             reason=reason,
             completed_at=_now(),
         )
-    )
+    session.add(optimization_run)
+    session.flush()
+    for sample in matured:
+        observations = list(session.scalars(
+            select(RankingTrainingObservation)
+            .where(RankingTrainingObservation.sample_id == sample.id)
+            .order_by(RankingTrainingObservation.observation_date)
+        ))
+        session.add(RankingOptimizationAudit(
+            run_id=optimization_run.id,
+            mode=mode,
+            sample_date=sample.sample_date,
+            split="train" if sample in train else "validation",
+            code=sample.code,
+            name=sample.name,
+            features_json=sample.features_json,
+            observations_json=json.dumps([
+                {"date": row.observation_date, "price": row.price, "return_pct": row.return_pct}
+                for row in observations
+            ], ensure_ascii=False),
+            labels_json=json.dumps({
+                "return_pct": sample.label_return_pct,
+                "max_drawdown_pct": sample.label_max_drawdown_pct,
+                "positive": sample.label_positive,
+            }, ensure_ascii=False),
+            candidate_score=_candidate_score(sample, parameters),
+        ))
     if accepted:
         invalidate_version_cache()
     return {
@@ -737,6 +763,24 @@ def ranking_strategy_status() -> dict[str, Any]:
                     .limit(5)
                 )
             )
+            audit_rows = list(session.scalars(
+                select(RankingOptimizationAudit)
+                .where(RankingOptimizationAudit.mode == mode)
+                .order_by(desc(RankingOptimizationAudit.id))
+                .limit(300)
+            ))
+            audits_by_run: dict[int, list[dict[str, Any]]] = defaultdict(list)
+            for audit in audit_rows:
+                audits_by_run[audit.run_id].append({
+                    "sample_date": audit.sample_date,
+                    "split": audit.split,
+                    "code": audit.code,
+                    "name": audit.name,
+                    "features": json.loads(audit.features_json),
+                    "observations": json.loads(audit.observations_json),
+                    "labels": json.loads(audit.labels_json),
+                    "candidate_score": audit.candidate_score,
+                })
             versions = list(
                 session.scalars(
                     select(RankingStrategyVersion)
@@ -774,6 +818,7 @@ def ranking_strategy_status() -> dict[str, Any]:
                         "trading_days": run.trading_days,
                         "metrics": json.loads(run.metrics_json),
                         "reason": run.reason,
+                        "audit_samples": audits_by_run.get(run.id, []),
                     }
                     for run in recent_runs
                 ],

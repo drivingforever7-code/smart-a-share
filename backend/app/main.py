@@ -28,6 +28,9 @@ from .ai_analysis_service import (
     list_ai_history,
 )
 from .ai_schemas import AiAnalysisRequest
+from .ai_schemas import TradeReviewRequest
+from .board_pool_service import BoardPoolDataError, board_pool_research, capture_board_pools
+from .trade_review_service import review_trade
 from .config import settings
 from .data_source import MarketDataError
 from .database import init_database
@@ -92,6 +95,11 @@ async def limit_break_data_error_handler(_: Request, exc: LimitBreakDataError) -
     return JSONResponse(status_code=503, content={"detail": str(exc)})
 
 
+@app.exception_handler(BoardPoolDataError)
+async def board_pool_data_error_handler(_: Request, exc: BoardPoolDataError) -> JSONResponse:
+    return JSONResponse(status_code=503, content={"detail": str(exc)})
+
+
 @app.exception_handler(MarketDataError)
 async def market_data_error_handler(_: Request, exc: MarketDataError) -> JSONResponse:
     return JSONResponse(status_code=503, content={"detail": str(exc)})
@@ -110,7 +118,7 @@ async def market_overview():
 @app.get("/api/market/opportunities", tags=["选股"])
 async def opportunities(
     mode: Literal["short", "swing"] = "short",
-    limit: int = Query(default=20, ge=1, le=500),
+    limit: int = Query(default=10, ge=1, le=10),
     preset: str | None = None,
 ):
     result = await run_in_threadpool(
@@ -121,7 +129,7 @@ async def opportunities(
     )
     if preset is None:
         await run_in_threadpool(capture_mode_snapshot, mode, result)
-    return result
+    return [item for item in result if item.get("score", 0) >= 60 and item.get("confidence", 0) >= 45][:10]
 
 
 @app.get("/api/auto-backtest", tags=["自动回测"])
@@ -149,6 +157,16 @@ async def limit_break_capture(
     stage: Literal["auto", "midday", "afternoon", "close"] = "auto",
 ):
     return await run_in_threadpool(capture_limit_breaks, stage)
+
+
+@app.get("/api/board-pools", tags=["连板与跌停研究"])
+async def board_pools(days: int = Query(default=5, ge=1, le=30), refresh: bool = True):
+    return await run_in_threadpool(board_pool_research, days, refresh)
+
+
+@app.post("/api/board-pools/capture", tags=["连板与跌停研究"])
+async def board_pool_capture():
+    return await run_in_threadpool(capture_board_pools)
 
 
 @app.get("/api/presets", tags=["选股"])
@@ -292,6 +310,14 @@ async def ai_analyze(request: AiAnalysisRequest):
             request.code,
             request.depth,
         )
+    except AiServiceError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@app.post("/api/ai/trade-review", tags=["交易复盘"])
+async def ai_trade_review(request: TradeReviewRequest):
+    try:
+        return await run_in_threadpool(review_trade, request)
     except AiServiceError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
 

@@ -13,6 +13,7 @@ import {
   Alert,
   Button,
   Card,
+  Collapse,
   Col,
   Popconfirm,
   Row,
@@ -38,6 +39,7 @@ import Disclaimer from '../components/Disclaimer'
 import { RecommendationTag, ScoreBadge } from '../components/ScoreBadge'
 import { changeClass, formatNumber, formatPercent, formatTime } from '../format'
 import { getSettings } from '../storage'
+import { getPurchasedStocks, removePurchasedStock, savePurchasedStock } from '../storage'
 import type { ScoreMode } from '../types'
 import { useDismissedRows } from '../useDismissedRows'
 
@@ -71,6 +73,7 @@ function EvolutionCard({
   status: RankingStrategyStatus
 }) {
   const latest = status.recent_runs[0]
+  const auditedRun = status.recent_runs.find((run) => (run.audit_samples?.length ?? 0) > 0)
   const modeName = mode === 'short' ? '短线' : '波段'
   return (
     <Card className={`content-card strategy-evolution strategy-evolution--${mode}`}>
@@ -117,6 +120,27 @@ function EvolutionCard({
             }
             description={latest.reason}
           />
+        )}
+        {auditedRun?.audit_samples && auditedRun.audit_samples.length > 0 && (
+          <Collapse size="small" items={[{
+            key: 'audit',
+            label: `查看 ${auditedRun.run_date} 优化使用的 ${auditedRun.audit_samples.length} 个样本`,
+            children: <Table
+              rowKey={(row) => `${row.sample_date}-${row.code}-${row.split}`}
+              size="small"
+              pagination={{ pageSize: 10 }}
+              dataSource={auditedRun.audit_samples}
+              columns={[
+                { title: '日期', dataIndex: 'sample_date' },
+                { title: '分组', dataIndex: 'split', render: (value) => value === 'train' ? '训练' : '验证' },
+                { title: '股票', render: (_, row) => `${row.name} ${row.code}` },
+                { title: '期末涨跌', render: (_, row) => formatPercent(row.labels.return_pct ?? null, true) },
+                { title: '最大回撤', render: (_, row) => formatPercent(row.labels.max_drawdown_pct ?? null, true) },
+                { title: '候选得分', dataIndex: 'candidate_score', render: (value) => value?.toFixed(2) ?? '--' },
+              ]}
+              expandable={{ expandedRowRender: (row) => <Space direction="vertical"><Typography.Text>发现时特征：{JSON.stringify(row.features)}</Typography.Text><Typography.Text>逐日观察：{row.observations.map((item) => `${item.date} ${item.return_pct.toFixed(2)}%`).join('；')}</Typography.Text></Space> }}
+            />,
+          }]} />
         )}
         <Space size={[6, 6]} wrap>
           {status.versions.slice(0, 5).map((version) => (
@@ -174,6 +198,18 @@ export default function AutoBacktest({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const { dismissed, dismiss } = useDismissedRows('auto-backtest')
+  const [purchasedCodes, setPurchasedCodes] = useState(() => new Set(getPurchasedStocks().map((item) => item.code)))
+
+  const markPurchased = useCallback((item: AutoBacktestItem) => {
+    const priceText = window.prompt('请输入实际买入价', String(item.current_price ?? item.discovery_price))
+    if (priceText === null) return
+    const buyPrice = Number(priceText)
+    if (!Number.isFinite(buyPrice) || buyPrice <= 0) return
+    const buyDate = window.prompt('请输入买入日期（YYYY-MM-DD）', new Date().toISOString().slice(0, 10))
+    if (!buyDate) return
+    savePurchasedStock({ code: item.code, name: item.name, buyPrice, buyDate })
+    setPurchasedCodes(new Set(getPurchasedStocks().map((row) => row.code)))
+  }, [])
 
   const load = useCallback(async (silent = false) => {
     if (!silent) setLoading(true)
@@ -272,6 +308,12 @@ export default function AutoBacktest({
       fixed: 'right',
       render: (_, item) => (
         <Space>
+          {purchasedCodes.has(item.code) ? (
+            <Button type="text" onClick={() => {
+              removePurchasedStock(item.code)
+              setPurchasedCodes(new Set(getPurchasedStocks().map((row) => row.code)))
+            }}>取消购入</Button>
+          ) : <Button type="primary" ghost onClick={() => markPurchased(item)}>已购入</Button>}
           <Button type="text" icon={<EyeOutlined />} onClick={() => onOpenStock(item.code)}>
             详情
           </Button>
@@ -287,7 +329,7 @@ export default function AutoBacktest({
         </Space>
       ),
     },
-  ], [dismiss, onOpenStock])
+  ], [dismiss, markPurchased, onOpenStock, purchasedCodes])
 
   return (
     <div className="page-stack auto-backtest-page">
@@ -351,6 +393,19 @@ export default function AutoBacktest({
         />
       )}
 
+      {data && data.items.some((item) => purchasedCodes.has(item.code)) && (
+        <Card className="content-card purchased-backtest-card" title="已购入 · 单独跟踪">
+          <Table
+            rowKey="id"
+            columns={columns}
+            dataSource={data.items.filter((item) => purchasedCodes.has(item.code) && !dismissed.has(String(item.id)))}
+            pagination={false}
+            scroll={{ x: 900 }}
+            size="small"
+          />
+        </Card>
+      )}
+
       <DataState
         loading={loading}
         error={error}
@@ -360,8 +415,12 @@ export default function AutoBacktest({
       >
         {(['short', 'swing'] as ScoreMode[]).map((mode) => {
           const items = data?.items.filter(
-            (item) => item.mode === mode && !dismissed.has(String(item.id)),
+            (item) => item.mode === mode && !dismissed.has(String(item.id)) && !purchasedCodes.has(item.code),
           ) ?? []
+          const dateGroups = Array.from(new Set(items.map((item) => item.discovery_date))).map((date) => ({
+            date,
+            items: items.filter((item) => item.discovery_date === date),
+          }))
           return (
             <Card
               key={mode}
@@ -375,10 +434,15 @@ export default function AutoBacktest({
                 </Space>
               }
             >
-              <Table
+              <Collapse
+                defaultActiveKey={dateGroups[0]?.date}
+                items={dateGroups.map((group) => ({
+                  key: group.date,
+                  label: `${group.date} · ${group.items.length} 条记录`,
+                  children: <Table
                 rowKey="id"
                 columns={columns}
-                dataSource={items}
+                dataSource={group.items}
                 pagination={false}
                 scroll={{ x: 900 }}
                 size="small"
@@ -435,6 +499,8 @@ export default function AutoBacktest({
                     </Row>
                   ),
                 }}
+                  />,
+                }))}
               />
             </Card>
           )

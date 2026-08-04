@@ -26,6 +26,8 @@ import type {
 import type { StrategyLabResult } from './labTypes'
 import type { AutoBacktestResponse } from './autoBacktestTypes'
 import type { LimitBreakResponse } from './limitBreakTypes'
+import type { BoardPoolResponse } from './boardPoolTypes'
+import type { TradeReviewPayload, TradeReviewResult } from './tradeReviewTypes'
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? '/api'
 
@@ -75,7 +77,10 @@ export const api = {
   limitBreaks: (days = 5) =>
     request<LimitBreakResponse>(`/limit-breaks?days=${days}&refresh=true`),
 
-  opportunities: (mode: ScoreMode, limit = 20, preset?: string) => {
+  boardPools: (days = 5) =>
+    request<BoardPoolResponse>(`/board-pools?days=${days}&refresh=true`),
+
+  opportunities: (mode: ScoreMode, limit = 10, preset?: string) => {
     const query = new URLSearchParams({ mode, limit: String(limit) })
     if (preset) query.set('preset', preset)
     return request<Opportunity[]>(`/market/opportunities?${query}`)
@@ -153,6 +158,12 @@ export const api = {
     request<AiAnalysisResult>('/ai/analyze', {
       method: 'POST',
       body: JSON.stringify({ code, depth }),
+    }),
+
+  tradeReview: (payload: TradeReviewPayload) =>
+    request<TradeReviewResult>('/ai/trade-review', {
+      method: 'POST',
+      body: JSON.stringify(payload),
     }),
 
   aiHistory: (code?: string, limit = 20) => {

@@ -1,4 +1,5 @@
-const WATCHLIST_KEY = 'smart-a-share:watchlist'
+const PURCHASED_KEY = 'smart-a-share:purchased'
+const TRADE_JOURNAL_KEY = 'smart-a-share:trade-journal'
 const SETTINGS_KEY = 'smart-a-share:settings'
 const SCHEMES_KEY = 'smart-a-share:screener-schemes'
 
@@ -14,6 +15,21 @@ export interface SavedScheme {
   name: string
   filters: Record<string, unknown>
   createdAt: string
+}
+
+export interface PurchasedStock {
+  code: string
+  name?: string
+  buyPrice?: number
+  buyDate?: string
+  addedAt: string
+}
+
+export interface TradeJournalEntry {
+  id: string
+  createdAt: string
+  payload: any
+  review?: Record<string, unknown>
 }
 
 const defaultSettings: LocalSettings = {
@@ -33,16 +49,50 @@ function readJson<T>(key: string, fallback: T): T {
 }
 
 export function getWatchlist(): string[] {
-  return readJson<string[]>(WATCHLIST_KEY, [])
+  return getPurchasedStocks().map((item) => item.code)
 }
 
 export function toggleWatchlist(code: string): string[] {
-  const current = getWatchlist()
-  const next = current.includes(code)
-    ? current.filter((item) => item !== code)
-    : [...current, code]
-  localStorage.setItem(WATCHLIST_KEY, JSON.stringify(next))
-  window.dispatchEvent(new CustomEvent('watchlist-change', { detail: next }))
+  const existing = getPurchasedStocks()
+  if (existing.some((item) => item.code === code)) removePurchasedStock(code)
+  else savePurchasedStock({ code })
+  return getWatchlist()
+}
+
+export function getPurchasedStocks(): PurchasedStock[] {
+  return readJson<PurchasedStock[]>(PURCHASED_KEY, [])
+}
+
+export function savePurchasedStock(input: Omit<PurchasedStock, 'addedAt'>): PurchasedStock[] {
+  const next = [
+    { ...input, addedAt: new Date().toISOString() },
+    ...getPurchasedStocks().filter((item) => item.code !== input.code),
+  ]
+  localStorage.setItem(PURCHASED_KEY, JSON.stringify(next))
+  window.dispatchEvent(new CustomEvent('purchased-change', { detail: next }))
+  return next
+}
+
+export function removePurchasedStock(code: string): PurchasedStock[] {
+  const next = getPurchasedStocks().filter((item) => item.code !== code)
+  localStorage.setItem(PURCHASED_KEY, JSON.stringify(next))
+  window.dispatchEvent(new CustomEvent('purchased-change', { detail: next }))
+  return next
+}
+
+export function getTradeJournal(): TradeJournalEntry[] {
+  return readJson<TradeJournalEntry[]>(TRADE_JOURNAL_KEY, [])
+}
+
+export function saveTradeJournal(entry: Omit<TradeJournalEntry, 'id' | 'createdAt'>): TradeJournalEntry[] {
+  const next = [{ id: crypto.randomUUID(), createdAt: new Date().toISOString(), ...entry }, ...getTradeJournal()]
+  localStorage.setItem(TRADE_JOURNAL_KEY, JSON.stringify(next))
+  return next
+}
+
+export function deleteTradeJournal(id: string): TradeJournalEntry[] {
+  const next = getTradeJournal().filter((item) => item.id !== id)
+  localStorage.setItem(TRADE_JOURNAL_KEY, JSON.stringify(next))
   return next
 }
 

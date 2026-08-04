@@ -35,3 +35,14 @@ jobs:
             --max-time 180 \
             --request POST \
             "https://smart-a-share.onrender.com/api/limit-breaks/capture?stage=close"
+      - name: Capture and evaluate streak/down-limit pools
+        run: |
+          curl \
+            --fail \
+            --show-error \
+            --retry 8 \
+            --retry-all-errors \
+            --retry-delay 15 \
+            --max-time 180 \
+            --request POST \
+            "https://smart-a-share.onrender.com/api/board-pools/capture"

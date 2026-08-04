@@ -31,7 +31,7 @@ export default function Dashboard({ onOpenStock }: { onOpenStock: (code: string)
     try {
       const [market, opportunities, presetList] = await Promise.all([
         api.overview(),
-        api.opportunities(mode, 20, activePreset),
+        api.opportunities(mode, 10, activePreset),
         api.presets(),
       ])
       setOverview(market)

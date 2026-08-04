@@ -15,6 +15,7 @@ import {
   Col,
   Popconfirm,
   Progress,
+  Modal,
   Row,
   Segmented,
   Space,
@@ -54,6 +55,7 @@ export default function LimitBreakResearch({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const { dismissed, dismiss } = useDismissedRows('limit-breaks')
+  const [metricOpen, setMetricOpen] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -250,13 +252,13 @@ export default function LimitBreakResearch({
       {data && (
         <Row gutter={[16, 16]}>
           <Col xs={12} lg={6}>
-            <Card className="metric-card">
+            <Card className="metric-card metric-card--clickable" onClick={() => setMetricOpen(true)}>
               <Statistic title="有效盘中样本" value={data.model_stats.sample_count} prefix={<ExperimentOutlined />} />
               <Typography.Text type="secondary">{data.model_stats.trading_days} 个交易日</Typography.Text>
             </Card>
           </Col>
           <Col xs={12} lg={6}>
-            <Card className="metric-card">
+            <Card className="metric-card metric-card--clickable" onClick={() => setMetricOpen(true)}>
               <Statistic
                 title="历史实际回封率"
                 value={data.model_stats.reseal_rate ?? 0}
@@ -270,7 +272,7 @@ export default function LimitBreakResearch({
             </Card>
           </Col>
           <Col xs={12} lg={6}>
-            <Card className="metric-card">
+            <Card className="metric-card metric-card--clickable" onClick={() => setMetricOpen(true)}>
               <Statistic
                 title="方向准确率"
                 value={data.model_stats.accuracy ?? 0}
@@ -282,7 +284,7 @@ export default function LimitBreakResearch({
             </Card>
           </Col>
           <Col xs={12} lg={6}>
-            <Card className="metric-card">
+            <Card className="metric-card metric-card--clickable" onClick={() => setMetricOpen(true)}>
               <Statistic
                 title="Brier 分数"
                 value={data.model_stats.brier_score ?? 0}
@@ -382,6 +384,24 @@ export default function LimitBreakResearch({
           description={`${data.model_stats.upgrade_gate} ${data.methodology.prediction_rule}`}
         />
       )}
+      <Modal open={metricOpen} onCancel={() => setMetricOpen(false)} footer={null} width={900} title="炸板模型统计明细（每日最多前 10 个有效预测）">
+        {data && <Space direction="vertical" size={16} style={{ width: '100%' }}>
+          <Table size="small" pagination={false} rowKey="trade_date" dataSource={data.daily_reviews} columns={[
+            { title: '交易日', dataIndex: 'trade_date' },
+            { title: '有效样本', dataIndex: 'evaluated' },
+            { title: '回封', dataIndex: 'resealed' },
+            { title: '未回封', dataIndex: 'failed' },
+            { title: '回封率', dataIndex: 'reseal_rate', render: (value) => value == null ? '--' : `${value}%` },
+          ]} />
+          <Table size="small" pagination={false} rowKey="range" dataSource={data.model_stats.calibration} columns={[
+            { title: '概率分档', dataIndex: 'range' },
+            { title: '样本', dataIndex: 'count' },
+            { title: '平均预测概率', dataIndex: 'average_probability', render: (value) => `${value}%` },
+            { title: '实际回封率', dataIndex: 'actual_reseal_rate', render: (value) => `${value}%` },
+          ]} />
+          <Typography.Text type="secondary">统计只包含当日盘中排名前 10 且通过质量门槛的预测；盘后补录不计入准确率。</Typography.Text>
+        </Space>}
+      </Modal>
       <Disclaimer />
     </div>
   )
