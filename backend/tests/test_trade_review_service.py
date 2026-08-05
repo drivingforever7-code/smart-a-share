@@ -28,3 +28,27 @@ def test_review_trade_keeps_trade_time_and_current_data_separate(monkeypatch):
     assert len(snapshot["recent_bars_for_current_plan"]) == 20
     assert result["review"]["action_plan"]["target_price"] is not None
     assert result["review"]["action_plan"]["stop_loss_price"] is not None
+
+def test_resolve_stock_from_chinese_name_in_conversation(monkeypatch):
+    monkeypatch.setattr(
+        service.data_source,
+        "get_spot_quotes",
+        lambda: ([{"code": "600519", "name": "贵州茅台"}, {"code": "000001", "name": "平安银行"}], {}),
+    )
+    payload = TradeReviewRequest(description="我今天买了茅台半仓，现在怎么办")
+    assert service._resolve_stock(payload) == {"code": "600519", "name": "贵州茅台"}
+
+
+def test_missing_stock_forces_clarification_and_no_prices(monkeypatch):
+    monkeypatch.setattr(service.data_source, "get_spot_quotes", lambda: ([], {}))
+    monkeypatch.setattr(
+        service,
+        "_chat_json",
+        lambda *_: {"reply": "猜测回答", "action_plan": {"target_price": 99, "stop_loss_price": 88}},
+    )
+    result = service.review_trade(TradeReviewRequest(description="我今天买了一只票，怎么办"))
+    plan = result["review"]["action_plan"]
+    assert plan["recommended_action"] == "等待"
+    assert plan["target_price"] is None
+    assert plan["stop_loss_price"] is None
+    assert "股票" in plan["action_summary"]

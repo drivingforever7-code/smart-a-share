@@ -1884,3 +1884,17 @@ a {
 
 /* 顶部导航避让 */
 .app-header { height: 88px; padding-top: 10px; }
+
+.trade-chat-card .ant-card-body { padding-top: 16px; }
+.trade-chat-history { min-height: 420px; max-height: calc(100vh - 360px); overflow-y: auto; padding: 20px 4px; }
+.trade-chat-row { display: flex; gap: 10px; margin-bottom: 16px; align-items: flex-start; }
+.trade-chat-row--user { flex-direction: row-reverse; }
+.trade-chat-avatar { width: 34px; height: 34px; flex: 0 0 34px; border-radius: 50%; display: grid; place-items: center; color: #d9fbff; background: rgba(44, 214, 255, .16); border: 1px solid rgba(44, 214, 255, .35); }
+.trade-chat-row--user .trade-chat-avatar { color: #fff2c7; background: rgba(245, 185, 66, .18); border-color: rgba(245, 185, 66, .38); }
+.trade-chat-bubble { width: min(820px, calc(100% - 54px)); padding: 12px 14px; border-radius: 14px; background: rgba(16, 31, 52, .88); border: 1px solid rgba(85, 214, 255, .17); }
+.trade-chat-row--user .trade-chat-bubble { width: auto; max-width: min(720px, calc(100% - 54px)); background: rgba(42, 55, 82, .92); }
+.trade-chat-bubble .ant-typography:last-child { margin-bottom: 0; }
+.trade-action-plan { margin-top: 10px; background: rgba(5, 18, 35, .76); }
+.trade-action-plan .ant-statistic-content { font-size: 18px; }
+.trade-chat-composer { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: end; border-top: 1px solid rgba(85, 214, 255, .14); padding-top: 14px; }
+@media (max-width: 640px) { .trade-chat-history { min-height: 360px; max-height: none; } .trade-chat-composer { grid-template-columns: 1fr; } .trade-chat-composer .ant-btn { width: 100%; } }

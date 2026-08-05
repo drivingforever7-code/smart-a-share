@@ -23,6 +23,11 @@ class AiHistoryQuery(BaseModel):
     limit: int = Field(default=20, ge=1, le=100)
 
 
+class TradeReviewMessage(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str = Field(min_length=1, max_length=2000)
+
+
 class TradeReviewRequest(BaseModel):
     description: str = Field(min_length=5, max_length=4000)
     code: str | None = None
@@ -30,6 +35,7 @@ class TradeReviewRequest(BaseModel):
     action: Literal["买入", "卖出", "加仓", "清仓", "其他"] = "其他"
     price: float | None = Field(default=None, gt=0)
     position_pct: float | None = Field(default=None, ge=0, le=100)
+    history: list[TradeReviewMessage] = Field(default_factory=list, max_length=12)
 
     @field_validator("code")
     @classmethod
