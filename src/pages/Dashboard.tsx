@@ -16,12 +16,23 @@ import { formatPercent, formatTime } from '../format'
 import { getSettings } from '../storage'
 import type { MarketOverview, Opportunity, Preset, ScoreMode } from '../types'
 
+const DASHBOARD_VIEW_KEY = 'smart-a-share-dashboard-view'
+interface DashboardViewState { mode: ScoreMode; activePreset?: string; contentScrollTop: number; windowScrollY: number; restore: boolean }
+function readDashboardView(): DashboardViewState {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(DASHBOARD_VIEW_KEY) || '{}') as Partial<DashboardViewState>
+    return { mode: saved.mode === 'swing' ? 'swing' : 'short', activePreset: saved.activePreset, contentScrollTop: saved.contentScrollTop || 0, windowScrollY: saved.windowScrollY || 0, restore: Boolean(saved.restore) }
+  } catch { return { mode: 'short', contentScrollTop: 0, windowScrollY: 0, restore: false } }
+}
+function saveDashboardView(value: DashboardViewState) { sessionStorage.setItem(DASHBOARD_VIEW_KEY, JSON.stringify(value)) }
+
 export default function Dashboard({ onOpenStock }: { onOpenStock: (code: string) => void }) {
-  const [mode, setMode] = useState<ScoreMode>('short')
+  const [initialView] = useState(readDashboardView)
+  const [mode, setMode] = useState<ScoreMode>(initialView.mode)
   const [overview, setOverview] = useState<MarketOverview | null>(null)
   const [items, setItems] = useState<Opportunity[]>([])
   const [presets, setPresets] = useState<Preset[]>([])
-  const [activePreset, setActivePreset] = useState<string>()
+  const [activePreset, setActivePreset] = useState<string | undefined>(initialView.activePreset)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -51,6 +62,24 @@ export default function Dashboard({ onOpenStock }: { onOpenStock: (code: string)
     return () => window.clearInterval(timer)
   }, [load])
 
+  useEffect(() => {
+    if (loading) return
+    const saved = readDashboardView()
+    if (!saved.restore) return
+    window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+      const content = document.querySelector<HTMLElement>('.app-content')
+      if (content) content.scrollTop = saved.contentScrollTop
+      window.scrollTo({ top: saved.windowScrollY })
+      saveDashboardView({ ...saved, restore: false })
+    }))
+  }, [loading])
+
+  const openStock = (code: string) => {
+    const content = document.querySelector<HTMLElement>('.app-content')
+    saveDashboardView({ mode, activePreset, contentScrollTop: content?.scrollTop || 0, windowScrollY: window.scrollY, restore: true })
+    onOpenStock(code)
+  }
+
   const modePresets = presets.filter((item) => item.mode === mode || item.mode === 'both')
 
   return (
@@ -59,8 +88,10 @@ export default function Dashboard({ onOpenStock }: { onOpenStock: (code: string)
         <Segmented
           value={mode}
           onChange={(value) => {
-            setMode(value as ScoreMode)
+            const nextMode = value as ScoreMode
+            setMode(nextMode)
             setActivePreset(undefined)
+            saveDashboardView({ mode: nextMode, contentScrollTop: 0, windowScrollY: 0, restore: false })
           }}
           options={[
             { label: '短线机会', value: 'short' },
@@ -178,7 +209,7 @@ export default function Dashboard({ onOpenStock }: { onOpenStock: (code: string)
         >
           <OpportunityTable
             items={items}
-            onOpenStock={onOpenStock}
+            onOpenStock={openStock}
             scoreLabel={mode === 'short' ? '短线分' : '波段分'}
             dismissScope={`dashboard-${mode}-${activePreset || 'all'}`}
           />
