@@ -75,6 +75,7 @@ export interface LimitBreakModelStats {
 
 export interface LimitBreakResponse {
   days: number
+  display_date?: string | null
   available_dates: string[]
   items: LimitBreakItem[]
   daily_reviews: LimitBreakDailyReview[]

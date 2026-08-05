@@ -129,3 +129,23 @@ def test_close_finalizes_reseal_without_rewriting_prediction(
     assert item["eligible_for_evaluation"] is True
     assert item["review"]["prediction_correct"] in (True, False)
     assert result["model_stats"]["sample_count"] == 1
+
+
+def test_research_only_lists_latest_day_but_keeps_history_in_metrics(
+    isolated_database,
+    monkeypatch,
+):
+    monkeypatch.setattr(service, "_fetch_pools", lambda _: (broken_pool(), sealed_pool()))
+    for trade_date in ("2026-07-30", "2026-07-31"):
+        service.capture_limit_breaks("midday", trade_date)
+        service.capture_limit_breaks("close", trade_date)
+
+    result = service.limit_break_research(days=10, refresh=False)
+
+    assert result["display_date"] == "2026-07-31"
+    assert {item["trade_date"] for item in result["items"]} == {"2026-07-31"}
+    assert result["model_stats"]["sample_count"] == 2
+    assert {review["trade_date"] for review in result["daily_reviews"]} == {
+        "2026-07-30",
+        "2026-07-31",
+    }

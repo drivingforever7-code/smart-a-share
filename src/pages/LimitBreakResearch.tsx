@@ -17,7 +17,6 @@ import {
   Progress,
   Modal,
   Row,
-  Segmented,
   Space,
   Statistic,
   Table,
@@ -50,7 +49,6 @@ export default function LimitBreakResearch({
 }: {
   onOpenStock: (code: string) => void
 }) {
-  const [days, setDays] = useState(5)
   const [data, setData] = useState<LimitBreakResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -61,13 +59,13 @@ export default function LimitBreakResearch({
     setLoading(true)
     setError(null)
     try {
-      setData(await api.limitBreaks(days))
+      setData(await api.limitBreaks(10))
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : '炸板研究数据暂时不可用')
     } finally {
       setLoading(false)
     }
-  }, [days])
+  }, [])
 
   useEffect(() => {
     void load()
@@ -223,17 +221,8 @@ export default function LimitBreakResearch({
     <div className="page-stack limit-break-page">
       <div className="page-toolbar">
         <Space>
-          <Typography.Text strong>研究窗口</Typography.Text>
-          <Segmented
-            value={days}
-            options={[
-              { label: '今日', value: 1 },
-              { label: '近 3 日', value: 3 },
-              { label: '近 5 日', value: 5 },
-              { label: '近 10 日', value: 10 },
-            ]}
-            onChange={(value) => setDays(Number(value))}
-          />
+          <Typography.Text strong>当日炸板候选</Typography.Text>
+          {data?.display_date && <Tag color="cyan">{data.display_date}</Tag>}
         </Space>
         <Button icon={<SyncOutlined />} loading={loading} onClick={() => void load()}>
           刷新并留存
@@ -324,7 +313,7 @@ export default function LimitBreakResearch({
           title={
             <Space>
               <FireOutlined />
-              <span>每日炸板与回封概率排名</span>
+              <span>当日炸板与回封概率排名</span>
               <Tag color="cyan">{data?.items.length ?? 0} 条</Tag>
             </Space>
           }

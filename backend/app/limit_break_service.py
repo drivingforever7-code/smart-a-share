@@ -457,6 +457,33 @@ def _fit_candidate(session, trained_through: str) -> None:
     )
 
 
+def _prune_redundant_finalized_observations(session, trade_date: str) -> int:
+    """Keep one auditable prediction per stock/day after the close review is complete."""
+    rows = list(
+        session.scalars(
+            select(LimitBreakEvent)
+            .where(
+                LimitBreakEvent.trade_date == trade_date,
+                LimitBreakEvent.outcome.in_(("resealed", "failed")),
+            )
+            .order_by(
+                LimitBreakEvent.code,
+                desc(LimitBreakEvent.eligible_for_evaluation),
+                desc(LimitBreakEvent.observed_at),
+            )
+        )
+    )
+    kept_codes: set[str] = set()
+    removed = 0
+    for row in rows:
+        if row.code not in kept_codes:
+            kept_codes.add(row.code)
+            continue
+        session.delete(row)
+        removed += 1
+    return removed
+
+
 def capture_limit_breaks(
     stage: Literal["auto", "midday", "afternoon", "close"] = "auto",
     trade_date: str | None = None,
@@ -492,6 +519,7 @@ def capture_limit_breaks(
         industry_counts[_text(row.get("所属行业"), "行业未知")] += 1
 
     created = 0
+    pruned = 0
     with SessionLocal.begin() as session:
         model_version, parameters = _active_model(session)
         ranked_values: list[dict[str, Any]] = []
@@ -545,11 +573,13 @@ def capture_limit_breaks(
                 event.outcome_at = moment
                 event.review_json = json.dumps(_review(event, event.outcome), ensure_ascii=False)
             _fit_candidate(session, resolved_date)
+            pruned = _prune_redundant_finalized_observations(session, resolved_date)
 
     return {
         "trade_date": resolved_date,
         "stage": resolved_stage,
         "created": created,
+        "pruned": pruned,
         "broken_count": len(broken_rows),
         "resealed_count": len(resealed_rows),
         "market_seal_rate": round(market_seal_rate * 100, 2),
@@ -634,11 +664,12 @@ def limit_break_research(days: int = 5, refresh: bool = True) -> dict[str, Any]:
                 .limit(days)
             )
         )
+        display_date = dates[0] if dates else None
         rows = (
             list(
                 session.scalars(
                     select(LimitBreakEvent)
-                    .where(LimitBreakEvent.trade_date.in_(dates))
+                    .where(LimitBreakEvent.trade_date == display_date)
                     .order_by(
                         desc(LimitBreakEvent.trade_date),
                         LimitBreakEvent.code,
@@ -649,6 +680,7 @@ def limit_break_research(days: int = 5, refresh: bool = True) -> dict[str, Any]:
             if dates
             else []
         )
+        evaluation_events = _evaluation_events(session)
         stats = _model_stats(session)
 
     grouped: dict[tuple[str, str], list[LimitBreakEvent]] = defaultdict(list)
@@ -721,17 +753,20 @@ def limit_break_research(days: int = 5, refresh: bool = True) -> dict[str, Any]:
 
     daily_reviews = []
     for trade_date in dates:
+        day_events = [row for row in evaluation_events if row.trade_date == trade_date]
         day_items = [item for item in items if item["trade_date"] == trade_date]
-        finished = [item for item in day_items if item["outcome"] in ("resealed", "failed")]
+        finished = day_events or [
+            item for item in day_items if item["outcome"] in ("resealed", "failed")
+        ]
         daily_reviews.append(
             {
                 "trade_date": trade_date,
-                "total": len(day_items),
-                "evaluated": sum(item["eligible_for_evaluation"] for item in finished),
-                "resealed": sum(item["outcome"] == "resealed" for item in finished),
-                "failed": sum(item["outcome"] == "failed" for item in finished),
+                "total": len(day_items) if day_items else len(day_events),
+                "evaluated": len(day_events),
+                "resealed": sum(item.outcome == "resealed" if isinstance(item, LimitBreakEvent) else item["outcome"] == "resealed" for item in finished),
+                "failed": sum(item.outcome == "failed" if isinstance(item, LimitBreakEvent) else item["outcome"] == "failed" for item in finished),
                 "reseal_rate": (
-                    round(sum(item["outcome"] == "resealed" for item in finished) / len(finished) * 100, 2)
+                    round(sum(item.outcome == "resealed" if isinstance(item, LimitBreakEvent) else item["outcome"] == "resealed" for item in finished) / len(finished) * 100, 2)
                     if finished
                     else None
                 ),
@@ -740,6 +775,7 @@ def limit_break_research(days: int = 5, refresh: bool = True) -> dict[str, Any]:
 
     return {
         "days": days,
+        "display_date": display_date,
         "available_dates": dates,
         "items": items,
         "daily_reviews": daily_reviews,
