@@ -131,7 +131,7 @@ def test_close_finalizes_reseal_without_rewriting_prediction(
     assert result["model_stats"]["sample_count"] == 1
 
 
-def test_research_only_lists_latest_day_but_keeps_history_in_metrics(
+def test_research_groups_recent_days_and_keeps_history_in_metrics(
     isolated_database,
     monkeypatch,
 ):
@@ -143,9 +143,29 @@ def test_research_only_lists_latest_day_but_keeps_history_in_metrics(
     result = service.limit_break_research(days=10, refresh=False)
 
     assert result["display_date"] == "2026-07-31"
-    assert {item["trade_date"] for item in result["items"]} == {"2026-07-31"}
+    assert {item["trade_date"] for item in result["items"]} == {
+        "2026-07-30",
+        "2026-07-31",
+    }
     assert result["model_stats"]["sample_count"] == 2
     assert {review["trade_date"] for review in result["daily_reviews"]} == {
         "2026-07-30",
         "2026-07-31",
     }
+
+
+def test_close_only_capture_creates_display_records_without_evaluation(
+    isolated_database,
+    monkeypatch,
+):
+    monkeypatch.setattr(service, "_fetch_pools", lambda _: (broken_pool(), sealed_pool(True)))
+
+    capture = service.capture_limit_breaks("close", "2026-08-06")
+    result = service.limit_break_research(days=5, refresh=False)
+
+    assert capture["created"] > 0
+    assert result["display_date"] == "2026-08-06"
+    assert result["items"]
+    assert all(item["prediction_stage"] == "close" for item in result["items"])
+    assert all(item["eligible_for_evaluation"] is False for item in result["items"])
+    assert result["model_stats"]["sample_count"] == 0

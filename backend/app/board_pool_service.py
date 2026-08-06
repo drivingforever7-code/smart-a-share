@@ -11,6 +11,7 @@ import akshare as ak
 from sqlalchemy import desc, select
 
 from .database import BoardPoolEvent, BoardPoolModelVersion, SessionLocal
+from .trading_calendar import latest_available_trade_date
 
 SHANGHAI = ZoneInfo("Asia/Shanghai")
 POOL_TYPES = ("streak", "down_repair")
@@ -181,7 +182,8 @@ def _maybe_upgrade(session, pool_type: str, trade_date: str) -> None:
 
 
 def capture_board_pools(trade_date: str | None = None) -> dict[str, Any]:
-    trade_date = trade_date or datetime.now(SHANGHAI).date().isoformat()
+    moment = datetime.now(SHANGHAI).replace(tzinfo=None)
+    trade_date = trade_date or latest_available_trade_date(moment)
     up_rows, down_rows = _fetch(trade_date)
     current_up, current_down = {_code(row) for row in up_rows}, {_code(row) for row in down_rows}
     industry_count = Counter(str(_value(row, "所属行业", "行业", default="未知")) for row in up_rows)

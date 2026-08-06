@@ -33,6 +33,7 @@ from .board_pool_service import BoardPoolDataError, board_pool_research, capture
 from .trade_review_service import review_trade
 from .config import settings
 from .data_source import MarketDataError
+from .data_refresh_service import refresh_all_data
 from .database import init_database
 from .ranking_optimizer_service import (
     ensure_baseline_versions,
@@ -341,6 +342,11 @@ async def ai_run(run_id: int):
 @app.get("/api/data/status", tags=["数据"])
 async def data_status():
     return await run_in_threadpool(market_service.data_status)
+
+
+@app.post("/api/data/refresh/all", tags=["数据"])
+async def refresh_all():
+    return await run_in_threadpool(refresh_all_data)
 
 
 @app.post("/api/data/warmup", tags=["数据"])

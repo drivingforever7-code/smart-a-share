@@ -6,12 +6,12 @@ import {
   ExperimentOutlined,
   FireOutlined,
   SafetyCertificateOutlined,
-  SyncOutlined,
 } from '@ant-design/icons'
 import {
   Alert,
   Button,
   Card,
+  Collapse,
   Col,
   Popconfirm,
   Progress,
@@ -216,17 +216,25 @@ export default function LimitBreakResearch({
   ], [dismiss, onOpenStock])
 
   const latestReview = data?.daily_reviews[0]
+  const groupedItems = useMemo(() => (
+    (data?.available_dates ?? [])
+      .map((date) => ({
+        date,
+        items: (data?.items ?? []).filter(
+          (item) => item.trade_date === date && !dismissed.has(String(item.id)),
+        ),
+      }))
+      .filter((group) => group.items.length > 0)
+  ), [data, dismissed])
 
   return (
     <div className="page-stack limit-break-page">
       <div className="page-toolbar">
         <Space>
-          <Typography.Text strong>当日炸板候选</Typography.Text>
-          {data?.display_date && <Tag color="cyan">{data.display_date}</Tag>}
+          <Typography.Text strong>按交易日查看炸板候选</Typography.Text>
+          {data?.display_date && <Tag color="cyan">最新 {data.display_date}</Tag>}
         </Space>
-        <Button icon={<SyncOutlined />} loading={loading} onClick={() => void load()}>
-          刷新并留存
-        </Button>
+        <Typography.Text type="secondary">打开或刷新网站时自动更新</Typography.Text>
       </div>
 
       <DailyAlert noticeKey="limitbreakresearch-1"
@@ -304,7 +312,7 @@ export default function LimitBreakResearch({
       <DataState
         loading={loading}
         error={error}
-        empty={!loading && !error && (!data || data.items.length === 0)}
+        empty={!loading && !error && groupedItems.length === 0}
         emptyText="当前还没有真实炸板记录。交易日成功抓取后会开始累计，不会伪造启用前历史。"
         onRetry={() => void load()}
       >
@@ -313,8 +321,8 @@ export default function LimitBreakResearch({
           title={
             <Space>
               <FireOutlined />
-              <span>当日炸板与回封概率排名</span>
-              <Tag color="cyan">{data?.items.length ?? 0} 条</Tag>
+              <span>按交易日查看炸板与回封概率排名</span>
+              <Tag color="cyan">{groupedItems.reduce((sum, group) => sum + group.items.length, 0)} 条</Tag>
             </Space>
           }
           extra={data?.capture && (
@@ -323,12 +331,23 @@ export default function LimitBreakResearch({
             </Typography.Text>
           )}
         >
+          <Collapse
+            key={data?.display_date ?? 'empty'}
+            defaultActiveKey={groupedItems[0]?.date ? [groupedItems[0].date] : []}
+            items={groupedItems.map(({ date, items }, index) => ({
+              key: date,
+              label: (
+                <Space>
+                  <strong>{date}</strong>
+                  <Tag color={index === 0 ? 'cyan' : 'default'}>{items.length} 只</Tag>
+                  {index === 0 && <Tag color="processing">当天默认展开</Tag>}
+                </Space>
+              ),
+              children: (
           <Table
             rowKey={(item) => `${item.trade_date}-${item.code}`}
             columns={columns}
-            dataSource={(data?.items ?? []).filter(
-              (item) => !dismissed.has(String(item.id)),
-            )}
+            dataSource={items}
             pagination={false}
             size="middle"
             scroll={{ x: 1390 }}
@@ -361,6 +380,9 @@ export default function LimitBreakResearch({
                 </Row>
               ),
             }}
+          />
+              ),
+            }))}
           />
         </Card>
       </DataState>

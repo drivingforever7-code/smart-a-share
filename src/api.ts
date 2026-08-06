@@ -74,11 +74,11 @@ export const api = {
   autoBacktest: (days = 5) =>
     request<AutoBacktestResponse>(`/auto-backtest?days=${days}`),
 
-  limitBreaks: (days = 5) =>
-    request<LimitBreakResponse>(`/limit-breaks?days=${days}&refresh=true`),
+  limitBreaks: (days = 5, refresh = false) =>
+    request<LimitBreakResponse>(`/limit-breaks?days=${days}&refresh=${refresh}`),
 
-  boardPools: (days = 5) =>
-    request<BoardPoolResponse>(`/board-pools?days=${days}&refresh=true`),
+  boardPools: (days = 5, refresh = false) =>
+    request<BoardPoolResponse>(`/board-pools?days=${days}&refresh=${refresh}`),
 
   opportunities: (mode: ScoreMode, limit = 10, preset?: string) => {
     const query = new URLSearchParams({ mode, limit: String(limit) })
@@ -175,6 +175,8 @@ export const api = {
   aiRun: (id: number) => request<unknown>(`/ai/runs/${id}`),
 
   dataStatus: () => request<DataStatus>('/data/status'),
+
+  refreshAll: () => request<{ cached: boolean; warnings: string[] }>('/data/refresh/all', { method: 'POST' }),
 
   warmup: () => request('/data/warmup', { method: 'POST' }),
 

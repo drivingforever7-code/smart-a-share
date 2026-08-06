@@ -97,12 +97,23 @@ export default function App() {
   const [selectedCode, setSelectedCode] = useState(initial.code)
   const [collapsed, setCollapsed] = useState(false)
   const [quickCode, setQuickCode] = useState('')
+  const [dataRefreshKey, setDataRefreshKey] = useState(0)
 
   const mobile = !screens.lg
 
   useEffect(() => {
     if (mobile) setCollapsed(true)
   }, [mobile])
+
+  useEffect(() => {
+    let active = true
+    void api.refreshAll().finally(() => {
+      if (active) setDataRefreshKey((value) => value + 1)
+    })
+    return () => {
+      active = false
+    }
+  }, [])
 
   useEffect(() => {
     const onHashChange = () => {
@@ -208,7 +219,7 @@ export default function App() {
               />
             )}
           >
-            <div className="page-transition" key={`${page}-${selectedCode}`}>
+            <div className="page-transition" key={`${page}-${selectedCode}-${dataRefreshKey}`}>
               {pageContent}
             </div>
           </Suspense>

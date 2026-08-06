@@ -13,6 +13,7 @@ import numpy as np
 from sqlalchemy import desc, select
 
 from .database import LimitBreakEvent, LimitBreakModelVersion, SessionLocal
+from .trading_calendar import latest_available_trade_date
 
 
 SHANGHAI = ZoneInfo("Asia/Shanghai")
@@ -489,10 +490,12 @@ def capture_limit_breaks(
     trade_date: str | None = None,
 ) -> dict[str, Any]:
     moment = _now()
+    resolved_date = trade_date or latest_available_trade_date(moment)
     resolved_stage = _stage_for_time(moment) if stage == "auto" else stage
-    resolved_date = trade_date or moment.date().isoformat()
+    if stage == "auto" and resolved_date < moment.date().isoformat():
+        resolved_stage = "close"
     minutes = moment.hour * 60 + moment.minute
-    if stage == "auto" and minutes < 9 * 60 + 25:
+    if stage == "auto" and minutes < 9 * 60 + 25 and resolved_date == moment.date().isoformat():
         return {
             "trade_date": resolved_date,
             "stage": "pre_market",
@@ -523,21 +526,20 @@ def capture_limit_breaks(
     with SessionLocal.begin() as session:
         model_version, parameters = _active_model(session)
         ranked_values: list[dict[str, Any]] = []
-        if resolved_stage != "close":
-            for item in candidates:
-                values = _event_values(
-                    item,
-                    trade_date=resolved_date,
-                    stage=resolved_stage,
-                    market_seal_rate=market_seal_rate,
-                    industry_heat_count=industry_counts[_text(item.get("所属行业"), "行业未知")],
-                    model_version=model_version,
-                    parameters=parameters,
-                )
-                if values["predicted_probability"] >= 60:
-                    ranked_values.append(values)
-            ranked_values.sort(key=lambda row: row["predicted_probability"], reverse=True)
-            ranked_values = ranked_values[:10]
+        for item in candidates:
+            values = _event_values(
+                item,
+                trade_date=resolved_date,
+                stage=resolved_stage,
+                market_seal_rate=market_seal_rate,
+                industry_heat_count=industry_counts[_text(item.get("所属行业"), "行业未知")],
+                model_version=model_version,
+                parameters=parameters,
+            )
+            if values["predicted_probability"] >= 60:
+                ranked_values.append(values)
+        ranked_values.sort(key=lambda row: row["predicted_probability"], reverse=True)
+        ranked_values = ranked_values[:10]
         for values in ranked_values:
             code = values["code"]
             if not code:
@@ -669,7 +671,7 @@ def limit_break_research(days: int = 5, refresh: bool = True) -> dict[str, Any]:
             list(
                 session.scalars(
                     select(LimitBreakEvent)
-                    .where(LimitBreakEvent.trade_date == display_date)
+                    .where(LimitBreakEvent.trade_date.in_(dates))
                     .order_by(
                         desc(LimitBreakEvent.trade_date),
                         LimitBreakEvent.code,
