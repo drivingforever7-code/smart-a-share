@@ -1,0 +1,49 @@
+name: Deploy public Render service
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: render-public-deploy
+  cancel-in-progress: true
+
+env:
+  PUBLIC_HEALTH_URL: https://smart-a-share.onrender.com/api/health
+  RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Explain missing deploy hook
+        if: ${{ env.RENDER_DEPLOY_HOOK_URL == '' }}
+        run: |
+          echo "::warning::Add the Render deploy hook as repository secret RENDER_DEPLOY_HOOK_URL, then rerun this workflow."
+
+      - name: Trigger Render deploy
+        if: ${{ env.RENDER_DEPLOY_HOOK_URL != '' }}
+        run: |
+          curl --fail --silent --show-error --request POST "$RENDER_DEPLOY_HOOK_URL"
+
+      - name: Verify deployed commit
+        if: ${{ env.RENDER_DEPLOY_HOOK_URL != '' }}
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: |
+          for attempt in $(seq 1 40); do
+            body="$(curl --fail --silent --show-error "$PUBLIC_HEALTH_URL" || true)"
+            deployed="$(python -c 'import json,sys; print(json.loads(sys.argv[1]).get("git_commit",""))' "$body" 2>/dev/null || true)"
+            if [ "$deployed" = "$EXPECTED_SHA" ]; then
+              echo "Render is running $deployed"
+              exit 0
+            fi
+            echo "Waiting for Render: expected $EXPECTED_SHA, got ${deployed:-unknown}"
+            sleep 15
+          done
+          echo "::error::Render did not switch to $EXPECTED_SHA within 10 minutes."
+          exit 1

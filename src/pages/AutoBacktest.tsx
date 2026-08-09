@@ -81,6 +81,9 @@ function EvolutionCard({
         <Space wrap>
           <Typography.Text strong>{modeName}策略进化</Typography.Text>
           <Tag color={mode === 'short' ? 'cyan' : 'purple'}>{strategyVersionLabel(status.active_version)}</Tag>
+          <Tag color={status.matured_samples > 0 ? 'success' : 'warning'}>
+            成熟 {status.matured_samples}/{status.required_samples}
+          </Tag>
           <Tag color={status.ready_for_optimization ? 'processing' : 'default'}>
             {status.ready_for_optimization ? '已达到训练门槛' : '积累中'}
           </Tag>
@@ -91,6 +94,22 @@ function EvolutionCard({
             <Typography.Text>{status.matured_samples}/{status.required_samples}</Typography.Text>
           </Space>
           <Progress percent={status.sample_progress_pct} size="small" showInfo={false} />
+        </div>
+        <div>
+          <Space style={{ width: '100%', justifyContent: 'space-between' }}>
+            <Typography.Text type="secondary">跟踪中样本</Typography.Text>
+            <Typography.Text>{status.observed_pending_samples ?? status.pending_samples}/{status.pending_samples}</Typography.Text>
+          </Space>
+          <Space style={{ width: '100%', justifyContent: 'space-between' }}>
+            <Typography.Text type="secondary">最长有效观察</Typography.Text>
+            <Typography.Text>{status.max_observations ?? 0}/{status.horizon_observations} 日</Typography.Text>
+          </Space>
+          <Progress
+            percent={status.observation_progress_pct ?? 0}
+            size="small"
+            showInfo={false}
+            strokeColor={mode === 'short' ? '#35d0ba' : '#8b7cff'}
+          />
         </div>
         <div>
           <Space style={{ width: '100%', justifyContent: 'space-between' }}>

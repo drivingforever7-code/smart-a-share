@@ -104,6 +104,9 @@ export interface RankingStrategyStatus {
   horizon_observations: number
   matured_samples: number
   pending_samples: number
+  observed_pending_samples: number
+  max_observations: number
+  observation_progress_pct: number
   trading_days: number
   required_samples: number
   required_days: number

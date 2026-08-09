@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+
 from contextlib import asynccontextmanager
 from typing import Literal
 
@@ -108,7 +110,13 @@ async def market_data_error_handler(_: Request, exc: MarketDataError) -> JSONRes
 
 @app.get("/api/health", tags=["系统"])
 async def health() -> dict[str, str]:
-    return {"status": "ok", "version": settings.version}
+    return {
+        "status": "ok",
+        "version": settings.version,
+        "git_commit": os.getenv("RENDER_GIT_COMMIT", "local"),
+        "git_branch": os.getenv("RENDER_GIT_BRANCH", "local"),
+        "git_repo": os.getenv("RENDER_GIT_REPO_SLUG", "local"),
+    }
 
 
 @app.get("/api/market/overview", tags=["行情"])

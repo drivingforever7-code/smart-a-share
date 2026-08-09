@@ -10,7 +10,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 import numpy as np
-from sqlalchemy import delete, desc, or_, select
+from sqlalchemy import delete, desc, func, or_, select
 
 from .database import (
     RankingOptimizationAudit,
@@ -755,6 +755,28 @@ def ranking_strategy_status() -> dict[str, Any]:
                     )
                 )
             )
+            observation_counts = dict(
+                session.execute(
+                    select(
+                        RankingTrainingObservation.sample_id,
+                        func.count(RankingTrainingObservation.id),
+                    )
+                    .join(
+                        RankingTrainingSample,
+                        RankingTrainingSample.id == RankingTrainingObservation.sample_id,
+                    )
+                    .where(
+                        RankingTrainingSample.mode == mode,
+                        RankingTrainingSample.matured.is_(False),
+                    )
+                    .group_by(RankingTrainingObservation.sample_id)
+                ).all()
+            )
+            observed_pending_samples = sum(
+                1 for count in observation_counts.values() if count > 0
+            )
+            max_observations = max(observation_counts.values(), default=0)
+
             recent_runs = list(
                 session.scalars(
                     select(RankingOptimizationRun)
@@ -796,6 +818,11 @@ def ranking_strategy_status() -> dict[str, Any]:
                 "horizon_observations": rules["horizon"],
                 "matured_samples": len(matured),
                 "pending_samples": pending_count,
+                "observed_pending_samples": observed_pending_samples,
+                "max_observations": max_observations,
+                "observation_progress_pct": round(
+                    min(max_observations / rules["horizon"], 1) * 100, 1
+                ),
                 "trading_days": trading_days,
                 "required_samples": rules["required_samples"],
                 "required_days": rules["required_days"],

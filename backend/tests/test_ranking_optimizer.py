@@ -205,3 +205,40 @@ def test_verified_trade_date_samples_survive_cleanup(isolated_database):
         samples = list(session.scalars(select(RankingTrainingSample)))
     assert len(samples) == 1
     assert "交易日历确认" in samples[0].source
+
+
+def test_status_exposes_pending_observation_progress(
+    isolated_database,
+    monkeypatch,
+):
+    monkeypatch.setitem(service.MODE_RULES["short"], "horizon", 2)
+    monkeypatch.setitem(service.MODE_RULES["swing"], "horizon", 2)
+    opportunities = {
+        "short": [opportunity("000001")],
+        "swing": [opportunity("600001")],
+    }
+    first_meta = {
+        "quote_time": "2026-07-29 15:00:00",
+        "fetched_at": "2026-07-29T15:01:00",
+        "source": "测试源",
+    }
+    second_meta = {
+        **first_meta,
+        "quote_time": "2026-07-30 15:00:00",
+        "fetched_at": "2026-07-30T15:01:00",
+    }
+
+    service.process_training_cycle(opportunities, [], first_meta)
+    service.process_training_cycle(
+        opportunities,
+        [{"code": "000001", "price": 11}, {"code": "600001", "price": 11}],
+        second_meta,
+    )
+
+    status = service.ranking_strategy_status()
+    assert status["short"]["matured_samples"] == 0
+    assert status["swing"]["matured_samples"] == 0
+    assert status["swing"]["pending_samples"] == 2
+    assert status["swing"]["observed_pending_samples"] == 1
+    assert status["swing"]["max_observations"] == 1
+    assert status["swing"]["observation_progress_pct"] == 50.0
