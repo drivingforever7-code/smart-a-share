@@ -95,15 +95,18 @@ export default function App() {
   const initial = useMemo(parseHash, [])
   const [page, setPage] = useState<PageKey>(initial.page)
   const [selectedCode, setSelectedCode] = useState(initial.code)
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(() =>
+    window.matchMedia('(max-width: 991px)').matches,
+  )
   const [quickCode, setQuickCode] = useState('')
   const [dataRefreshKey, setDataRefreshKey] = useState(0)
 
-  const mobile = !screens.lg
+  const mobile = screens.lg === false
 
   useEffect(() => {
-    if (mobile) setCollapsed(true)
-  }, [mobile])
+    if (screens.lg === false) setCollapsed(true)
+    if (screens.lg === true) setCollapsed(false)
+  }, [screens.lg])
 
   useEffect(() => {
     let active = true

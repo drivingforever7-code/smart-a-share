@@ -105,10 +105,12 @@ function EvolutionCard({
           />
         </div>
         <Typography.Text type="secondary">
-          每日留存前 20 · 后续 {status.horizon_observations} 个有效观察日成熟 · 待成熟 {status.pending_samples}
+          {mode === 'swing' && status.matured_samples === 0 && status.pending_samples > 0
+            ? `波段回测并未缺失：已有 ${status.pending_samples} 个样本正在跟踪；每个样本需满 ${status.horizon_observations} 个后续有效交易日后才计为成熟。`
+            : `每日留存前 20 · 后续 ${status.horizon_observations} 个有效观察日成熟 · 待成熟 ${status.pending_samples}`}
         </Typography.Text>
         {latest && (
-          <DailyAlert noticeKey="autobacktest-1"
+          <DailyAlert noticeKey={`autobacktest-${mode}-evolution`}
             type={latest.status === 'activated' ? 'success' : latest.status === 'rejected' ? 'warning' : 'info'}
             showIcon
             message={
