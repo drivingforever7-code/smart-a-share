@@ -17,22 +17,46 @@ if (-not $nodeCommand -or -not (Test-Path -LiteralPath $vitePath)) {
 }
 New-Item -ItemType Directory -Force -Path $runtimeDir | Out-Null
 
-function Test-WebsiteReady {
+function Test-FrontendReady {
     try {
         $response = Invoke-WebRequest -Uri "http://127.0.0.1:5173" -UseBasicParsing -TimeoutSec 2
         return $response.StatusCode -eq 200
     } catch { return $false }
 }
-if (Test-WebsiteReady) { Start-Process "http://127.0.0.1:5173"; exit 0 }
+
+function Test-BackendReady {
+    try {
+        $response = Invoke-RestMethod -Uri "http://127.0.0.1:8710/api/health" -TimeoutSec 2
+        return $response.status -eq "ok"
+    } catch { return $false }
+}
+
+$frontendReady = Test-FrontendReady
+$backendReady = Test-BackendReady
+if ($frontendReady -and $backendReady) {
+    Start-Process "http://127.0.0.1:5173"
+    exit 0
+}
 
 $backendProcess = $null
 $frontendProcess = $null
 try {
     Write-Host "正在后台启动智选 A 股..." -ForegroundColor Cyan
-    $backendProcess = Start-Process -FilePath $pythonPath -ArgumentList @("-m", "uvicorn", "app.main:app", "--app-dir", "backend", "--host", "127.0.0.1", "--port", "8710") -WorkingDirectory $projectRoot -WindowStyle Hidden -RedirectStandardOutput (Join-Path $runtimeDir "backend.out.log") -RedirectStandardError (Join-Path $runtimeDir "backend.err.log") -PassThru
-    $frontendProcess = Start-Process -FilePath $nodeCommand.Source -ArgumentList @($vitePath, "--host", "127.0.0.1", "--port", "5173") -WorkingDirectory $projectRoot -WindowStyle Hidden -RedirectStandardOutput (Join-Path $runtimeDir "frontend.out.log") -RedirectStandardError (Join-Path $runtimeDir "frontend.err.log") -PassThru
+    if (-not $backendReady) {
+        $backendProcess = Start-Process -FilePath $pythonPath -ArgumentList @("-m", "uvicorn", "app.main:app", "--app-dir", "backend", "--host", "127.0.0.1", "--port", "8710") -WorkingDirectory $projectRoot -WindowStyle Hidden -RedirectStandardOutput (Join-Path $runtimeDir "backend.out.log") -RedirectStandardError (Join-Path $runtimeDir "backend.err.log") -PassThru
+    }
+    if (-not $frontendReady) {
+        $frontendProcess = Start-Process -FilePath $nodeCommand.Source -ArgumentList @($vitePath, "--host", "127.0.0.1", "--port", "5173") -WorkingDirectory $projectRoot -WindowStyle Hidden -RedirectStandardOutput (Join-Path $runtimeDir "frontend.out.log") -RedirectStandardError (Join-Path $runtimeDir "frontend.err.log") -PassThru
+    }
+
     $ready = $false
-    for ($attempt = 0; $attempt -lt 40; $attempt++) { Start-Sleep -Milliseconds 500; if (Test-WebsiteReady) { $ready = $true; break } }
+    for ($attempt = 0; $attempt -lt 60; $attempt++) {
+        Start-Sleep -Milliseconds 500
+        if ((Test-FrontendReady) -and (Test-BackendReady)) {
+            $ready = $true
+            break
+        }
+    }
     if (-not $ready) { throw "网站启动超时，请检查 .codex-runtime 日志。" }
     Write-Host "网站已启动：http://127.0.0.1:5173" -ForegroundColor Green
     Write-Host "窗口会自动关闭，网站仍在后台运行到关机。" -ForegroundColor DarkGray

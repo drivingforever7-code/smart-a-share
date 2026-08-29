@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-07-30",
+  "captured_at": "2026-07-30 15:15:44.975525",
+  "items": [
+    {
+      "discovery_date": "2026-07-30",
+      "mode": "short",
+      "rank": 1,
+      "code": "600298",
+      "name": "安琪酵母",
+      "industry": null,
+      "discovery_price": 41.19,
+      "discovery_score": 67.2,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 2.56，成交活跃",
+        "当前规则风险可控",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "本地 SQLite（后台正在刷新）；交易日历确认"
+    },
+    {
+      "discovery_date": "2026-07-30",
+      "mode": "short",
+      "rank": 2,
+      "code": "300138",
+      "name": "晨光生物",
+      "industry": null,
+      "discovery_price": 11.92,
+      "discovery_score": 65.4,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.67，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "本地 SQLite（后台正在刷新）；交易日历确认"
+    },
+    {
+      "discovery_date": "2026-07-30",
+      "mode": "short",
+      "rank": 3,
+      "code": "688767",
+      "name": "博拓生物",
+      "industry": null,
+      "discovery_price": 35.78,
+      "discovery_score": 64.7,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 1.94，成交活跃",
+        "上涨动能较强且未明显过热",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽"
+      ],
+      "quote_time": null,
+      "source": "本地 SQLite（后台正在刷新）；交易日历确认"
+    },
+    {
+      "discovery_date": "2026-07-30",
+      "mode": "swing",
+      "rank": 1,
+      "code": "600428",
+      "name": "XD中远海",
+      "industry": null,
+      "discovery_price": 10.98,
+      "discovery_score": 76.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 16.37、PB 1.86，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "本地 SQLite（后台正在刷新）；交易日历确认"
+    },
+    {
+      "discovery_date": "2026-07-30",
+      "mode": "swing",
+      "rank": 2,
+      "code": "002440",
+      "name": "闰土股份",
+      "industry": null,
+      "discovery_price": 13.64,
+      "discovery_score": 74.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 19.04、PB 1.55，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽",
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "本地 SQLite（后台正在刷新）；交易日历确认"
+    },
+    {
+      "discovery_date": "2026-07-30",
+      "mode": "swing",
+      "rank": 3,
+      "code": "002832",
+      "name": "比音勒芬",
+      "industry": null,
+      "discovery_price": 25.8,
+      "discovery_score": 72.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽",
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "本地 SQLite（后台正在刷新）；交易日历确认"
+    }
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-07-29",
+  "captured_at": "2026-07-29 17:05:31.650735",
+  "items": [
+    {
+      "discovery_date": "2026-07-29",
+      "mode": "short",
+      "rank": 1,
+      "code": "301526",
+      "name": "国际复材",
+      "industry": null,
+      "discovery_price": 30.2,
+      "discovery_score": 68.4,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "上涨动能较强且未明显过热",
+        "量比 1.85，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽",
+        "换手率偏高，筹码可能不稳定"
+      ],
+      "quote_time": null,
+      "source": "本地 SQLite（后台正在刷新）"
+    },
+    {
+      "discovery_date": "2026-07-29",
+      "mode": "short",
+      "rank": 2,
+      "code": "600176",
+      "name": "中国巨石",
+      "industry": null,
+      "discovery_price": 38.39,
+      "discovery_score": 65.0,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.23，成交活跃",
+        "上涨动能较强且未明显过热"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "本地 SQLite（后台正在刷新）"
+    },
+    {
+      "discovery_date": "2026-07-29",
+      "mode": "short",
+      "rank": 3,
+      "code": "301108",
+      "name": "洁雅股份",
+      "industry": null,
+      "discovery_price": 34.28,
+      "discovery_score": 64.8,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.48，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "本地 SQLite（后台正在刷新）"
+    },
+    {
+      "discovery_date": "2026-07-29",
+      "mode": "swing",
+      "rank": 1,
+      "code": "600428",
+      "name": "中远海特",
+      "industry": null,
+      "discovery_price": 11.24,
+      "discovery_score": 74.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 16.76、PB 1.80，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "本地 SQLite（后台正在刷新）"
+    },
+    {
+      "discovery_date": "2026-07-29",
+      "mode": "swing",
+      "rank": 2,
+      "code": "603989",
+      "name": "艾华集团",
+      "industry": null,
+      "discovery_price": 26.01,
+      "discovery_score": 73.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "成交活跃且量价结构较健康",
+        "阶段涨幅偏强，详情页可补充中期均线",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽",
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "本地 SQLite（后台正在刷新）"
+    },
+    {
+      "discovery_date": "2026-07-29",
+      "mode": "swing",
+      "rank": 3,
+      "code": "002440",
+      "name": "闰土股份",
+      "industry": null,
+      "discovery_price": 13.64,
+      "discovery_score": 73.0,
+      "recommendation": "建议回避",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 19.04、PB 1.55，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "接近涨停，无法按当前价格合理成交",
+        "当日涨幅较大，存在追高回落风险",
+        "日内振幅较大，止损空间需要放宽"
+      ],
+      "quote_time": null,
+      "source": "本地 SQLite（后台正在刷新）"
+    }
+  ]
+}

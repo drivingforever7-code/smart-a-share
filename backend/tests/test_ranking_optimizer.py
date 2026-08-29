@@ -8,7 +8,12 @@ from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 
 from app import ranking_optimizer_service as service
-from app.database import Base, RankingStrategyVersion, RankingTrainingSample
+from app.database import (
+    Base,
+    RankingOptimizationRun,
+    RankingStrategyVersion,
+    RankingTrainingSample,
+)
 
 
 @pytest.fixture()
@@ -137,6 +142,176 @@ def test_candidate_activates_only_after_out_of_time_improvement(isolated_databas
         )
     assert active is not None
     assert active.version == "short-v1.1"
+
+def test_sample_threshold_retries_waiting_run_without_day_gate(isolated_database):
+    service.ensure_baseline_versions()
+    run_date = "2026-08-24"
+    with isolated_database.begin() as session:
+        waiting = service._optimize_mode(session, "short", run_date)
+    assert waiting["status"] == "waiting"
+
+    start = datetime(2026, 8, 1)
+    with isolated_database.begin() as session:
+        for day in range(11):
+            sample_date = (start + timedelta(days=day)).date().isoformat()
+            for rank in range(1, 21):
+                positive = rank > 3
+                features = {name: 0.5 for name in service.FEATURE_NAMES}
+                features["price_change"] = 1.0 if positive else -1.0
+                session.add(
+                    RankingTrainingSample(
+                        sample_date=sample_date,
+                        mode="short",
+                        code=f"{day:02d}{rank:04d}",
+                        name="样本门槛测试",
+                        candidate_rank=rank,
+                        discovery_price=10,
+                        base_score=100 - rank,
+                        strategy_score=100 - rank,
+                        strategy_version="short-v1.0",
+                        features_json=json.dumps(features),
+                        target_observations=5,
+                        matured=True,
+                        label_return_pct=5 if positive else -5,
+                        label_max_drawdown_pct=-1 if positive else -5,
+                        label_positive=positive,
+                        matured_at=datetime.now(),
+                        quote_time=f"{sample_date} 15:00:00",
+                        source="测试源",
+                        created_at=datetime.now(),
+                    )
+                )
+
+    with isolated_database.begin() as session:
+        result = service._optimize_mode(session, "short", run_date)
+
+    assert result["status"] in {"activated", "rejected"}
+    assert result["candidate_version"] == "short-v1.1"
+
+
+def test_fit_parameters_records_multi_outcome_objective():
+    samples = []
+    for index, positive in enumerate((False, True, False, True), start=1):
+        features = {name: index / 4 for name in service.FEATURE_NAMES}
+        samples.append(
+            RankingTrainingSample(
+                features_json=json.dumps(features),
+                label_return_pct=4 if positive else -3,
+                label_max_drawdown_pct=-1 if positive else -6,
+                label_positive=positive,
+            )
+        )
+
+    parameters = service._fit_parameters(samples)
+
+    assert parameters["model"] == "multi_factor_return_success_ridge_v3"
+    assert parameters["objective"] == {
+        "future_return_weight": 1.0,
+        "max_drawdown_weight": 0.10,
+        "direction_weight": 1.50,
+        "recency_weighted": True,
+    }
+    assert parameters["feature_names"] == list(service.FEATURE_NAMES)
+
+def test_new_threshold_policy_accepts_return_and_success_improvement():
+    assert service._passes_validation_thresholds(0.5, -10.0, 0.0)
+    assert not service._passes_validation_thresholds(0.49, -1.0, 5.0)
+    assert not service._passes_validation_thresholds(1.0, -10.01, 5.0)
+    assert not service._passes_validation_thresholds(1.0, -1.0, -0.01)
+
+
+def test_rejected_candidate_is_rechecked_under_new_policy(isolated_database):
+    service.ensure_baseline_versions()
+    with isolated_database.begin() as session:
+        session.add(
+            RankingStrategyVersion(
+                version="short-v1.1",
+                mode="short",
+                parameters_json=json.dumps(service.BASELINE_PARAMETERS),
+                trained_through="2026-08-11",
+                train_samples=180,
+                validation_samples=60,
+                validation_mean_return=1.0,
+                validation_mean_drawdown=-5.0,
+                validation_positive_rate=60.0,
+                status="rejected",
+                is_active=False,
+                notes="旧门槛未通过",
+                created_at=datetime.now(),
+            )
+        )
+        session.add(
+            RankingOptimizationRun(
+                mode="short",
+                run_date="2026-08-25",
+                incumbent_version="short-v1.0",
+                candidate_version="short-v1.1",
+                sample_count=240,
+                trading_days=12,
+                metrics_json=json.dumps({
+                    "return_improvement": 0.55,
+                    "drawdown_change": -1.68,
+                    "positive_rate_change": 11.11,
+                }),
+                status="rejected",
+                accepted=False,
+                reason="旧门槛未通过",
+                completed_at=datetime.now(),
+            )
+        )
+
+    with isolated_database.begin() as session:
+        result = service._optimize_mode(session, "short", "2026-08-25")
+
+    assert result["status"] == "activated"
+    with isolated_database() as session:
+        candidate = session.get(RankingStrategyVersion, "short-v1.1")
+    assert candidate is not None
+    assert candidate.is_active is True
+
+
+def test_version_detail_returns_actual_selected_results(isolated_database, monkeypatch):
+    monkeypatch.setitem(service.MODE_RULES["short"], "required_samples", 8)
+    service.ensure_baseline_versions()
+    start = datetime(2026, 8, 1)
+    with isolated_database.begin() as session:
+        for day in range(4):
+            sample_date = (start + timedelta(days=day)).date().isoformat()
+            for rank in range(1, 3):
+                positive = rank == 2
+                features = {name: rank / 2 for name in service.FEATURE_NAMES}
+                session.add(
+                    RankingTrainingSample(
+                        sample_date=sample_date,
+                        mode="short",
+                        code=f"{day:02d}{rank:04d}",
+                        name="版本详情样本",
+                        candidate_rank=rank,
+                        discovery_price=10,
+                        base_score=90 - rank,
+                        strategy_score=90 - rank,
+                        strategy_version="short-v1.0",
+                        features_json=json.dumps(features),
+                        target_observations=5,
+                        matured=True,
+                        label_return_pct=4 if positive else -3,
+                        label_max_drawdown_pct=-1 if positive else -5,
+                        label_positive=positive,
+                        matured_at=datetime.now(),
+                        quote_time=f"{sample_date} 15:00:00",
+                        source="测试源",
+                        created_at=datetime.now(),
+                    )
+                )
+    with isolated_database.begin() as session:
+        result = service._optimize_mode(session, "short", "2026-08-25")
+
+    detail = service.ranking_strategy_version_detail("short", result["candidate_version"])
+
+    assert detail["version"] == result["candidate_version"]
+    assert len(detail["actual_results"]) == 8
+    assert {item["split"] for item in detail["actual_results"]} == {"train", "validation"}
+    assert all("labels" in item for item in detail["actual_results"])
 
 def test_training_skips_fetch_time_without_real_quote_time(isolated_database):
     opportunities = {

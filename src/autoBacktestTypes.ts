@@ -99,6 +99,38 @@ export interface RankingStrategyVersion {
   notes: string
 }
 
+export interface RankingStrategyVersionDetail extends RankingStrategyVersion {
+  mode: ScoreMode
+  parameters: Record<string, unknown>
+  run: {
+    run_date: string
+    incumbent_version: string
+    status: 'waiting' | 'activated' | 'rejected'
+    sample_count: number
+    trading_days: number
+    metrics: {
+      incumbent?: { mean_return: number; mean_drawdown: number; positive_rate: number; positive_days: number }
+      candidate?: { mean_return: number; mean_drawdown: number; positive_rate: number; positive_days: number }
+      return_improvement?: number
+      drawdown_change?: number
+      positive_rate_change?: number
+      model?: string
+      threshold_policy?: string
+      max_drawdown_deterioration?: number
+    }
+    reason: string
+  } | null
+  actual_results: Array<{
+    sample_date: string
+    split: 'train' | 'validation'
+    code: string
+    name: string
+    features: Record<string, number>
+    observations: Array<{ date: string; price: number; return_pct: number }>
+    labels: { return_pct?: number | null; max_drawdown_pct?: number | null; positive?: boolean | null }
+    candidate_score?: number | null
+  }>
+}
 export interface RankingStrategyStatus {
   active_version: string
   horizon_observations: number

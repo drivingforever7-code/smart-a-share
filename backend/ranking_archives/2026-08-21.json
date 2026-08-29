@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-08-21",
+  "captured_at": "2026-08-21 15:09:59.984279",
+  "items": [
+    {
+      "discovery_date": "2026-08-21",
+      "mode": "short",
+      "rank": 1,
+      "code": "600547",
+      "name": "XD山东黄",
+      "industry": null,
+      "discovery_price": 37.05,
+      "discovery_score": 66.6,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.43，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-08-21",
+      "mode": "short",
+      "rank": 2,
+      "code": "603882",
+      "name": "金域医学",
+      "industry": null,
+      "discovery_price": 31.35,
+      "discovery_score": 66.3,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 3.16，成交活跃",
+        "当前规则风险可控",
+        "短期动能一般，需要等待进一步确认"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-08-21",
+      "mode": "short",
+      "rank": 3,
+      "code": "603268",
+      "name": "松发股份",
+      "industry": null,
+      "discovery_price": 182.81,
+      "discovery_score": 65.9,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.38，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-08-21",
+      "mode": "swing",
+      "rank": 1,
+      "code": "601233",
+      "name": "桐昆股份",
+      "industry": null,
+      "discovery_price": 24.71,
+      "discovery_score": 73.5,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 17.71、PB 1.47，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-08-21",
+      "mode": "swing",
+      "rank": 2,
+      "code": "600985",
+      "name": "淮北矿业",
+      "industry": null,
+      "discovery_price": 18.03,
+      "discovery_score": 73.2,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽",
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-08-21",
+      "mode": "swing",
+      "rank": 3,
+      "code": "002440",
+      "name": "闰土股份",
+      "industry": null,
+      "discovery_price": 12.3,
+      "discovery_score": 73.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 17.17、PB 1.40，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    }
+  ]
+}

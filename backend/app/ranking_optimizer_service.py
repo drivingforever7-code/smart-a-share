@@ -54,6 +54,11 @@ BASELINE_PARAMETERS = {
     "adjustment_scale": 1.5,
     "max_adjustment": 8.0,
 }
+MODEL_NAME = "multi_factor_return_success_ridge_v3"
+THRESHOLD_POLICY = "return_success_drawdown10_v1"
+MIN_RETURN_IMPROVEMENT = 0.5
+MAX_DRAWDOWN_DETERIORATION = 10.0
+MIN_POSITIVE_RATE_CHANGE = 0.0
 
 _version_cache_lock = threading.Lock()
 _version_cache: dict[str, tuple[float, str, dict[str, Any]]] = {}
@@ -352,6 +357,18 @@ def _metrics(groups: dict[str, list[RankingTrainingSample]], selector) -> dict[s
     }
 
 
+def _passes_validation_thresholds(
+    return_improvement: float,
+    drawdown_change: float,
+    positive_rate_change: float,
+) -> bool:
+    return (
+        return_improvement >= MIN_RETURN_IMPROVEMENT
+        and drawdown_change >= -MAX_DRAWDOWN_DETERIORATION
+        and positive_rate_change >= MIN_POSITIVE_RATE_CHANGE
+    )
+
+
 def _fit_parameters(samples: list[RankingTrainingSample]) -> dict[str, Any]:
     x = np.array(
         [
@@ -360,14 +377,33 @@ def _fit_parameters(samples: list[RankingTrainingSample]) -> dict[str, Any]:
         ],
         dtype=float,
     )
-    y = np.clip(
+    future_returns = np.clip(
         np.array([_number(sample.label_return_pct) for sample in samples], dtype=float),
         -20,
         20,
     )
+    future_drawdowns = np.clip(
+        np.array([_number(sample.label_max_drawdown_pct) for sample in samples], dtype=float),
+        -20,
+        0,
+    )
+    future_directions = np.array(
+        [1.0 if sample.label_positive else -1.0 for sample in samples],
+        dtype=float,
+    )
+    # 收益率与成功率优先，回撤保留为轻量风险惩罚并在样本外验证中硬约束。
+    target = future_returns + 0.10 * future_drawdowns + 1.50 * future_directions
+    recency_weights = np.linspace(0.75, 1.25, num=len(samples), dtype=float)
+    sqrt_weights = np.sqrt(recency_weights)
+    weighted_x = x * sqrt_weights[:, None]
+    weighted_target = target * sqrt_weights
     regularizer = np.eye(x.shape[1]) * 0.35
     regularizer[0, 0] = 0.05
-    coefficients = np.linalg.pinv(x.T @ x + regularizer) @ x.T @ y
+    coefficients = (
+        np.linalg.pinv(weighted_x.T @ weighted_x + regularizer)
+        @ weighted_x.T
+        @ weighted_target
+    )
     coefficients = np.clip(coefficients, -15, 15)
     return {
         "intercept": round(float(coefficients[0]), 8),
@@ -377,6 +413,14 @@ def _fit_parameters(samples: list[RankingTrainingSample]) -> dict[str, Any]:
         },
         "adjustment_scale": 1.5,
         "max_adjustment": 8.0,
+        "model": MODEL_NAME,
+        "objective": {
+            "future_return_weight": 1.0,
+            "max_drawdown_weight": 0.10,
+            "direction_weight": 1.50,
+            "recency_weighted": True,
+        },
+        "feature_names": list(FEATURE_NAMES),
     }
 
 
@@ -387,9 +431,6 @@ def _optimize_mode(session, mode: str, run_date: str) -> dict[str, Any]:
             RankingOptimizationRun.run_date == run_date,
         )
     )
-    if existing is not None:
-        return {"mode": mode, "status": existing.status}
-
     rules = MODE_RULES[mode]
     matured = list(
         session.scalars(
@@ -411,11 +452,66 @@ def _optimize_mode(session, mode: str, run_date: str) -> dict[str, Any]:
         .order_by(desc(RankingStrategyVersion.created_at))
     )
     active_version = active.version if active else _baseline_version(mode)
+    positive_samples = sum(item.label_positive is True for item in matured)
+    negative_samples = sum(item.label_positive is False for item in matured)
 
-    if len(matured) < rules["required_samples"] or len(dates) < rules["required_days"]:
+    if existing is not None:
+        if existing.status == "rejected" and existing.candidate_version:
+            metrics = json.loads(existing.metrics_json or "{}")
+            if metrics.get("threshold_policy") != THRESHOLD_POLICY:
+                metrics["threshold_policy"] = THRESHOLD_POLICY
+                existing.metrics_json = json.dumps(metrics, ensure_ascii=False)
+                accepted_after_review = _passes_validation_thresholds(
+                    _number(metrics.get("return_improvement")),
+                    _number(metrics.get("drawdown_change")),
+                    _number(metrics.get("positive_rate_change")),
+                )
+                candidate = session.get(RankingStrategyVersion, existing.candidate_version)
+                if accepted_after_review and candidate is not None:
+                    for version in session.scalars(
+                        select(RankingStrategyVersion).where(
+                            RankingStrategyVersion.mode == mode,
+                            RankingStrategyVersion.is_active.is_(True),
+                        )
+                    ):
+                        version.is_active = False
+                        version.status = "superseded"
+                    candidate.is_active = True
+                    candidate.status = "active"
+                    candidate.activated_at = _now()
+                    candidate.notes = f"{candidate.notes} 按收益率/成功率优先及最大回撤恶化不超过10点的新规则复核通过。"
+                    existing.status = "activated"
+                    existing.accepted = True
+                    existing.reason = f"{existing.reason} 按新门槛复核通过并启用。"
+                    invalidate_version_cache()
+                    return {
+                        "mode": mode,
+                        "status": "activated",
+                        "candidate_version": existing.candidate_version,
+                        "reason": existing.reason,
+                    }
+                existing.reason = f"{existing.reason} 按新门槛复核后仍未通过。"
+                return {
+                    "mode": mode,
+                    "status": "rejected",
+                    "candidate_version": existing.candidate_version,
+                    "reason": existing.reason,
+                }
+        if existing.status != "waiting":
+            return {"mode": mode, "status": existing.status}
+        if (
+            len(matured) < rules["required_samples"]
+            and existing.sample_count == len(matured)
+            and existing.trading_days == len(dates)
+        ):
+            return {"mode": mode, "status": existing.status}
+        session.delete(existing)
+        session.flush()
+
+    if len(matured) < rules["required_samples"]:
         reason = (
-            f"成熟样本 {len(matured)}/{rules['required_samples']}，"
-            f"交易日 {len(dates)}/{rules['required_days']}，继续积累。"
+            f"成熟样本 {len(matured)}/{rules['required_samples']}，继续积累；"
+            f"当前覆盖 {len(dates)} 个交易日。"
         )
         session.add(
             RankingOptimizationRun(
@@ -434,13 +530,11 @@ def _optimize_mode(session, mode: str, run_date: str) -> dict[str, Any]:
         )
         return {"mode": mode, "status": "waiting", "reason": reason}
 
-    split_index = max(1, int(len(dates) * 0.75))
-    train_dates = set(dates[:split_index])
-    validation_dates = set(dates[split_index:])
-    train = [item for item in matured if item.sample_date in train_dates]
-    validation = [item for item in matured if item.sample_date in validation_dates]
-    if len(validation_dates) < 5 or len(validation) < 60:
-        reason = f"时间后段验证集只有 {len(validation_dates)} 日、{len(validation)} 个样本，尚不足 5 日和 60 样本。"
+    if positive_samples == 0 or negative_samples == 0:
+        reason = (
+            f"成熟样本已达 {len(matured)} 个，但上涨/未上涨结果为 "
+            f"{positive_samples}/{negative_samples}，需同时包含正负结果后再优化。"
+        )
         session.add(
             RankingOptimizationRun(
                 mode=mode,
@@ -457,6 +551,21 @@ def _optimize_mode(session, mode: str, run_date: str) -> dict[str, Any]:
             )
         )
         return {"mode": mode, "status": "waiting", "reason": reason}
+
+    if len(dates) >= 2:
+        split_index = min(len(dates) - 1, max(1, int(len(dates) * 0.75)))
+        train_dates = set(dates[:split_index])
+        validation_dates = set(dates[split_index:])
+        train = [item for item in matured if item.sample_date in train_dates]
+        validation = [item for item in matured if item.sample_date in validation_dates]
+        validation_scheme = "按发现日期前段训练、后段验证"
+    else:
+        split_index = min(len(matured) - 1, max(1, int(len(matured) * 0.75)))
+        train = matured[:split_index]
+        validation = matured[split_index:]
+        train_dates = {item.sample_date for item in train}
+        validation_dates = {item.sample_date for item in validation}
+        validation_scheme = "同日样本按原始排名顺序前段训练、后段验证"
 
     parameters = _fit_parameters(train)
     groups: dict[str, list[RankingTrainingSample]] = defaultdict(list)
@@ -483,13 +592,14 @@ def _optimize_mode(session, mode: str, run_date: str) -> dict[str, Any]:
     positive_rate_change = (
         candidate_metrics["positive_rate"] - incumbent_metrics["positive_rate"]
     )
-    accepted = (
-        return_improvement >= 0.5
-        and drawdown_change >= -1.0
-        and positive_rate_change >= -3.0
+    accepted = _passes_validation_thresholds(
+        return_improvement,
+        drawdown_change,
+        positive_rate_change,
     )
     candidate_version = _next_version(session, mode)
     reason = (
+        f"已用 {len(train)} 个训练样本和 {len(validation)} 个后段验证样本完成多因素优化；"
         f"验证前三平均收益变化 {return_improvement:+.2f}pct，"
         f"平均最大回撤变化 {drawdown_change:+.2f}pct，"
         f"上涨比例变化 {positive_rate_change:+.2f}pct。"
@@ -535,6 +645,14 @@ def _optimize_mode(session, mode: str, run_date: str) -> dict[str, Any]:
                     "return_improvement": round(return_improvement, 4),
                     "drawdown_change": round(drawdown_change, 4),
                     "positive_rate_change": round(positive_rate_change, 4),
+                    "validation_scheme": validation_scheme,
+                    "model": parameters.get("model"),
+                    "objective": parameters.get("objective"),
+                    "feature_names": parameters.get("feature_names"),
+                    "positive_samples": positive_samples,
+                    "negative_samples": negative_samples,
+                    "threshold_policy": THRESHOLD_POLICY,
+                    "max_drawdown_deterioration": MAX_DRAWDOWN_DETERIORATION,
                 },
                 ensure_ascii=False,
             ),
@@ -813,6 +931,8 @@ def ranking_strategy_status() -> dict[str, Any]:
             )
             rules = MODE_RULES[mode]
             trading_days = len({item.sample_date for item in matured})
+            positive_samples = sum(item.label_positive is True for item in matured)
+            negative_samples = sum(item.label_positive is False for item in matured)
             result[mode] = {
                 "active_version": active.version if active else _baseline_version(mode),
                 "horizon_observations": rules["horizon"],
@@ -832,9 +952,12 @@ def ranking_strategy_status() -> dict[str, Any]:
                 "day_progress_pct": round(
                     min(trading_days / rules["required_days"], 1) * 100, 1
                 ),
+                "positive_samples": positive_samples,
+                "negative_samples": negative_samples,
                 "ready_for_optimization": (
                     len(matured) >= rules["required_samples"]
-                    and trading_days >= rules["required_days"]
+                    and positive_samples > 0
+                    and negative_samples > 0
                 ),
                 "recent_runs": [
                     {
@@ -872,6 +995,100 @@ def ranking_strategy_status() -> dict[str, Any]:
             }
     return result
 
+
+def ranking_strategy_version_detail(mode: str, version: str) -> dict[str, Any]:
+    if mode not in MODES:
+        raise LookupError("未知策略模式")
+    with SessionLocal() as session:
+        version_row = session.scalar(
+            select(RankingStrategyVersion).where(
+                RankingStrategyVersion.mode == mode,
+                RankingStrategyVersion.version == version,
+            )
+        )
+        if version_row is None:
+            raise LookupError("未找到该策略版本")
+        run = session.scalar(
+            select(RankingOptimizationRun)
+            .where(
+                RankingOptimizationRun.mode == mode,
+                RankingOptimizationRun.candidate_version == version,
+            )
+            .order_by(desc(RankingOptimizationRun.id))
+        )
+        audits = (
+            list(
+                session.scalars(
+                    select(RankingOptimizationAudit)
+                    .where(RankingOptimizationAudit.run_id == run.id)
+                    .order_by(
+                        RankingOptimizationAudit.sample_date,
+                        RankingOptimizationAudit.candidate_score.desc(),
+                    )
+                )
+            )
+            if run is not None
+            else []
+        )
+        grouped: dict[str, list[RankingOptimizationAudit]] = defaultdict(list)
+        for audit in audits:
+            grouped[audit.sample_date].append(audit)
+        selected_ids = {
+            audit.id
+            for rows in grouped.values()
+            for audit in sorted(
+                rows,
+                key=lambda item: _number(item.candidate_score, -999),
+                reverse=True,
+            )[:3]
+        }
+        actual_results = [
+            {
+                "sample_date": audit.sample_date,
+                "split": audit.split,
+                "code": audit.code,
+                "name": audit.name,
+                "features": json.loads(audit.features_json),
+                "observations": json.loads(audit.observations_json),
+                "labels": json.loads(audit.labels_json),
+                "candidate_score": audit.candidate_score,
+            }
+            for audit in audits
+            if audit.id in selected_ids
+        ]
+        return {
+            "version": version_row.version,
+            "mode": version_row.mode,
+            "status": version_row.status,
+            "is_active": version_row.is_active,
+            "trained_through": version_row.trained_through,
+            "train_samples": version_row.train_samples,
+            "validation_samples": version_row.validation_samples,
+            "validation_mean_return": version_row.validation_mean_return,
+            "validation_mean_drawdown": version_row.validation_mean_drawdown,
+            "validation_positive_rate": version_row.validation_positive_rate,
+            "activated_at": (
+                version_row.activated_at.isoformat()
+                if version_row.activated_at
+                else None
+            ),
+            "notes": version_row.notes,
+            "parameters": json.loads(version_row.parameters_json),
+            "run": (
+                {
+                    "run_date": run.run_date,
+                    "incumbent_version": run.incumbent_version,
+                    "status": run.status,
+                    "sample_count": run.sample_count,
+                    "trading_days": run.trading_days,
+                    "metrics": json.loads(run.metrics_json),
+                    "reason": run.reason,
+                }
+                if run is not None
+                else None
+            ),
+            "actual_results": actual_results,
+        }
 
 def discovery_version_map(discovery_rows: list[Any]) -> dict[int, str]:
     if not discovery_rows:

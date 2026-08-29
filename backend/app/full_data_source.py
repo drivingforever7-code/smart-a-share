@@ -18,38 +18,58 @@ class FullMarketDataSource(BackgroundRefreshingDataSource):
         timeframe: str,
         limit: int,
     ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-        try:
+        if timeframe.endswith("m"):
             return super().get_bars(code, timeframe, limit)
-        except MarketDataError as primary_error:
-            if timeframe.endswith("m"):
-                raise primary_error
-            if ak is None:
-                raise primary_error
 
+        cached_result: tuple[list[dict[str, Any]], dict[str, Any]] | None = None
+        primary_failure: MarketDataError | None = None
+        # 东方财富偶尔会单次断连；先快速重试，再落到腾讯。基础类在失败时
+        # 会返回 SQLite，因此必须显式检查 is_cached，不能把它当成主源成功。
+        for _attempt in range(4):
             try:
-                fetched_at = datetime.now()
-                prefix = infer_market(code).lower()
-                frame = ak.stock_zh_a_hist_tx(
-                    symbol=f"{prefix}{code}",
-                    start_date=(fetched_at - timedelta(days=3650)).strftime("%Y%m%d"),
-                    end_date=fetched_at.strftime("%Y%m%d"),
-                    adjust="qfq",
-                    timeout=25,
-                )
-                bars = self._normalize_tx_bars(frame, timeframe)
-                if not bars:
-                    raise MarketDataError("腾讯证券没有返回可用 K 线")
-                bars = bars[-max(1, min(limit, 2000)) :]
-                self._persist_bars(code, timeframe, bars, fetched_at)
-                return bars, _meta(
-                    fetched_at,
-                    cached=False,
-                    source="AKShare / 腾讯证券（K 线备用）",
-                )
-            except Exception as fallback_error:
-                raise MarketDataError(
-                    f"K 线两个免费数据源均失败：{primary_error}；腾讯证券：{fallback_error}"
-                ) from fallback_error
+                bars, meta = super().get_bars(code, timeframe, limit)
+                if not meta.get("is_cached"):
+                    return bars, meta
+                if not cached_result or str(bars[-1]["time"]) > str(cached_result[0][-1]["time"]):
+                    cached_result = (bars, meta)
+                primary_failure = MarketDataError("东方财富失败，当前仅取得本地 K 线缓存")
+            except MarketDataError as exc:
+                primary_failure = exc
+
+        if ak is None:
+            if cached_result:
+                return cached_result
+            raise primary_failure or MarketDataError("K 线主数据源不可用")
+
+        try:
+            fetched_at = datetime.now()
+            prefix = infer_market(code).lower()
+            frame = ak.stock_zh_a_hist_tx(
+                symbol=f"{prefix}{code}",
+                start_date=(fetched_at - timedelta(days=3650)).strftime("%Y%m%d"),
+                end_date=fetched_at.strftime("%Y%m%d"),
+                adjust="qfq",
+                timeout=25,
+            )
+            bars = self._normalize_tx_bars(frame, timeframe)
+            if not bars:
+                raise MarketDataError("腾讯证券没有返回可用 K 线")
+            bars = bars[-max(1, min(limit, 2000)) :]
+            if cached_result and str(bars[-1]["time"]) < str(cached_result[0][-1]["time"]):
+                return cached_result
+            self._persist_bars(code, timeframe, bars, fetched_at)
+            return bars, _meta(
+                fetched_at,
+                cached=False,
+                source="AKShare / 腾讯证券（K 线备用）",
+                trade_date=str(bars[-1]["time"])[:10],
+            )
+        except Exception as fallback_error:
+            if cached_result:
+                return cached_result
+            raise MarketDataError(
+                f"K 线两个免费数据源均失败：{primary_failure}；腾讯证券：{fallback_error}"
+            ) from fallback_error
 
     @staticmethod
     def _normalize_tx_bars(

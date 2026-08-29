@@ -129,6 +129,8 @@ export default function StockDetailV2({
   useEffect(() => {
     setWatched(getWatchlist().includes(code))
     setBacktestResult(null)
+    setBarData(null)
+    setIntraday(null)
     void loadBase()
   }, [code, mode]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -324,6 +326,12 @@ export default function StockDetailV2({
                     {' · '}来源 {intraday.meta.source}
                   </Typography.Text>
                 )}
+                {timeframe !== 'intraday' && barData?.bars.length ? (
+                  <Typography.Text type="secondary">
+                    最新交易日 {barData.bars[barData.bars.length - 1].time.slice(0, 10)} · {barData.meta.is_cached ? '缓存数据' : '最新获取'}
+                    {' · '}来源 {barData.meta.source}
+                  </Typography.Text>
+                ) : null}
                 {timeframe !== 'intraday' && (
                   <Checkbox.Group
                     value={visibleMa}

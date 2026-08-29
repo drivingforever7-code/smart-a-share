@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-07-31",
+  "captured_at": "2026-08-01 02:56:53.746959",
+  "items": [
+    {
+      "discovery_date": "2026-07-31",
+      "mode": "short",
+      "rank": 1,
+      "code": "300981",
+      "name": "中红医疗",
+      "industry": null,
+      "discovery_price": 14.79,
+      "discovery_score": 67.5,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 2.98，成交活跃",
+        "上涨动能较强且未明显过热",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-07-31",
+      "mode": "short",
+      "rank": 2,
+      "code": "688635",
+      "name": "长进光子",
+      "industry": null,
+      "discovery_price": 210.0,
+      "discovery_score": 65.7,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.45，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-07-31",
+      "mode": "short",
+      "rank": 3,
+      "code": "301531",
+      "name": "春光集团",
+      "industry": null,
+      "discovery_price": 46.08,
+      "discovery_score": 65.3,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.26，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-07-31",
+      "mode": "swing",
+      "rank": 1,
+      "code": "002440",
+      "name": "闰土股份",
+      "industry": null,
+      "discovery_price": 13.71,
+      "discovery_score": 76.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 19.14、PB 1.56，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-07-31",
+      "mode": "swing",
+      "rank": 2,
+      "code": "000725",
+      "name": "京东方Ａ",
+      "industry": null,
+      "discovery_price": 5.51,
+      "discovery_score": 72.3,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-07-31",
+      "mode": "swing",
+      "rank": 3,
+      "code": "600428",
+      "name": "中远海特",
+      "industry": null,
+      "discovery_price": 11.31,
+      "discovery_score": 72.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 16.86、PB 1.91，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽",
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    }
+  ]
+}

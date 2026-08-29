@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 
 from contextlib import asynccontextmanager
+from datetime import datetime
 from typing import Literal
 
 from fastapi import FastAPI, HTTPException, Query, Request
@@ -34,12 +35,17 @@ from .ai_schemas import TradeReviewRequest
 from .board_pool_service import BoardPoolDataError, board_pool_research, capture_board_pools
 from .trade_review_service import review_trade
 from .config import settings
-from .data_source import MarketDataError
+from .data_source import MarketDataError, ak, safe_float
 from .data_refresh_service import refresh_all_data
 from .database import init_database
+from .ranking_archive_service import (
+    import_packaged_ranking_archives,
+    sync_ranking_archives,
+)
 from .ranking_optimizer_service import (
     ensure_baseline_versions,
     ranking_strategy_status,
+    ranking_strategy_version_detail,
     repair_unverified_training_samples,
 )
 from .intraday_service import get_intraday
@@ -65,6 +71,7 @@ from .strategy_service import (
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     init_database()
+    import_packaged_ranking_archives()
     repair_repeated_cached_discoveries()
     repair_unverified_training_samples()
     ensure_baseline_versions()
@@ -145,13 +152,25 @@ async def opportunities(
 async def automatic_backtest(
     days: int = Query(default=5, ge=1, le=30),
 ):
-    return await run_in_threadpool(auto_backtest, days)
+    archive_sync = await run_in_threadpool(sync_ranking_archives)
+    result = await run_in_threadpool(auto_backtest, days)
+    return {**result, "archive_sync": archive_sync}
 
 
 @app.get("/api/ranking-strategies/status", tags=["自动回测"])
 async def ranking_strategy_versions():
     return await run_in_threadpool(ranking_strategy_status)
 
+
+@app.get("/api/ranking-strategies/{mode}/versions/{version}", tags=["自动回测"])
+async def ranking_strategy_version(
+    mode: Literal["short", "swing"],
+    version: str,
+):
+    try:
+        return await run_in_threadpool(ranking_strategy_version_detail, mode, version)
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 @app.get("/api/limit-breaks", tags=["炸板研究"])
 async def limit_breaks(
@@ -210,7 +229,181 @@ async def stock_bars(
     if len(code) != 6 or not code.isdigit():
         raise HTTPException(status_code=422, detail="股票代码必须是 6 位数字")
     bars, meta = await run_in_threadpool(data_source.get_bars, code, timeframe, limit)
+    if timeframe == "day":
+        bars, meta = await run_in_threadpool(
+            _merge_current_daily_quote,
+            code,
+            bars,
+            meta,
+            limit,
+        )
+    if bars:
+        meta = {**meta, "trade_date": str(bars[-1]["time"])[:10]}
     return {"code": code, "timeframe": timeframe, "bars": bars, "meta": meta}
+
+
+def _merge_current_daily_quote(
+    code: str,
+    bars: list[dict],
+    meta: dict,
+    limit: int,
+) -> tuple[list[dict], dict]:
+    """历史日线盘中滞后时，用已校验交易日的实时 OHLC 补齐最后一根。"""
+    if not bars:
+        return bars, meta
+    last_date = str(bars[-1].get("time", ""))[:10]
+    expected_date = data_source._resolve_trade_date(datetime.now())
+    if not expected_date or last_date >= expected_date:
+        return bars, meta
+
+    # 分钟线是按股票请求，通常比全市场实时接口更快，也能完整还原当日 OHLC。
+    try:
+        minute_bars, minute_meta = data_source.get_bars(code, "1m", 500)
+        current_minutes = [
+            item for item in minute_bars if str(item.get("time", ""))[:10] == expected_date
+        ]
+    except MarketDataError:
+        current_minutes = []
+        minute_meta = {}
+    if current_minutes:
+        amounts = [safe_float(item.get("amount")) for item in current_minutes]
+        live_bar = {
+            "time": expected_date,
+            "open": safe_float(current_minutes[0].get("open")),
+            "high": max(safe_float(item.get("high")) or 0 for item in current_minutes),
+            "low": min(
+                value
+                for item in current_minutes
+                if (value := safe_float(item.get("low"))) is not None
+            ),
+            "close": safe_float(current_minutes[-1].get("close")),
+            "volume": sum(safe_float(item.get("volume")) or 0 for item in current_minutes),
+            "amount": sum(value for value in amounts if value is not None) or None,
+        }
+        if None not in {
+            live_bar["open"],
+            live_bar["high"],
+            live_bar["low"],
+            live_bar["close"],
+        } and live_bar["volume"] > 0:
+            merged = [*bars, live_bar][-max(1, min(limit, 2000)) :]
+            return merged, {
+                **meta,
+                "source": f"{meta.get('source', '历史行情')}；当日 K 线由{minute_meta.get('source', '分钟行情')}聚合",
+                "quote_time": str(current_minutes[-1].get("time", "")),
+                "trade_date": expected_date,
+                "is_cached": bool(minute_meta.get("is_cached")),
+                "fetched_at": minute_meta.get("fetched_at", meta.get("fetched_at")),
+                "cache_age_seconds": minute_meta.get("cache_age_seconds", 0),
+            }
+
+    individual_result = _fetch_individual_daily_bar(code, expected_date)
+    if individual_result:
+        live_bar, live_meta = individual_result
+        merged = [*bars, live_bar][-max(1, min(limit, 2000)) :]
+        return merged, {
+            **meta,
+            "source": f"{meta.get('source', '历史行情')}；当日 K 线使用{live_meta['source']}补齐",
+            "quote_time": live_meta["quote_time"],
+            "trade_date": expected_date,
+            "is_cached": False,
+            "fetched_at": live_meta["fetched_at"],
+            "cache_age_seconds": 0,
+        }
+
+    try:
+        quotes, quote_meta = data_source.get_spot_quotes(force=False)
+        if quote_meta.get("trade_date") != expected_date:
+            quotes, quote_meta = data_source.get_spot_quotes(force=True)
+    except MarketDataError:
+        return bars, meta
+    if quote_meta.get("trade_date") != expected_date:
+        return bars, meta
+
+    quote = next((item for item in quotes if item.get("code") == code), None)
+    if not quote:
+        return bars, meta
+    open_price = safe_float(quote.get("open"))
+    high = safe_float(quote.get("high"))
+    low = safe_float(quote.get("low"))
+    close = safe_float(quote.get("price"))
+    volume = safe_float(quote.get("volume"))
+    if None in {open_price, high, low, close, volume}:
+        return bars, meta
+    if min(open_price, high, low, close, volume) <= 0:
+        return bars, meta
+    if high < max(open_price, close) or low > min(open_price, close):
+        return bars, meta
+
+    live_bar = {
+        "time": expected_date,
+        "open": open_price,
+        "high": high,
+        "low": low,
+        "close": close,
+        "volume": volume,
+        "amount": safe_float(quote.get("amount")),
+    }
+    merged = [*bars, live_bar][-max(1, min(limit, 2000)) :]
+    return merged, {
+        **meta,
+        "source": f"{meta.get('source', '历史行情')}；当日 K 线使用{quote_meta.get('source', '实时行情')}补齐",
+        "quote_time": quote.get("quote_time") or quote_meta.get("fetched_at"),
+        "trade_date": expected_date,
+        "is_cached": bool(quote_meta.get("is_cached")),
+        "fetched_at": quote_meta.get("fetched_at", meta.get("fetched_at")),
+        "cache_age_seconds": quote_meta.get("cache_age_seconds", 0),
+    }
+
+
+def _fetch_individual_daily_bar(
+    code: str,
+    trade_date: str,
+) -> tuple[dict, dict] | None:
+    """用轻量个股盘口接口获取当日 OHLC，避免全市场接口失败拖累日 K。"""
+    if ak is None:
+        return None
+    for _attempt in range(4):
+        try:
+            frame = ak.stock_bid_ask_em(symbol=code)
+            if frame is None or frame.empty:
+                continue
+            values = {
+                str(item.get("item", "")): item.get("value")
+                for item in frame.to_dict(orient="records")
+            }
+            open_price = safe_float(values.get("今开"))
+            high = safe_float(values.get("最高"))
+            low = safe_float(values.get("最低"))
+            close = safe_float(values.get("最新"))
+            volume = safe_float(values.get("总手"))
+            amount = safe_float(values.get("金额"))
+            if None in {open_price, high, low, close, volume}:
+                continue
+            if min(open_price, high, low, close, volume) <= 0:
+                continue
+            if high < max(open_price, close) or low > min(open_price, close):
+                continue
+            fetched_at = datetime.now().isoformat(timespec="seconds")
+            return (
+                {
+                    "time": trade_date,
+                    "open": open_price,
+                    "high": high,
+                    "low": low,
+                    "close": close,
+                    "volume": volume,
+                    "amount": amount,
+                },
+                {
+                    "source": "AKShare / 东方财富个股盘口",
+                    "quote_time": fetched_at,
+                    "fetched_at": fetched_at,
+                },
+            )
+        except Exception:
+            continue
+    return None
 
 
 @app.post("/api/screener", tags=["选股"])

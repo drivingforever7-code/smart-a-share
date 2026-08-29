@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-08-03",
+  "captured_at": "2026-08-03 17:24:45.523258",
+  "items": [
+    {
+      "discovery_date": "2026-08-03",
+      "mode": "short",
+      "rank": 1,
+      "code": "600298",
+      "name": "安琪酵母",
+      "industry": null,
+      "discovery_price": 42.9,
+      "discovery_score": 63.7,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.36，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-08-03",
+      "mode": "short",
+      "rank": 2,
+      "code": "600593",
+      "name": "大连圣亚",
+      "industry": null,
+      "discovery_price": 39.28,
+      "discovery_score": 62.9,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.53，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-08-03",
+      "mode": "short",
+      "rank": 3,
+      "code": "688017",
+      "name": "绿的谐波",
+      "industry": null,
+      "discovery_price": 311.95,
+      "discovery_score": 62.8,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 1.50，成交活跃",
+        "接近阶段新高，存在突破特征",
+        "当前规则风险可控"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-08-03",
+      "mode": "swing",
+      "rank": 1,
+      "code": "600428",
+      "name": "中远海特",
+      "industry": null,
+      "discovery_price": 11.35,
+      "discovery_score": 72.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 16.92、PB 1.92，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-08-03",
+      "mode": "swing",
+      "rank": 2,
+      "code": "603259",
+      "name": "药明康德",
+      "industry": null,
+      "discovery_price": 128.5,
+      "discovery_score": 71.8,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-08-03",
+      "mode": "swing",
+      "rank": 3,
+      "code": "002440",
+      "name": "闰土股份",
+      "industry": null,
+      "discovery_price": 12.99,
+      "discovery_score": 70.8,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 18.13、PB 1.47，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    }
+  ]
+}

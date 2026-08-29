@@ -15,6 +15,8 @@ import {
   Card,
   Collapse,
   Col,
+  Descriptions,
+  Modal,
   Popconfirm,
   Row,
   Progress,
@@ -33,6 +35,7 @@ import type {
   AutoBacktestResponse,
   AutoBacktestSummary,
   RankingStrategyStatus,
+  RankingStrategyVersionDetail,
 } from '../autoBacktestTypes'
 import DataState, { DataNotice } from '../components/DataState'
 import Disclaimer from '../components/Disclaimer'
@@ -73,14 +76,64 @@ function EvolutionCard({
   status: RankingStrategyStatus
 }) {
   const latest = status.recent_runs[0]
+  const latestOptimization = status.recent_runs.find((run) => Boolean(run.candidate_version))
   const auditedRun = status.recent_runs.find((run) => (run.audit_samples?.length ?? 0) > 0)
   const modeName = mode === 'short' ? '短线' : '波段'
+  const [selectedVersionName, setSelectedVersionName] = useState<string | null>(null)
+  const [versionDetail, setVersionDetail] = useState<RankingStrategyVersionDetail | null>(null)
+  const [versionLoading, setVersionLoading] = useState(false)
+  const [versionError, setVersionError] = useState<string | null>(null)
+  const [showActualResults, setShowActualResults] = useState(false)
+
+  const openVersion = async (version: string) => {
+    setSelectedVersionName(version)
+    setVersionDetail(null)
+    setVersionError(null)
+    setShowActualResults(false)
+    setVersionLoading(true)
+    try {
+      setVersionDetail(await api.rankingStrategyVersion(mode, version))
+    } catch (error) {
+      setVersionError(error instanceof Error ? error.message : '版本详情加载失败')
+    } finally {
+      setVersionLoading(false)
+    }
+  }
+
+  const closeVersion = () => {
+    setSelectedVersionName(null)
+    setVersionDetail(null)
+    setVersionError(null)
+    setShowActualResults(false)
+  }
+
+  const latestVersionName = latestOptimization?.candidate_version ?? status.active_version
   return (
     <Card className={`content-card strategy-evolution strategy-evolution--${mode}`}>
       <Space direction="vertical" size={10} style={{ width: '100%' }}>
         <Space wrap>
           <Typography.Text strong>{modeName}策略进化</Typography.Text>
-          <Tag color={mode === 'short' ? 'cyan' : 'purple'}>{strategyVersionLabel(status.active_version)}</Tag>
+          <Tag
+            color={mode === 'short' ? 'cyan' : 'purple'}
+            onClick={() => void openVersion(latestVersionName)}
+            style={{ cursor: 'pointer' }}
+            title="点击查看该版本数据"
+          >
+            最新优化 {strategyVersionLabel(latestVersionName)}
+          </Tag>
+          <Tag
+            color="success"
+            onClick={() => void openVersion(status.active_version)}
+            style={{ cursor: 'pointer' }}
+            title="点击查看当前生效版本数据"
+          >
+            当前生效 {strategyVersionLabel(status.active_version)}
+          </Tag>
+          {latestOptimization && (
+            <Tag color={latestOptimization.status === 'activated' ? 'success' : 'error'}>
+              {latestOptimization.status === 'activated' ? '验证通过' : '验证未通过'}
+            </Tag>
+          )}
           <Tag color={status.matured_samples > 0 ? 'success' : 'warning'}>
             成熟 {status.matured_samples}/{status.required_samples}
           </Tag>
@@ -113,8 +166,8 @@ function EvolutionCard({
         </div>
         <div>
           <Space style={{ width: '100%', justifyContent: 'space-between' }}>
-            <Typography.Text type="secondary">交易日</Typography.Text>
-            <Typography.Text>{status.trading_days}/{status.required_days}</Typography.Text>
+            <Typography.Text type="secondary">覆盖交易日（仅作可信度参考）</Typography.Text>
+            <Typography.Text>{status.trading_days} 日（建议 ≥{status.required_days}）</Typography.Text>
           </Space>
           <Progress
             percent={status.day_progress_pct}
@@ -165,12 +218,92 @@ function EvolutionCard({
         )}
         <Space size={[6, 6]} wrap>
           {status.versions.slice(0, 5).map((version) => (
-            <Tag key={version.version} color={version.is_active ? 'success' : version.status === 'rejected' ? 'error' : 'default'}>
+            <Tag
+              key={version.version}
+              color={version.is_active ? 'success' : version.status === 'rejected' ? 'error' : 'default'}
+              onClick={() => void openVersion(version.version)}
+              style={{ cursor: 'pointer' }}
+              title="点击查看该版本指标"
+            >
               {strategyVersionLabel(version.version)} · {version.is_active ? '使用中' : version.status === 'rejected' ? '未通过' : '历史'}
             </Tag>
           ))}
         </Space>
       </Space>
+      <Modal
+        open={selectedVersionName !== null}
+        onCancel={closeVersion}
+        footer={null}
+        width={1080}
+        title={selectedVersionName ? `${strategyVersionLabel(selectedVersionName)} 版本详情` : '版本详情'}
+      >
+        {versionLoading && <Alert type="info" showIcon message="正在加载该版本的训练、验证和实际选股结果…" />}
+        {versionError && <Alert type="error" showIcon message="版本详情加载失败" description={versionError} />}
+        {versionDetail && (
+          <Space direction="vertical" size={16} style={{ width: '100%' }}>
+            <Descriptions
+              bordered
+              size="small"
+              column={{ xs: 1, sm: 2, lg: 3 }}
+              items={[
+                { key: 'status', label: '状态', children: versionDetail.is_active ? '当前生效' : versionDetail.status === 'rejected' ? '验证未通过' : '历史版本' },
+                { key: 'train', label: '训练样本', children: versionDetail.train_samples },
+                { key: 'validation', label: '验证样本', children: versionDetail.validation_samples },
+                { key: 'return', label: '验证平均收益', children: formatPercent(versionDetail.validation_mean_return ?? null, true) },
+                { key: 'success', label: '验证成功率', children: formatPercent(versionDetail.validation_positive_rate ?? null, false) },
+                { key: 'drawdown', label: '验证平均最大回撤', children: formatPercent(versionDetail.validation_mean_drawdown ?? null, true) },
+                { key: 'returnChange', label: '相对收益变化', children: formatPercent(versionDetail.run?.metrics.return_improvement ?? null, true) },
+                { key: 'successChange', label: '成功率变化', children: formatPercent(versionDetail.run?.metrics.positive_rate_change ?? null, true) },
+                { key: 'drawdownChange', label: '回撤变化', children: formatPercent(versionDetail.run?.metrics.drawdown_change ?? null, true) },
+                { key: 'runDate', label: '优化日期', children: versionDetail.run?.run_date ?? '--' },
+                { key: 'through', label: '训练截止', children: versionDetail.trained_through ?? '--' },
+                { key: 'model', label: '模型', children: versionDetail.run?.metrics.model ?? '初始规则版本' },
+              ]}
+            />
+            <Alert
+              type={versionDetail.is_active ? 'success' : 'info'}
+              showIcon
+              message={versionDetail.notes}
+              description={versionDetail.run?.reason}
+            />
+            <Button
+              type="primary"
+              onClick={() => setShowActualResults((value) => !value)}
+              disabled={versionDetail.actual_results.length === 0}
+            >
+              {showActualResults ? '收起实际选股结果' : `查看实际选股结果（${versionDetail.actual_results.length} 条）`}
+            </Button>
+            {versionDetail.actual_results.length === 0 && (
+              <Typography.Text type="secondary">初始版本没有独立候选回测记录。</Typography.Text>
+            )}
+            {showActualResults && (
+              <Table
+                rowKey={(row) => `${row.sample_date}-${row.code}-${row.split}`}
+                size="small"
+                scroll={{ x: 820 }}
+                pagination={{ pageSize: 12 }}
+                dataSource={versionDetail.actual_results}
+                columns={[
+                  { title: '发现日期', dataIndex: 'sample_date', width: 110 },
+                  { title: '分组', dataIndex: 'split', width: 80, render: (value) => value === 'train' ? '训练' : '验证' },
+                  { title: '实际选股', render: (_, row) => `${row.name} ${row.code}`, width: 180 },
+                  { title: '最终涨跌', render: (_, row) => formatPercent(row.labels.return_pct ?? null, true), width: 110 },
+                  { title: '最大回撤', render: (_, row) => formatPercent(row.labels.max_drawdown_pct ?? null, true), width: 110 },
+                  { title: '结果', render: (_, row) => row.labels.positive ? <Tag color="success">成功</Tag> : <Tag color="error">未成功</Tag>, width: 90 },
+                  { title: '模型得分', dataIndex: 'candidate_score', render: (value) => value?.toFixed(2) ?? '--', width: 100 },
+                ]}
+                expandable={{
+                  expandedRowRender: (row) => (
+                    <Typography.Text>
+                      后续走势：{row.observations.map((item) => `${item.date} ${item.return_pct.toFixed(2)}%`).join('；')}
+                    </Typography.Text>
+                  ),
+                }}
+              />
+            )}
+          </Space>
+        )}
+      </Modal>
     </Card>
   )
 }

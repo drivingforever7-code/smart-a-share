@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-08-14",
+  "captured_at": "2026-08-16 18:24:12.571371",
+  "items": [
+    {
+      "discovery_date": "2026-08-14",
+      "mode": "short",
+      "rank": 1,
+      "code": "300907",
+      "name": "康平科技",
+      "industry": null,
+      "discovery_price": 50.53,
+      "discovery_score": 69.8,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.86，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-08-14",
+      "mode": "short",
+      "rank": 2,
+      "code": "002552",
+      "name": "宝鼎科技",
+      "industry": null,
+      "discovery_price": 60.65,
+      "discovery_score": 67.8,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.25，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-08-14",
+      "mode": "short",
+      "rank": 3,
+      "code": "002353",
+      "name": "杰瑞股份",
+      "industry": null,
+      "discovery_price": 150.99,
+      "discovery_score": 67.7,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.04，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-08-14",
+      "mode": "swing",
+      "rank": 1,
+      "code": "601886",
+      "name": "江河集团",
+      "industry": null,
+      "discovery_price": 11.75,
+      "discovery_score": 75.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 18.42、PB 1.84，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽",
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-08-14",
+      "mode": "swing",
+      "rank": 2,
+      "code": "002440",
+      "name": "闰土股份",
+      "industry": null,
+      "discovery_price": 12.37,
+      "discovery_score": 74.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 17.27、PB 1.40，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-08-14",
+      "mode": "swing",
+      "rank": 3,
+      "code": "000703",
+      "name": "恒逸石化",
+      "industry": null,
+      "discovery_price": 16.78,
+      "discovery_score": 71.7,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 10.81、PB 2.15，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    }
+  ]
+}

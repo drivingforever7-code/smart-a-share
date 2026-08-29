@@ -71,4 +71,10 @@ def get_intraday(code: str) -> dict[str, Any]:
                 "volume": volume,
             }
         )
+    latest_time = points[-1]["time"] if points else None
+    meta = {
+        **meta,
+        "quote_time": latest_time,
+        "trade_date": latest_date,
+    }
     return {"code": code, "date": latest_date, "points": points, "meta": meta}

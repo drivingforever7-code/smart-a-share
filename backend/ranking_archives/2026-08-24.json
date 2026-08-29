@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-08-24",
+  "captured_at": "2026-08-25 09:18:20.470647",
+  "items": [
+    {
+      "discovery_date": "2026-08-24",
+      "mode": "short",
+      "rank": 1,
+      "code": "920438",
+      "name": "戈碧迦",
+      "industry": null,
+      "discovery_price": 110.0,
+      "discovery_score": 58.0,
+      "recommendation": "暂不建议",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "上涨动能较强且未明显过热",
+        "依据盘中和阶段涨幅估算，打开详情后补充均线"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-08-24",
+      "mode": "short",
+      "rank": 2,
+      "code": "688828",
+      "name": "国仪公司-U",
+      "industry": null,
+      "discovery_price": 100.88,
+      "discovery_score": 58.0,
+      "recommendation": "暂不建议",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "上涨动能较强且未明显过热",
+        "依据盘中和阶段涨幅估算，打开详情后补充均线"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-08-24",
+      "mode": "short",
+      "rank": 3,
+      "code": "688710",
+      "name": "益诺思",
+      "industry": null,
+      "discovery_price": 93.89,
+      "discovery_score": 58.0,
+      "recommendation": "暂不建议",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "上涨动能较强且未明显过热",
+        "依据盘中和阶段涨幅估算，打开详情后补充均线"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-08-24",
+      "mode": "swing",
+      "rank": 1,
+      "code": "002440",
+      "name": "闰土股份",
+      "industry": null,
+      "discovery_price": 12.4,
+      "discovery_score": 69.0,
+      "recommendation": "建议观察",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 17.31、PB 1.41，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-08-24",
+      "mode": "swing",
+      "rank": 2,
+      "code": "603995",
+      "name": "甬金股份",
+      "industry": null,
+      "discovery_price": 25.22,
+      "discovery_score": 68.1,
+      "recommendation": "建议观察",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 15.20、PB 1.54，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-08-24",
+      "mode": "swing",
+      "rank": 3,
+      "code": "920038",
+      "name": "森合高科",
+      "industry": null,
+      "discovery_price": 39.21,
+      "discovery_score": 67.5,
+      "recommendation": "建议观察",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 14.79、PB 3.00，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    }
+  ]
+}

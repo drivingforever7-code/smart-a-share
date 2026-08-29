@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-08-18",
+  "captured_at": "2026-08-18 15:30:17.174491",
+  "items": [
+    {
+      "discovery_date": "2026-08-18",
+      "mode": "short",
+      "rank": 1,
+      "code": "300821",
+      "name": "东岳硅材",
+      "industry": null,
+      "discovery_price": 18.18,
+      "discovery_score": 69.2,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 2.58，成交活跃",
+        "当前规则风险可控",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；本地 SQLite 缓存；后台刷新中"
+    },
+    {
+      "discovery_date": "2026-08-18",
+      "mode": "short",
+      "rank": 2,
+      "code": "920126",
+      "name": "永大股份",
+      "industry": null,
+      "discovery_price": 10.6,
+      "discovery_score": 68.7,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.20，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；本地 SQLite 缓存；后台刷新中"
+    },
+    {
+      "discovery_date": "2026-08-18",
+      "mode": "short",
+      "rank": 3,
+      "code": "688630",
+      "name": "芯碁微装",
+      "industry": null,
+      "discovery_price": 471.2,
+      "discovery_score": 67.6,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.38，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；本地 SQLite 缓存；后台刷新中"
+    },
+    {
+      "discovery_date": "2026-08-18",
+      "mode": "swing",
+      "rank": 1,
+      "code": "000703",
+      "name": "恒逸石化",
+      "industry": null,
+      "discovery_price": 17.47,
+      "discovery_score": 74.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 11.25、PB 2.24，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；本地 SQLite 缓存；后台刷新中"
+    },
+    {
+      "discovery_date": "2026-08-18",
+      "mode": "swing",
+      "rank": 2,
+      "code": "601101",
+      "name": "昊华能源",
+      "industry": null,
+      "discovery_price": 13.03,
+      "discovery_score": 72.9,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；本地 SQLite 缓存；后台刷新中"
+    },
+    {
+      "discovery_date": "2026-08-18",
+      "mode": "swing",
+      "rank": 3,
+      "code": "601233",
+      "name": "桐昆股份",
+      "industry": null,
+      "discovery_price": 23.92,
+      "discovery_score": 72.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 17.14、PB 1.42，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；本地 SQLite 缓存；后台刷新中"
+    }
+  ]
+}

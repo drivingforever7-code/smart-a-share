@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-08-10",
+  "captured_at": "2026-08-10 19:19:33.460076",
+  "items": [
+    {
+      "discovery_date": "2026-08-10",
+      "mode": "short",
+      "rank": 1,
+      "code": "688131",
+      "name": "皓元医药",
+      "industry": null,
+      "discovery_price": 97.73,
+      "discovery_score": 70.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.82，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-08-10",
+      "mode": "short",
+      "rank": 2,
+      "code": "603228",
+      "name": "景旺电子",
+      "industry": null,
+      "discovery_price": 96.0,
+      "discovery_score": 68.9,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 2.26，成交活跃",
+        "上涨动能较强且未明显过热",
+        "当前规则风险可控"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-08-10",
+      "mode": "short",
+      "rank": 3,
+      "code": "300759",
+      "name": "康龙化成",
+      "industry": null,
+      "discovery_price": 47.03,
+      "discovery_score": 68.7,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.78，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-08-10",
+      "mode": "swing",
+      "rank": 1,
+      "code": "601101",
+      "name": "昊华能源",
+      "industry": null,
+      "discovery_price": 13.39,
+      "discovery_score": 74.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-08-10",
+      "mode": "swing",
+      "rank": 2,
+      "code": "000703",
+      "name": "恒逸石化",
+      "industry": null,
+      "discovery_price": 18.18,
+      "discovery_score": 72.6,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽",
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-08-10",
+      "mode": "swing",
+      "rank": 3,
+      "code": "603995",
+      "name": "甬金股份",
+      "industry": null,
+      "discovery_price": 24.73,
+      "discovery_score": 72.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 15.77、PB 1.59，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    }
+  ]
+}

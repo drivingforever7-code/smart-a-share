@@ -24,7 +24,7 @@ import type {
   AiServiceStatus,
 } from './aiTypes'
 import type { StrategyLabResult } from './labTypes'
-import type { AutoBacktestResponse } from './autoBacktestTypes'
+import type { AutoBacktestResponse, RankingStrategyVersionDetail } from './autoBacktestTypes'
 import type { LimitBreakResponse } from './limitBreakTypes'
 import type { BoardPoolResponse } from './boardPoolTypes'
 import type { TradeReviewPayload, TradeReviewResult } from './tradeReviewTypes'
@@ -74,6 +74,11 @@ export const api = {
   autoBacktest: (days = 5) =>
     request<AutoBacktestResponse>(`/auto-backtest?days=${days}`),
 
+  rankingStrategyVersion: (mode: ScoreMode, version: string) =>
+    request<RankingStrategyVersionDetail>(
+      `/ranking-strategies/${mode}/versions/${encodeURIComponent(version)}`,
+    ),
+
   limitBreaks: (days = 5, refresh = false) =>
     request<LimitBreakResponse>(`/limit-breaks?days=${days}&refresh=${refresh}`),
 
@@ -97,6 +102,7 @@ export const api = {
   bars: (code: string, timeframe: string, limit = 250) =>
     request<BarResponse>(
       `/stocks/${code}/bars?timeframe=${encodeURIComponent(timeframe)}&limit=${limit}`,
+      { cache: 'no-store' },
     ),
 
   screen: (filters: ScreenerFilters) =>
@@ -112,7 +118,7 @@ export const api = {
     }),
 
   intraday: (code: string) =>
-    request<IntradayResponse>(`/stocks/${code}/intraday`),
+    request<IntradayResponse>(`/stocks/${code}/intraday`, { cache: 'no-store' }),
 
   strategies: () => request<StrategyDefinition[]>('/strategies'),
 

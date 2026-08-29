@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-08-04",
+  "captured_at": "2026-08-04 18:53:27.756320",
+  "items": [
+    {
+      "discovery_date": "2026-08-04",
+      "mode": "short",
+      "rank": 1,
+      "code": "603823",
+      "name": "百合花",
+      "industry": null,
+      "discovery_price": 52.76,
+      "discovery_score": 71.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 2.25，成交活跃",
+        "当前规则风险可控",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-08-04",
+      "mode": "short",
+      "rank": 2,
+      "code": "600664",
+      "name": "哈药股份",
+      "industry": null,
+      "discovery_price": 6.22,
+      "discovery_score": 70.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.39，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-08-04",
+      "mode": "short",
+      "rank": 3,
+      "code": "688507",
+      "name": "索辰科技",
+      "industry": null,
+      "discovery_price": 152.46,
+      "discovery_score": 68.4,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.20，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-08-04",
+      "mode": "swing",
+      "rank": 1,
+      "code": "000725",
+      "name": "京东方Ａ",
+      "industry": null,
+      "discovery_price": 5.57,
+      "discovery_score": 72.4,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-08-04",
+      "mode": "swing",
+      "rank": 2,
+      "code": "002440",
+      "name": "闰土股份",
+      "industry": null,
+      "discovery_price": 12.8,
+      "discovery_score": 71.9,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 17.87、PB 1.45，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-08-04",
+      "mode": "swing",
+      "rank": 3,
+      "code": "003013",
+      "name": "地铁设计",
+      "industry": null,
+      "discovery_price": 18.09,
+      "discovery_score": 71.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 17.34、PB 2.58，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    }
+  ]
+}
