@@ -137,7 +137,7 @@ export interface RankingStrategyVersionDetail extends RankingStrategyVersion {
   } | null
   actual_results: Array<{
     sample_date: string
-    split: 'train' | 'validation' | 'matured' | 'tracking'
+    split: 'train' | 'validation' | 'matured' | 'tracking' | 'archived'
     code: string
     name: string
     features: Record<string, unknown>

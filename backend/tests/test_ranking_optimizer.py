@@ -526,3 +526,58 @@ def test_baseline_version_detail_summarizes_real_swing_tracking_samples(
     assert next(row for row in detail["actual_results"] if row["code"] == "600002")[
         "current_return_pct"
     ] == 4
+
+
+def test_baseline_version_detail_falls_back_to_archived_discoveries(
+    isolated_database,
+):
+    service.ensure_baseline_versions()
+    with isolated_database.begin() as session:
+        session.add_all(
+            [
+                service.RankingDiscovery(
+                    discovery_date="2026-08-27",
+                    mode="swing",
+                    rank=1,
+                    code="600010",
+                    name="归档甲",
+                    industry="软件",
+                    discovery_price=10,
+                    discovery_score=82,
+                    recommendation="建议观察",
+                    confidence=76,
+                    reasons_json="[]",
+                    risks_json="[]",
+                    quote_time="2026-08-27 15:05:00",
+                    source="GitHub 每日归档",
+                    discovered_at=datetime.now(),
+                ),
+                service.RankingDiscovery(
+                    discovery_date="2026-08-28",
+                    mode="swing",
+                    rank=2,
+                    code="600011",
+                    name="归档乙",
+                    industry="电子",
+                    discovery_price=12,
+                    discovery_score=79,
+                    recommendation="建议观察",
+                    confidence=72,
+                    reasons_json="[]",
+                    risks_json="[]",
+                    quote_time="2026-08-28 15:05:00",
+                    source="GitHub 每日归档",
+                    discovered_at=datetime.now(),
+                ),
+            ]
+        )
+
+    detail = service.ranking_strategy_version_detail("swing", "swing-v1.0")
+
+    assert detail["sample_summary"]["available_samples"] == 2
+    assert detail["sample_summary"]["pending_samples"] == 2
+    assert detail["sample_summary"]["max_observations"] == 0
+    assert detail["sample_summary"]["data_through"] == "2026-08-28"
+    assert len(detail["actual_results"]) == 2
+    assert {row["split"] for row in detail["actual_results"]} == {"archived"}
+    assert detail["actual_results"][0]["features"]["data_quality"] == "archived_top3"

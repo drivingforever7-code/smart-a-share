@@ -268,7 +268,7 @@ function EvolutionCard({
               type={versionDetail.is_active ? 'success' : 'info'}
               showIcon
               message={versionDetail.notes}
-              description={provisionalSummary ? `尚未达到正式优化门槛；以下为截至 ${provisionalSummary.data_through ?? ''} 的真实阶段跟踪，不是样本外验证结论。最长已观察 ${provisionalSummary.max_observations}/${provisionalSummary.target_observations} 个有效交易日。` : versionDetail.run?.reason}
+              description={provisionalSummary ? (provisionalSummary.max_observations === 0 ? `已从每日归档恢复 ${provisionalSummary.available_samples} 条真实前三记录；尚未形成逐日观察，不计入正式验证或模型训练。` : `尚未达到正式优化门槛；以下为截至 ${provisionalSummary.data_through ?? ''} 的真实阶段跟踪，不是样本外验证结论。最长已观察 ${provisionalSummary.max_observations}/${provisionalSummary.target_observations} 个有效交易日。`) : versionDetail.run?.reason}
             />
             <Button
               type="primary"
@@ -289,11 +289,11 @@ function EvolutionCard({
                 dataSource={versionDetail.actual_results}
                 columns={[
                   { title: '发现日期', dataIndex: 'sample_date', width: 110 },
-                  { title: '状态', dataIndex: 'split', width: 90, render: (value) => value === 'train' ? '训练' : value === 'validation' ? '验证' : value === 'matured' ? '已成熟' : '跟踪中' },
+                  { title: '状态', dataIndex: 'split', width: 90, render: (value) => value === 'train' ? '训练' : value === 'validation' ? '验证' : value === 'matured' ? '已成熟' : value === 'tracking' ? '跟踪中' : '已归档' },
                   { title: '实际选股', render: (_, row) => `${row.name} ${row.code}`, width: 180 },
                   { title: '阶段/最终涨跌', render: (_, row) => formatPercent(row.labels.return_pct ?? row.current_return_pct ?? null, true), width: 125 },
                   { title: '最大回撤', render: (_, row) => formatPercent(row.labels.max_drawdown_pct ?? null, true), width: 110 },
-                  { title: '结果', render: (_, row) => row.labels.positive == null ? <Tag>跟踪中</Tag> : row.labels.positive ? <Tag color="success">成功</Tag> : <Tag color="error">未成功</Tag>, width: 90 },
+                  { title: '结果', render: (_, row) => row.split === 'archived' ? <Tag color="blue">待观察</Tag> : row.labels.positive == null ? <Tag>跟踪中</Tag> : row.labels.positive ? <Tag color="success">成功</Tag> : <Tag color="error">未成功</Tag>, width: 90 },
                   { title: '观察进度', render: (_, row) => `${row.observation_count}/${row.target_observations}`, width: 95 },
                   { title: '模型得分', dataIndex: 'candidate_score', render: (value) => value?.toFixed(2) ?? '--', width: 100 },
                 ]}

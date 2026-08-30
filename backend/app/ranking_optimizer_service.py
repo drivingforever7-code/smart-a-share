@@ -13,6 +13,7 @@ import numpy as np
 from sqlalchemy import delete, desc, func, or_, select
 
 from .database import (
+    RankingDiscovery,
     RankingOptimizationAudit,
     RankingOptimizationRun,
     RankingStrategyVersion,
@@ -1120,6 +1121,20 @@ def ranking_strategy_version_detail(mode: str, version: str) -> dict[str, Any]:
                 )
             )
         )
+        archived_discoveries = (
+            list(
+                session.scalars(
+                    select(RankingDiscovery)
+                    .where(RankingDiscovery.mode == mode)
+                    .order_by(
+                        RankingDiscovery.discovery_date,
+                        RankingDiscovery.rank,
+                    )
+                )
+            )
+            if not samples and version == _baseline_version(mode)
+            else []
+        )
         sample_ids = [sample.id for sample in samples]
         observations = (
             list(
@@ -1147,14 +1162,16 @@ def ranking_strategy_version_detail(mode: str, version: str) -> dict[str, Any]:
             if observations_by_sample[sample.id]
         ]
 
+        available_samples = len(samples) if samples else len(archived_discoveries)
+
         def average(values: list[float]) -> float | None:
             return round(sum(values) / len(values), 4) if values else None
 
         sample_summary = {
             "data_status": "validated" if run is not None else "provisional",
-            "available_samples": len(samples),
+            "available_samples": available_samples,
             "matured_samples": len(matured_samples),
-            "pending_samples": len(pending_samples),
+            "pending_samples": len(pending_samples) + len(archived_discoveries),
             "observed_pending_samples": sum(
                 1 for sample in pending_samples if observations_by_sample[sample.id]
             ),
@@ -1196,6 +1213,7 @@ def ranking_strategy_version_detail(mode: str, version: str) -> dict[str, Any]:
                 [
                     *[sample.sample_date for sample in samples],
                     *[observation.observation_date for observation in observations],
+                    *[row.discovery_date for row in archived_discoveries],
                 ],
                 default=None,
             ),
@@ -1230,6 +1248,33 @@ def ranking_strategy_version_detail(mode: str, version: str) -> dict[str, Any]:
                     "current_return_pct": rows[-1].return_pct if rows else None,
                     "observation_count": len(rows),
                     "target_observations": sample.target_observations,
+                }
+            )
+        for row in archived_discoveries:
+            sample_results.append(
+                {
+                    "sample_date": row.discovery_date,
+                    "split": "archived",
+                    "code": row.code,
+                    "name": row.name,
+                    "features": {
+                        "base_score": round(row.discovery_score / 100, 6),
+                        "confidence": round(row.confidence / 100, 6),
+                        "industry": row.industry,
+                        "archive_source": row.source,
+                        "data_quality": "archived_top3",
+                    },
+                    "observations": [],
+                    "labels": {
+                        "return_pct": None,
+                        "max_drawdown_pct": None,
+                        "positive": None,
+                    },
+                    "candidate_score": row.discovery_score,
+                    "candidate_rank": row.rank,
+                    "current_return_pct": None,
+                    "observation_count": 0,
+                    "target_observations": MODE_RULES[mode]["horizon"],
                 }
             )
 
