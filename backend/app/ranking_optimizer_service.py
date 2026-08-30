@@ -35,6 +35,10 @@ FEATURE_NAMES = (
     "liquidity",
     "valuation_quality",
     "risk_quality",
+    "news_sentiment",
+    "news_coverage",
+    "industry_strength",
+    "peer_relative_strength",
 )
 MODE_RULES = {
     "short": {
@@ -54,7 +58,7 @@ BASELINE_PARAMETERS = {
     "adjustment_scale": 1.5,
     "max_adjustment": 8.0,
 }
-MODEL_NAME = "multi_factor_return_success_ridge_v3"
+MODEL_NAME = "multi_factor_contextual_return_success_ridge_v4"
 THRESHOLD_POLICY = "return_success_drawdown10_v1"
 MIN_RETURN_IMPROVEMENT = 0.5
 MAX_DRAWDOWN_DETERIORATION = 10.0
@@ -194,12 +198,44 @@ def _active_version(mode: str) -> tuple[str, dict[str, Any]]:
     return row.version, parameters
 
 
+def _enrich_contextual_features(items: list[dict[str, Any]]) -> None:
+    groups: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for item in items:
+        industry = str(item.get("industry") or "unknown")
+        groups[industry].append(item)
+
+    for rows in groups.values():
+        peer_scores = [
+            _number(row.get("base_score", row.get("score")))
+            for row in rows
+        ]
+        peer_changes = [_number(row.get("change_pct")) for row in rows]
+        mean_score = sum(peer_scores) / len(peer_scores)
+        mean_change = sum(peer_changes) / len(peer_changes)
+        industry_strength = _clamp(
+            mean_score / 100 * 0.6 + _clamp(0.5 + mean_change / 20) * 0.4
+        )
+        for item, score, change in zip(rows, peer_scores, peer_changes, strict=True):
+            item["industry_strength"] = industry_strength
+            item["peer_relative_strength"] = (
+                _clamp(
+                    0.5
+                    + (score - mean_score) / 50 * 0.6
+                    + (change - mean_change) / 20 * 0.4
+                )
+                if len(rows) > 1
+                else 0.5
+            )
+
+
 def feature_snapshot(item: dict[str, Any]) -> dict[str, float]:
     turnover = _number(item.get("turnover_rate"))
     volume_ratio = _number(item.get("volume_ratio"))
     amount = max(_number(item.get("amount")), 1.0)
     pe = _number(item.get("pe"))
     pb = _number(item.get("pb"))
+    news_score = item.get("news_sentiment_score")
+    news_count = _number(item.get("news_sample_count"))
     valuation_parts = []
     if pe > 0:
         valuation_parts.append(1 - _clamp(abs(pe - 22) / 55))
@@ -217,8 +253,17 @@ def feature_snapshot(item: dict[str, Any]) -> dict[str, float]:
         "liquidity": round(_clamp((math.log10(amount) - 7) / 3), 6),
         "valuation_quality": round(valuation, 6),
         "risk_quality": round(1 - _clamp(len(item.get("risks") or []) / 4), 6),
+        "news_sentiment": round(
+            _clamp(_number(news_score) / 100) if news_score is not None else 0.5,
+            6,
+        ),
+        "news_coverage": round(_clamp(news_count / 3), 6),
+        "industry_strength": round(_clamp(_number(item.get("industry_strength"), 0.5)), 6),
+        "peer_relative_strength": round(
+            _clamp(_number(item.get("peer_relative_strength"), 0.5)),
+            6,
+        ),
     }
-
 
 def _expected_return(features: dict[str, float], parameters: dict[str, Any]) -> float:
     value = _number(parameters.get("intercept"))
@@ -724,6 +769,7 @@ def process_training_cycle(
 
     with SessionLocal.begin() as session:
         for mode in MODES:
+            _enrich_contextual_features(opportunities.get(mode, [])[:20])
             already_saved = session.scalar(
                 select(RankingTrainingSample.id).where(
                     RankingTrainingSample.sample_date == current_date_text,
@@ -1042,7 +1088,7 @@ def ranking_strategy_version_detail(mode: str, version: str) -> dict[str, Any]:
                 reverse=True,
             )[:3]
         }
-        actual_results = [
+        audited_results = [
             {
                 "sample_date": audit.sample_date,
                 "split": audit.split,
@@ -1052,10 +1098,141 @@ def ranking_strategy_version_detail(mode: str, version: str) -> dict[str, Any]:
                 "observations": json.loads(audit.observations_json),
                 "labels": json.loads(audit.labels_json),
                 "candidate_score": audit.candidate_score,
+                "candidate_rank": None,
+                "current_return_pct": json.loads(audit.labels_json).get("return_pct"),
+                "observation_count": len(json.loads(audit.observations_json)),
+                "target_observations": MODE_RULES[mode]["horizon"],
             }
             for audit in audits
             if audit.id in selected_ids
         ]
+
+        samples = list(
+            session.scalars(
+                select(RankingTrainingSample)
+                .where(
+                    RankingTrainingSample.mode == mode,
+                    RankingTrainingSample.strategy_version == version,
+                )
+                .order_by(
+                    RankingTrainingSample.sample_date,
+                    RankingTrainingSample.candidate_rank,
+                )
+            )
+        )
+        sample_ids = [sample.id for sample in samples]
+        observations = (
+            list(
+                session.scalars(
+                    select(RankingTrainingObservation)
+                    .where(RankingTrainingObservation.sample_id.in_(sample_ids))
+                    .order_by(
+                        RankingTrainingObservation.sample_id,
+                        RankingTrainingObservation.observation_date,
+                    )
+                )
+            )
+            if sample_ids
+            else []
+        )
+        observations_by_sample: dict[int, list[RankingTrainingObservation]] = defaultdict(list)
+        for observation in observations:
+            observations_by_sample[observation.sample_id].append(observation)
+
+        matured_samples = [sample for sample in samples if sample.matured]
+        pending_samples = [sample for sample in samples if not sample.matured]
+        latest_returns = [
+            observations_by_sample[sample.id][-1].return_pct
+            for sample in samples
+            if observations_by_sample[sample.id]
+        ]
+
+        def average(values: list[float]) -> float | None:
+            return round(sum(values) / len(values), 4) if values else None
+
+        sample_summary = {
+            "data_status": "validated" if run is not None else "provisional",
+            "available_samples": len(samples),
+            "matured_samples": len(matured_samples),
+            "pending_samples": len(pending_samples),
+            "observed_pending_samples": sum(
+                1 for sample in pending_samples if observations_by_sample[sample.id]
+            ),
+            "max_observations": max(
+                [0, *[len(observations_by_sample[sample.id]) for sample in samples]]
+            ),
+            "target_observations": MODE_RULES[mode]["horizon"],
+            "mean_return": average(
+                [
+                    _number(sample.label_return_pct)
+                    for sample in matured_samples
+                    if sample.label_return_pct is not None
+                ]
+            ),
+            "mean_drawdown": average(
+                [
+                    _number(sample.label_max_drawdown_pct)
+                    for sample in matured_samples
+                    if sample.label_max_drawdown_pct is not None
+                ]
+            ),
+            "positive_rate": (
+                round(
+                    sum(1 for sample in matured_samples if sample.label_positive)
+                    / len(matured_samples)
+                    * 100,
+                    2,
+                )
+                if matured_samples
+                else None
+            ),
+            "tracking_mean_return": average(latest_returns),
+            "tracking_positive_rate": (
+                round(sum(1 for value in latest_returns if value > 0) / len(latest_returns) * 100, 2)
+                if latest_returns
+                else None
+            ),
+            "data_through": max(
+                [
+                    *[sample.sample_date for sample in samples],
+                    *[observation.observation_date for observation in observations],
+                ],
+                default=None,
+            ),
+        }
+        sample_results = []
+        for sample in samples:
+            if sample.candidate_rank > 3:
+                continue
+            rows = observations_by_sample[sample.id]
+            sample_results.append(
+                {
+                    "sample_date": sample.sample_date,
+                    "split": "matured" if sample.matured else "tracking",
+                    "code": sample.code,
+                    "name": sample.name,
+                    "features": json.loads(sample.features_json),
+                    "observations": [
+                        {
+                            "date": observation.observation_date,
+                            "price": observation.price,
+                            "return_pct": observation.return_pct,
+                        }
+                        for observation in rows
+                    ],
+                    "labels": {
+                        "return_pct": sample.label_return_pct,
+                        "max_drawdown_pct": sample.label_max_drawdown_pct,
+                        "positive": sample.label_positive,
+                    },
+                    "candidate_score": sample.strategy_score,
+                    "candidate_rank": sample.candidate_rank,
+                    "current_return_pct": rows[-1].return_pct if rows else None,
+                    "observation_count": len(rows),
+                    "target_observations": sample.target_observations,
+                }
+            )
+
         return {
             "version": version_row.version,
             "mode": version_row.mode,
@@ -1074,6 +1251,7 @@ def ranking_strategy_version_detail(mode: str, version: str) -> dict[str, Any]:
             ),
             "notes": version_row.notes,
             "parameters": json.loads(version_row.parameters_json),
+            "sample_summary": sample_summary,
             "run": (
                 {
                     "run_date": run.run_date,
@@ -1087,7 +1265,7 @@ def ranking_strategy_version_detail(mode: str, version: str) -> dict[str, Any]:
                 if run is not None
                 else None
             ),
-            "actual_results": actual_results,
+            "actual_results": audited_results or sample_results,
         }
 
 def discovery_version_map(discovery_rows: list[Any]) -> dict[int, str]:

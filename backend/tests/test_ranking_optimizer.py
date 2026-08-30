@@ -204,7 +204,7 @@ def test_fit_parameters_records_multi_outcome_objective():
 
     parameters = service._fit_parameters(samples)
 
-    assert parameters["model"] == "multi_factor_return_success_ridge_v3"
+    assert parameters["model"] == "multi_factor_contextual_return_success_ridge_v4"
     assert parameters["objective"] == {
         "future_return_weight": 1.0,
         "max_drawdown_weight": 0.10,
@@ -417,3 +417,112 @@ def test_status_exposes_pending_observation_progress(
     assert status["swing"]["observed_pending_samples"] == 1
     assert status["swing"]["max_observations"] == 1
     assert status["swing"]["observation_progress_pct"] == 50.0
+
+
+def test_contextual_features_include_news_sector_and_peer_strength():
+    items = [
+        {
+            **opportunity("000001", 90),
+            "industry": "软件",
+            "change_pct": 6,
+            "news_sentiment_score": 80,
+            "news_sample_count": 3,
+        },
+        {
+            **opportunity("000002", 70),
+            "industry": "软件",
+            "change_pct": -2,
+        },
+    ]
+
+    service._enrich_contextual_features(items)
+    strong = service.feature_snapshot(items[0])
+    weak = service.feature_snapshot(items[1])
+
+    assert strong["news_sentiment"] == 0.8
+    assert strong["news_coverage"] == 1.0
+    assert weak["news_sentiment"] == 0.5
+    assert strong["industry_strength"] == weak["industry_strength"]
+    assert strong["peer_relative_strength"] > weak["peer_relative_strength"]
+
+
+def test_baseline_version_detail_summarizes_real_swing_tracking_samples(
+    isolated_database,
+):
+    service.ensure_baseline_versions()
+    with isolated_database.begin() as session:
+        mature = RankingTrainingSample(
+            sample_date="2026-08-01",
+            mode="swing",
+            code="600001",
+            name="成熟样本",
+            candidate_rank=1,
+            discovery_price=10,
+            base_score=82,
+            strategy_score=83,
+            strategy_version="swing-v1.0",
+            features_json=json.dumps({name: 0.5 for name in service.FEATURE_NAMES}),
+            target_observations=15,
+            matured=True,
+            label_return_pct=8,
+            label_max_drawdown_pct=-3,
+            label_positive=True,
+            matured_at=datetime.now(),
+            quote_time="2026-08-01 15:00:00",
+            source="测试源",
+            created_at=datetime.now(),
+        )
+        tracking = RankingTrainingSample(
+            sample_date="2026-08-20",
+            mode="swing",
+            code="600002",
+            name="跟踪样本",
+            candidate_rank=2,
+            discovery_price=10,
+            base_score=78,
+            strategy_score=79,
+            strategy_version="swing-v1.0",
+            features_json=json.dumps({name: 0.5 for name in service.FEATURE_NAMES}),
+            target_observations=15,
+            matured=False,
+            quote_time="2026-08-20 15:00:00",
+            source="测试源",
+            created_at=datetime.now(),
+        )
+        session.add_all([mature, tracking])
+        session.flush()
+        session.add_all(
+            [
+                service.RankingTrainingObservation(
+                    sample_id=mature.id,
+                    observation_date="2026-08-22",
+                    price=10.8,
+                    return_pct=8,
+                    quote_time="2026-08-22 15:00:00",
+                    created_at=datetime.now(),
+                ),
+                service.RankingTrainingObservation(
+                    sample_id=tracking.id,
+                    observation_date="2026-08-22",
+                    price=10.4,
+                    return_pct=4,
+                    quote_time="2026-08-22 15:00:00",
+                    created_at=datetime.now(),
+                ),
+            ]
+        )
+
+    detail = service.ranking_strategy_version_detail("swing", "swing-v1.0")
+
+    assert detail["run"] is None
+    assert detail["sample_summary"]["data_status"] == "provisional"
+    assert detail["sample_summary"]["available_samples"] == 2
+    assert detail["sample_summary"]["matured_samples"] == 1
+    assert detail["sample_summary"]["pending_samples"] == 1
+    assert detail["sample_summary"]["mean_return"] == 8
+    assert detail["sample_summary"]["tracking_mean_return"] == 6
+    assert len(detail["actual_results"]) == 2
+    assert {row["split"] for row in detail["actual_results"]} == {"matured", "tracking"}
+    assert next(row for row in detail["actual_results"] if row["code"] == "600002")[
+        "current_return_pct"
+    ] == 4

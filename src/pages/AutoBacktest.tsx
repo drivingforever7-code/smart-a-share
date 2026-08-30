@@ -108,6 +108,10 @@ function EvolutionCard({
   }
 
   const latestVersionName = latestOptimization?.candidate_version ?? status.active_version
+  const provisionalSummary = versionDetail?.run === null && versionDetail.sample_summary.available_samples > 0
+    ? versionDetail.sample_summary
+    : null
+  const provisionalHasMatured = (provisionalSummary?.matured_samples ?? 0) > 0
   return (
     <Card className={`content-card strategy-evolution strategy-evolution--${mode}`}>
       <Space direction="vertical" size={10} style={{ width: '100%' }}>
@@ -247,11 +251,11 @@ function EvolutionCard({
               column={{ xs: 1, sm: 2, lg: 3 }}
               items={[
                 { key: 'status', label: '状态', children: versionDetail.is_active ? '当前生效' : versionDetail.status === 'rejected' ? '验证未通过' : '历史版本' },
-                { key: 'train', label: '训练样本', children: versionDetail.train_samples },
-                { key: 'validation', label: '验证样本', children: versionDetail.validation_samples },
-                { key: 'return', label: '验证平均收益', children: formatPercent(versionDetail.validation_mean_return ?? null, true) },
-                { key: 'success', label: '验证成功率', children: formatPercent(versionDetail.validation_positive_rate ?? null, false) },
-                { key: 'drawdown', label: '验证平均最大回撤', children: formatPercent(versionDetail.validation_mean_drawdown ?? null, true) },
+                { key: 'available', label: provisionalSummary ? '可用真实样本' : '训练样本', children: provisionalSummary?.available_samples ?? versionDetail.train_samples },
+                { key: 'validation', label: provisionalSummary ? '跟踪中样本' : '验证样本', children: provisionalSummary?.pending_samples ?? versionDetail.validation_samples },
+                { key: 'return', label: provisionalSummary ? (provisionalHasMatured ? '阶段平均收益' : '跟踪期平均涨跌') : '验证平均收益', children: formatPercent(provisionalSummary ? (provisionalSummary.mean_return ?? provisionalSummary.tracking_mean_return ?? null) : (versionDetail.validation_mean_return ?? null), true) },
+                { key: 'success', label: provisionalSummary ? (provisionalHasMatured ? '阶段成功率' : '跟踪期上涨比例') : '验证成功率', children: formatPercent(provisionalSummary ? (provisionalSummary.positive_rate ?? provisionalSummary.tracking_positive_rate ?? null) : (versionDetail.validation_positive_rate ?? null), false) },
+                { key: 'drawdown', label: provisionalSummary ? '阶段平均最大回撤' : '验证平均最大回撤', children: formatPercent(provisionalSummary?.mean_drawdown ?? versionDetail.validation_mean_drawdown ?? null, true) },
                 { key: 'returnChange', label: '相对收益变化', children: formatPercent(versionDetail.run?.metrics.return_improvement ?? null, true) },
                 { key: 'successChange', label: '成功率变化', children: formatPercent(versionDetail.run?.metrics.positive_rate_change ?? null, true) },
                 { key: 'drawdownChange', label: '回撤变化', children: formatPercent(versionDetail.run?.metrics.drawdown_change ?? null, true) },
@@ -264,7 +268,7 @@ function EvolutionCard({
               type={versionDetail.is_active ? 'success' : 'info'}
               showIcon
               message={versionDetail.notes}
-              description={versionDetail.run?.reason}
+              description={provisionalSummary ? `尚未达到正式优化门槛；以下为截至 ${provisionalSummary.data_through ?? ''} 的真实阶段跟踪，不是样本外验证结论。最长已观察 ${provisionalSummary.max_observations}/${provisionalSummary.target_observations} 个有效交易日。` : versionDetail.run?.reason}
             />
             <Button
               type="primary"
@@ -274,7 +278,7 @@ function EvolutionCard({
               {showActualResults ? '收起实际选股结果' : `查看实际选股结果（${versionDetail.actual_results.length} 条）`}
             </Button>
             {versionDetail.actual_results.length === 0 && (
-              <Typography.Text type="secondary">初始版本没有独立候选回测记录。</Typography.Text>
+              <Typography.Text type="secondary">该版本尚未保存可供汇总的真实候选记录。</Typography.Text>
             )}
             {showActualResults && (
               <Table
@@ -285,11 +289,12 @@ function EvolutionCard({
                 dataSource={versionDetail.actual_results}
                 columns={[
                   { title: '发现日期', dataIndex: 'sample_date', width: 110 },
-                  { title: '分组', dataIndex: 'split', width: 80, render: (value) => value === 'train' ? '训练' : '验证' },
+                  { title: '状态', dataIndex: 'split', width: 90, render: (value) => value === 'train' ? '训练' : value === 'validation' ? '验证' : value === 'matured' ? '已成熟' : '跟踪中' },
                   { title: '实际选股', render: (_, row) => `${row.name} ${row.code}`, width: 180 },
-                  { title: '最终涨跌', render: (_, row) => formatPercent(row.labels.return_pct ?? null, true), width: 110 },
+                  { title: '阶段/最终涨跌', render: (_, row) => formatPercent(row.labels.return_pct ?? row.current_return_pct ?? null, true), width: 125 },
                   { title: '最大回撤', render: (_, row) => formatPercent(row.labels.max_drawdown_pct ?? null, true), width: 110 },
-                  { title: '结果', render: (_, row) => row.labels.positive ? <Tag color="success">成功</Tag> : <Tag color="error">未成功</Tag>, width: 90 },
+                  { title: '结果', render: (_, row) => row.labels.positive == null ? <Tag>跟踪中</Tag> : row.labels.positive ? <Tag color="success">成功</Tag> : <Tag color="error">未成功</Tag>, width: 90 },
+                  { title: '观察进度', render: (_, row) => `${row.observation_count}/${row.target_observations}`, width: 95 },
                   { title: '模型得分', dataIndex: 'candidate_score', render: (value) => value?.toFixed(2) ?? '--', width: 100 },
                 ]}
                 expandable={{

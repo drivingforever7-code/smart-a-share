@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, time
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -12,7 +13,7 @@ from .database import RankingAdviceSnapshot, RankingDiscovery, SessionLocal
 from .research_models import AiAnalysisRun
 from .market_service import market_service
 from .config import settings
-from .ai_analysis_service import AiServiceError, _chat_json
+from .ai_analysis_service import AiServiceError, _chat_json, _load_recent_news
 from .reliable_data_source import data_source
 from .ranking_optimizer_service import (
     discovery_version_map,
@@ -324,6 +325,37 @@ def _mode_summary(items: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def _news_context_for_candidates(
+    opportunity_lists: dict[str, list[dict[str, Any]]],
+    quote_time: str,
+) -> dict[str, list[dict[str, Any]]]:
+    codes = list(
+        dict.fromkeys(
+            str(item.get("code"))
+            for items in opportunity_lists.values()
+            for item in items[:10]
+            if item.get("code")
+        )
+    )
+    if not codes:
+        return {}
+    with ThreadPoolExecutor(max_workers=min(6, len(codes))) as executor:
+        loaded = dict(zip(codes, executor.map(_load_recent_news, codes), strict=True))
+
+    cutoff = quote_time[:16]
+    result: dict[str, list[dict[str, Any]]] = {}
+    for code, rows in loaded.items():
+        eligible = []
+        for row in rows:
+            published_at = str(row.get("time") or "")
+            if len(published_at) < 10:
+                continue
+            normalized = published_at.replace("T", " ")[:16]
+            if normalized <= cutoff:
+                eligible.append(row)
+        result[code] = eligible[:3]
+    return result
+
 def _apply_daily_ai_ranking(
     opportunity_lists: dict[str, list[dict[str, Any]]], meta: dict[str, Any]
 ) -> dict[str, Any]:
@@ -333,6 +365,7 @@ def _apply_daily_ai_ranking(
         return {"status": "indicator_only", "reason": "未到收盘批处理时间或 AI 未配置"}
     trade_date = quote_time[:10]
     result = {"status": "cached", "trade_date": trade_date, "modes": {}}
+    news_context: dict[str, list[dict[str, Any]]] | None = None
     for mode, items in opportunity_lists.items():
         candidates = items[:20]
         code = "990001" if mode == "short" else "990002"
@@ -347,36 +380,89 @@ def _apply_daily_ai_ranking(
             )
         payload = json.loads(cached.result_json) if cached and cached.result_json else None
         if payload is None:
-            compact = [{
-                "code": item["code"], "name": item["name"],
-                "indicator_score": item.get("score"), "change_pct": item.get("change_pct"),
-                "reasons": (item.get("reasons") or [])[:3], "risks": (item.get("risks") or [])[:2],
-            } for item in candidates]
+            if news_context is None:
+                news_context = _news_context_for_candidates(opportunity_lists, quote_time)
+            compact = []
+            for item in candidates:
+                code_value = str(item["code"])
+                news_rows = news_context.get(code_value, []) if news_context else []
+                compact.append(
+                    {
+                        "code": code_value,
+                        "name": item["name"],
+                        "indicator_score": item.get("score"),
+                        "change_pct": item.get("change_pct"),
+                        "industry": item.get("industry"),
+                        "reasons": (item.get("reasons") or [])[:3],
+                        "risks": (item.get("risks") or [])[:2],
+                        "recent_news": [row.get("title") for row in news_rows],
+                    }
+                )
             try:
                 payload = _chat_json(
-                    "你是A股量化复核员。只基于输入，为每只股票给0到100的ai_score；风险高则降分。返回JSON对象，格式为{scores:[{code,ai_score,reason}]}。不得保证收益。",
-                    json.dumps({"mode": mode, "trade_date": trade_date, "candidates": compact}, ensure_ascii=False),
+                    "你是A股量化复核员。只基于输入，为每只股票给0到100的ai_score；结合输入中的新闻标题另给0到100的news_score，没有新闻时必须给50。风险高则降分。返回JSON对象，格式为{scores:[{code,ai_score,news_score,reason}]}。不得保证收益。",
+                    json.dumps(
+                        {"mode": mode, "trade_date": trade_date, "candidates": compact},
+                        ensure_ascii=False,
+                    ),
                 )
+                news_counts = {
+                    row["code"]: len((news_context or {}).get(row["code"], []))
+                    for row in compact
+                }
+                for row in payload.get("scores", []):
+                    row["news_sample_count"] = news_counts.get(str(row.get("code")), 0)
                 with SessionLocal.begin() as session:
-                    session.add(AiAnalysisRun(
-                        code=code, name=f"每日{mode}候选AI复核", model=settings.deepseek_model,
-                        depth=depth, status="success",
-                        input_snapshot_json=json.dumps({"trade_date": trade_date, "count": len(compact)}, ensure_ascii=False),
-                        result_json=json.dumps(payload, ensure_ascii=False),
-                    ))
+                    session.add(
+                        AiAnalysisRun(
+                            code=code,
+                            name=f"每日{mode}候选AI复核",
+                            model=settings.deepseek_model,
+                            depth=depth,
+                            status="success",
+                            input_snapshot_json=json.dumps(
+                                {
+                                    "trade_date": trade_date,
+                                    "count": len(compact),
+                                    "news_cutoff": quote_time,
+                                    "news_candidates": sum(
+                                        1 for value in news_counts.values() if value > 0
+                                    ),
+                                },
+                                ensure_ascii=False,
+                            ),
+                            result_json=json.dumps(payload, ensure_ascii=False),
+                        )
+                    )
                 result["status"] = "updated"
             except AiServiceError as exc:
                 result["modes"][mode] = {"status": "fallback", "reason": str(exc)}
                 continue
-        scores = {str(row.get("code")): float(row.get("ai_score", 50)) for row in payload.get("scores", [])}
+        score_rows = {
+            str(row.get("code")): row for row in payload.get("scores", [])
+        }
         for item in candidates:
-            ai_score = max(0.0, min(100.0, scores.get(str(item["code"]), 50.0)))
+            score_row = score_rows.get(str(item["code"]), {})
+            ai_score = max(0.0, min(100.0, float(score_row.get("ai_score", 50))))
+            news_count = int(score_row.get("news_sample_count", 0) or 0)
             item["indicator_score"] = float(item.get("score") or 0)
             item["ai_score"] = ai_score
+            item["news_sample_count"] = news_count
+            item["news_sentiment_score"] = (
+                max(0.0, min(100.0, float(score_row.get("news_score", 50))))
+                if news_count > 0
+                else None
+            )
             item["score"] = round(item["indicator_score"] * 0.7 + ai_score * 0.3, 2)
         candidates.sort(key=lambda item: item["score"], reverse=True)
         opportunity_lists[mode] = candidates + items[20:]
-        result["modes"][mode] = {"status": "applied", "count": len(candidates)}
+        result["modes"][mode] = {
+            "status": "applied",
+            "count": len(candidates),
+            "news_candidates": sum(
+                1 for item in candidates if item.get("news_sample_count", 0) > 0
+            ),
+        }
     return result
 
 def auto_backtest(days: int = 5) -> dict[str, Any]:

@@ -102,6 +102,21 @@ export interface RankingStrategyVersion {
 export interface RankingStrategyVersionDetail extends RankingStrategyVersion {
   mode: ScoreMode
   parameters: Record<string, unknown>
+  sample_summary: {
+    data_status: 'provisional' | 'validated'
+    available_samples: number
+    matured_samples: number
+    pending_samples: number
+    observed_pending_samples: number
+    max_observations: number
+    target_observations: number
+    mean_return?: number | null
+    mean_drawdown?: number | null
+    positive_rate?: number | null
+    tracking_mean_return?: number | null
+    tracking_positive_rate?: number | null
+    data_through?: string | null
+  }
   run: {
     run_date: string
     incumbent_version: string
@@ -122,13 +137,17 @@ export interface RankingStrategyVersionDetail extends RankingStrategyVersion {
   } | null
   actual_results: Array<{
     sample_date: string
-    split: 'train' | 'validation'
+    split: 'train' | 'validation' | 'matured' | 'tracking'
     code: string
     name: string
-    features: Record<string, number>
+    features: Record<string, unknown>
     observations: Array<{ date: string; price: number; return_pct: number }>
     labels: { return_pct?: number | null; max_drawdown_pct?: number | null; positive?: boolean | null }
     candidate_score?: number | null
+    candidate_rank?: number | null
+    current_return_pct?: number | null
+    observation_count: number
+    target_observations: number
   }>
 }
 export interface RankingStrategyStatus {
