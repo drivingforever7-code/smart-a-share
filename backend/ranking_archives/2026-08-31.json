@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-08-31",
+  "captured_at": "2026-08-31T15:13:05.717672+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-08-31",
+      "mode": "short",
+      "rank": 1,
+      "code": "600815",
+      "name": "厦工股份",
+      "industry": null,
+      "discovery_price": 4.55,
+      "discovery_score": 70.5,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 2.18，成交活跃",
+        "接近阶段新高，存在突破特征",
+        "当前规则风险可控"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-08-31",
+      "mode": "short",
+      "rank": 2,
+      "code": "603976",
+      "name": "正川股份",
+      "industry": null,
+      "discovery_price": 30.45,
+      "discovery_score": 69.1,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.94，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-08-31",
+      "mode": "short",
+      "rank": 3,
+      "code": "601555",
+      "name": "东吴证券",
+      "industry": null,
+      "discovery_price": 8.5,
+      "discovery_score": 68.7,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 2.89，成交活跃",
+        "当前规则风险可控",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-08-31",
+      "mode": "swing",
+      "rank": 1,
+      "code": "601233",
+      "name": "桐昆股份",
+      "industry": null,
+      "discovery_price": 27.66,
+      "discovery_score": 76.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 12.76、PB 1.56，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-08-31",
+      "mode": "swing",
+      "rank": 2,
+      "code": "002648",
+      "name": "卫星化学",
+      "industry": null,
+      "discovery_price": 28.48,
+      "discovery_score": 74.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 10.91、PB 2.52，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-08-31",
+      "mode": "swing",
+      "rank": 3,
+      "code": "000703",
+      "name": "恒逸石化",
+      "industry": null,
+      "discovery_price": 19.52,
+      "discovery_score": 74.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 12.57、PB 2.50，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    }
+  ]
+}
