@@ -40,6 +40,7 @@ const items: MenuProps['items'] = [
   { key: 'autoBacktest', icon: <HistoryOutlined />, label: '自动回测' },
   { key: 'limitBreaks', icon: <ThunderboltOutlined />, label: '炸板研究' },
   { key: 'boardPools', icon: <AreaChartOutlined />, label: '连板与跌停' },
+  { key: 'sectorHeatmap', icon: <BarChartOutlined />, label: '板块热力图' },
   { key: 'ai', icon: <RobotOutlined />, label: 'AI联合分析' },
   { key: 'tradeReview', icon: <RobotOutlined />, label: '交易复盘' },
   { key: 'backtest', icon: <ExperimentOutlined />, label: '策略实验室' },
