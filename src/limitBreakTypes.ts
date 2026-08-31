@@ -1,4 +1,5 @@
 export type LimitBreakOutcome = 'pending' | 'resealed' | 'failed'
+export type LimitBreakLiveStatus = LimitBreakOutcome | 'monitoring'
 
 export interface LimitBreakReview {
   summary: string
@@ -38,6 +39,7 @@ export interface LimitBreakItem {
   invalidation: string
   model_version: string
   outcome: LimitBreakOutcome
+  live_status: LimitBreakLiveStatus
   eligible_for_evaluation: boolean
   review?: LimitBreakReview | null
   source: string

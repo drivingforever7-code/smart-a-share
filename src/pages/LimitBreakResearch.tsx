@@ -38,10 +38,10 @@ const stageText = {
   close: '盘后补录',
 }
 
-function OutcomeTag({ value }: { value: LimitBreakItem['outcome'] }) {
-  if (value === 'resealed') return <Tag color="success">已回封</Tag>
-  if (value === 'failed') return <Tag color="error">未回封</Tag>
-  return <Tag color="processing">待收盘确认</Tag>
+function OutcomeTag({ value }: { value: LimitBreakItem['live_status'] }) {
+  if (value === 'resealed') return <Tag color="success">回封成功</Tag>
+  if (value === 'failed') return <Tag color="error">收盘未回封</Tag>
+  return <Tag color="processing">继续监控</Tag>
 }
 
 export default function LimitBreakResearch({
@@ -55,20 +55,22 @@ export default function LimitBreakResearch({
   const { dismissed, dismiss } = useDismissedRows('limit-breaks')
   const [metricOpen, setMetricOpen] = useState(false)
 
-  const load = useCallback(async () => {
-    setLoading(true)
+  const load = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true)
     setError(null)
     try {
-      setData(await api.limitBreaks(10))
+      setData(await api.limitBreaks(10, true))
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : '炸板研究数据暂时不可用')
     } finally {
-      setLoading(false)
+      if (!silent) setLoading(false)
     }
   }, [])
 
   useEffect(() => {
     void load()
+    const timer = window.setInterval(() => void load(true), 30_000)
+    return () => window.clearInterval(timer)
   }, [load])
 
   const columns = useMemo<ColumnsType<LimitBreakItem>>(() => [
@@ -99,10 +101,10 @@ export default function LimitBreakResearch({
       ),
     },
     {
-      title: '结果',
-      dataIndex: 'outcome',
-      width: 108,
-      render: (value) => <OutcomeTag value={value} />,
+      title: '实时状态',
+      key: 'live_status',
+      width: 112,
+      render: (_, item) => <OutcomeTag value={item.live_status} />,
     },
     {
       title: '回封概率',
@@ -234,7 +236,7 @@ export default function LimitBreakResearch({
           <Typography.Text strong>按交易日查看炸板候选</Typography.Text>
           {data?.display_date && <Tag color="cyan">最新 {data.display_date}</Tag>}
         </Space>
-        <Typography.Text type="secondary">打开或刷新网站时自动更新</Typography.Text>
+        <Typography.Text type="secondary">进入即刷新，停留页面时每 30 秒静默更新</Typography.Text>
       </div>
 
       <DailyAlert noticeKey="limitbreakresearch-1"

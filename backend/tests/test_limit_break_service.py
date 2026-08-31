@@ -111,6 +111,28 @@ def test_intraday_prediction_is_frozen_and_ranked(isolated_database, monkeypatch
         assert row.outcome == "pending"
 
 
+def test_intraday_reseal_updates_live_status_without_finalizing(
+    isolated_database,
+    monkeypatch,
+):
+    pools = {"value": (broken_pool(), sealed_pool())}
+    monkeypatch.setattr(service, "_fetch_pools", lambda _: pools["value"])
+    service.capture_limit_breaks("midday", "2026-07-30")
+
+    pools["value"] = (pd.DataFrame(columns=broken_pool().columns), sealed_pool(True))
+    resealed = service.limit_break_research(days=5, refresh=True)
+    item = next(row for row in resealed["items"] if row["code"] == "000001")
+    assert item["live_status"] == "resealed"
+    assert item["outcome"] == "pending"
+    assert resealed["model_stats"]["sample_count"] == 0
+
+    pools["value"] = (broken_pool(), sealed_pool())
+    monitoring = service.limit_break_research(days=5, refresh=True)
+    item = next(row for row in monitoring["items"] if row["code"] == "000001")
+    assert item["live_status"] == "monitoring"
+    assert item["outcome"] == "pending"
+
+
 def test_close_finalizes_reseal_without_rewriting_prediction(
     isolated_database,
     monkeypatch,

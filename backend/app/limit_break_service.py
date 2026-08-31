@@ -511,11 +511,14 @@ def capture_limit_breaks(
     broken_rows = [_row_dict(row) for _, row in broken_df.iterrows()]
     sealed_rows = [_row_dict(row) for _, row in sealed_df.iterrows()]
     resealed_rows = [row for row in sealed_rows if _integer(row.get("炸板次数")) > 0]
-    candidates = (
-        [*broken_rows, *resealed_rows]
-        if resolved_stage == "close"
-        else broken_rows
-    )
+    broken_codes = {_text(row.get("代码")) for row in broken_rows}
+    resealed_codes = {_text(row.get("代码")) for row in resealed_rows}
+    candidate_by_code = {
+        _text(row.get("代码")): row
+        for row in [*broken_rows, *resealed_rows]
+        if _text(row.get("代码"))
+    }
+    candidates = list(candidate_by_code.values())
     market_seal_rate = len(sealed_rows) / max(len(sealed_rows) + len(broken_rows), 1)
     industry_counts: dict[str, int] = defaultdict(int)
     for row in [*sealed_rows, *broken_rows]:
@@ -536,6 +539,9 @@ def capture_limit_breaks(
                 model_version=model_version,
                 parameters=parameters,
             )
+            if values["code"] in resealed_codes and resolved_stage != "close":
+                # 盘中已回封状态只用于实时展示；若没有更早的炸板预测，不得纳入收盘准确率训练。
+                values["eligible_for_evaluation"] = False
             if values["predicted_probability"] >= 60:
                 ranked_values.append(values)
         ranked_values.sort(key=lambda row: row["predicted_probability"], reverse=True)
@@ -558,8 +564,7 @@ def capture_limit_breaks(
         session.flush()
 
         if resolved_stage == "close":
-            resealed_codes = {_text(row.get("代码")) for row in resealed_rows}
-            failed_codes = {_text(row.get("代码")) for row in broken_rows}
+            failed_codes = broken_codes
             events = list(
                 session.scalars(
                     select(LimitBreakEvent).where(LimitBreakEvent.trade_date == resolved_date)
@@ -584,6 +589,8 @@ def capture_limit_breaks(
         "pruned": pruned,
         "broken_count": len(broken_rows),
         "resealed_count": len(resealed_rows),
+        "live_broken_codes": sorted(broken_codes),
+        "live_resealed_codes": sorted(resealed_codes),
         "market_seal_rate": round(market_seal_rate * 100, 2),
         "source": "AKShare/东方财富涨停板行情",
         "captured_at": moment.isoformat(),
@@ -689,6 +696,14 @@ def limit_break_research(days: int = 5, refresh: bool = True) -> dict[str, Any]:
     for row in rows:
         grouped[(row.trade_date, row.code)].append(row)
 
+    is_live_capture = bool(
+        capture_meta
+        and capture_meta.get("stage") not in ("close", "pre_market")
+    )
+    live_trade_date = capture_meta.get("trade_date") if is_live_capture else None
+    live_broken_codes = set(capture_meta.get("live_broken_codes", [])) if is_live_capture else set()
+    live_resealed_codes = set(capture_meta.get("live_resealed_codes", [])) if is_live_capture else set()
+
     items = []
     for (trade_date, code), observations in grouped.items():
         latest = observations[-1]
@@ -727,6 +742,13 @@ def limit_break_research(days: int = 5, refresh: bool = True) -> dict[str, Any]:
                 "invalidation": prediction.invalidation,
                 "model_version": prediction.model_version,
                 "outcome": latest.outcome,
+                "live_status": (
+                    "resealed"
+                    if trade_date == live_trade_date and code in live_resealed_codes
+                    else "monitoring"
+                    if trade_date == live_trade_date and code in live_broken_codes
+                    else latest.outcome
+                ),
                 "eligible_for_evaluation": prediction.eligible_for_evaluation,
                 "review": review,
                 "source": latest.source,
