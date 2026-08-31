@@ -36,6 +36,8 @@ FEATURE_NAMES = (
     "liquidity",
     "valuation_quality",
     "risk_quality",
+    "market_breadth",
+    "market_strength",
     "news_sentiment",
     "news_coverage",
     "industry_strength",
@@ -60,10 +62,12 @@ BASELINE_PARAMETERS = {
     "max_adjustment": 8.0,
 }
 MODEL_NAME = "multi_factor_contextual_return_success_ridge_v4"
-THRESHOLD_POLICY = "return_success_drawdown10_v1"
+THRESHOLD_POLICY = "absolute_return_success_floor_v2"
 MIN_RETURN_IMPROVEMENT = 0.5
 MAX_DRAWDOWN_DETERIORATION = 10.0
 MIN_POSITIVE_RATE_CHANGE = 0.0
+MIN_CANDIDATE_RETURN = 0.0
+MIN_CANDIDATE_POSITIVE_RATE = 40.0
 
 _version_cache_lock = threading.Lock()
 _version_cache: dict[str, tuple[float, str, dict[str, Any]]] = {}
@@ -200,6 +204,19 @@ def _active_version(mode: str) -> tuple[str, dict[str, Any]]:
 
 
 def _enrich_contextual_features(items: list[dict[str, Any]]) -> None:
+    if not items:
+        return
+    market_scores = [_number(item.get("base_score", item.get("score"))) for item in items]
+    market_changes = [_number(item.get("change_pct")) for item in items]
+    market_breadth = sum(value > 0 for value in market_changes) / len(market_changes)
+    market_strength = _clamp(
+        (sum(market_scores) / len(market_scores)) / 100 * 0.55
+        + _clamp(0.5 + sum(market_changes) / len(market_changes) / 20) * 0.45
+    )
+    for item in items:
+        item["market_breadth"] = market_breadth
+        item["market_strength"] = market_strength
+
     groups: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for item in items:
         industry = str(item.get("industry") or "unknown")
@@ -254,6 +271,8 @@ def feature_snapshot(item: dict[str, Any]) -> dict[str, float]:
         "liquidity": round(_clamp((math.log10(amount) - 7) / 3), 6),
         "valuation_quality": round(valuation, 6),
         "risk_quality": round(1 - _clamp(len(item.get("risks") or []) / 4), 6),
+        "market_breadth": round(_clamp(_number(item.get("market_breadth"), 0.5)), 6),
+        "market_strength": round(_clamp(_number(item.get("market_strength"), 0.5)), 6),
         "news_sentiment": round(
             _clamp(_number(news_score) / 100) if news_score is not None else 0.5,
             6,
@@ -407,11 +426,15 @@ def _passes_validation_thresholds(
     return_improvement: float,
     drawdown_change: float,
     positive_rate_change: float,
+    candidate_mean_return: float,
+    candidate_positive_rate: float,
 ) -> bool:
     return (
         return_improvement >= MIN_RETURN_IMPROVEMENT
         and drawdown_change >= -MAX_DRAWDOWN_DETERIORATION
         and positive_rate_change >= MIN_POSITIVE_RATE_CHANGE
+        and candidate_mean_return >= MIN_CANDIDATE_RETURN
+        and candidate_positive_rate >= MIN_CANDIDATE_POSITIVE_RATE
     )
 
 
@@ -451,6 +474,9 @@ def _fit_parameters(samples: list[RankingTrainingSample]) -> dict[str, Any]:
         @ weighted_target
     )
     coefficients = np.clip(coefficients, -15, 15)
+    for safe_feature in ("risk_quality", "liquidity", "news_coverage"):
+        index = FEATURE_NAMES.index(safe_feature) + 1
+        coefficients[index] = max(0.0, coefficients[index])
     return {
         "intercept": round(float(coefficients[0]), 8),
         "weights": {
@@ -507,10 +533,13 @@ def _optimize_mode(session, mode: str, run_date: str) -> dict[str, Any]:
             if metrics.get("threshold_policy") != THRESHOLD_POLICY:
                 metrics["threshold_policy"] = THRESHOLD_POLICY
                 existing.metrics_json = json.dumps(metrics, ensure_ascii=False)
+                candidate_metrics = metrics.get("candidate") or {}
                 accepted_after_review = _passes_validation_thresholds(
                     _number(metrics.get("return_improvement")),
                     _number(metrics.get("drawdown_change")),
                     _number(metrics.get("positive_rate_change")),
+                    _number(candidate_metrics.get("mean_return")),
+                    _number(candidate_metrics.get("positive_rate")),
                 )
                 candidate = session.get(RankingStrategyVersion, existing.candidate_version)
                 if accepted_after_review and candidate is not None:
@@ -642,6 +671,8 @@ def _optimize_mode(session, mode: str, run_date: str) -> dict[str, Any]:
         return_improvement,
         drawdown_change,
         positive_rate_change,
+        candidate_metrics["mean_return"],
+        candidate_metrics["positive_rate"],
     )
     candidate_version = _next_version(session, mode)
     reason = (

@@ -53,6 +53,10 @@ class Settings:
     deepseek_model: str = field(
         default_factory=lambda: os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
     )
+    ifind_access_token: str = field(
+        default_factory=lambda: os.getenv("IFIND_ACCESS_TOKEN", ""),
+        repr=False,
+    )
 
 
 settings = Settings()

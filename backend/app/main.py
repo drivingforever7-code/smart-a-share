@@ -50,6 +50,7 @@ from .ranking_optimizer_service import (
 )
 from .intraday_service import get_intraday
 from .market_service import market_service, presets
+from .sector_heatmap_service import sector_heatmap_service
 from .reliable_data_source import data_source
 from .schemas import ScreenerRequest
 from .strategy_schemas import StrategyBacktestRequest, StrategyPayload
@@ -129,6 +130,40 @@ async def health() -> dict[str, str]:
 @app.get("/api/market/overview", tags=["行情"])
 async def market_overview():
     return await run_in_threadpool(market_service.overview)
+
+@app.get("/api/market/sectors", tags=["行情"])
+async def sector_rankings(
+    kind: Literal["industry", "concept"] = "industry",
+    refresh: bool = False,
+    ai: bool = True,
+):
+    try:
+        return await run_in_threadpool(
+            sector_heatmap_service.rankings,
+            kind,
+            force=refresh,
+            with_ai=ai,
+        )
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+@app.get("/api/market/sectors/{kind}/{name}", tags=["行情"])
+async def sector_detail(
+    kind: Literal["industry", "concept"],
+    name: str,
+    ai: bool = True,
+):
+    try:
+        return await run_in_threadpool(
+            sector_heatmap_service.detail,
+            kind,
+            name,
+            with_ai=ai,
+        )
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
 
 
 @app.get("/api/market/opportunities", tags=["选股"])

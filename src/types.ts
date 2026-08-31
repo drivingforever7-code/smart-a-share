@@ -219,7 +219,7 @@ export type PageKey =
   | 'autoBacktest'
   | 'limitBreaks'
   | 'boardPools'
-  | 'screener'
+  | 'sectorHeatmap'
   | 'detail'
   | 'backtest'
   | 'ai'

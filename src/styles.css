@@ -1898,3 +1898,30 @@ a {
 .trade-action-plan .ant-statistic-content { font-size: 18px; }
 .trade-chat-composer { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: end; border-top: 1px solid rgba(85, 214, 255, .14); padding-top: 14px; }
 @media (max-width: 640px) { .trade-chat-history { min-height: 360px; max-height: none; } .trade-chat-composer { grid-template-columns: 1fr; } .trade-chat-composer .ant-btn { width: 100%; } }
+.sector-toolbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.sector-chart-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(360px, .65fr);
+  gap: 14px;
+  margin: 14px 0;
+}
+
+.sector-chart-grid .ant-card {
+  min-width: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 1100px) {
+  .sector-chart-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+  .sector-toolbar-row { align-items: flex-start; flex-direction: column; }
+}

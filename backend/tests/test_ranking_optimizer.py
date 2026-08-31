@@ -214,10 +214,12 @@ def test_fit_parameters_records_multi_outcome_objective():
     assert parameters["feature_names"] == list(service.FEATURE_NAMES)
 
 def test_new_threshold_policy_accepts_return_and_success_improvement():
-    assert service._passes_validation_thresholds(0.5, -10.0, 0.0)
-    assert not service._passes_validation_thresholds(0.49, -1.0, 5.0)
-    assert not service._passes_validation_thresholds(1.0, -10.01, 5.0)
-    assert not service._passes_validation_thresholds(1.0, -1.0, -0.01)
+    assert service._passes_validation_thresholds(0.5, -10.0, 0.0, 0.0, 40.0)
+    assert not service._passes_validation_thresholds(0.49, -1.0, 5.0, 1.0, 60.0)
+    assert not service._passes_validation_thresholds(1.0, -10.01, 5.0, 1.0, 60.0)
+    assert not service._passes_validation_thresholds(1.0, -1.0, -0.01, 1.0, 60.0)
+    assert not service._passes_validation_thresholds(1.0, -1.0, 5.0, -0.01, 60.0)
+    assert not service._passes_validation_thresholds(1.0, -1.0, 5.0, 1.0, 39.99)
 
 
 def test_rejected_candidate_is_rechecked_under_new_policy(isolated_database):
@@ -252,6 +254,7 @@ def test_rejected_candidate_is_rechecked_under_new_policy(isolated_database):
                     "return_improvement": 0.55,
                     "drawdown_change": -1.68,
                     "positive_rate_change": 11.11,
+                    "candidate": {"mean_return": 1.0, "positive_rate": 60.0},
                 }),
                 status="rejected",
                 accepted=False,

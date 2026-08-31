@@ -28,6 +28,7 @@ import type { AutoBacktestResponse, RankingStrategyVersionDetail } from './autoB
 import type { LimitBreakResponse } from './limitBreakTypes'
 import type { BoardPoolResponse } from './boardPoolTypes'
 import type { TradeReviewPayload, TradeReviewResult } from './tradeReviewTypes'
+import type { SectorDetailResponse, SectorHeatmapResponse, SectorKind } from './sectorTypes'
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? '/api'
 
@@ -70,6 +71,16 @@ export const api = {
   health: () => request<{ status: string; version: string }>('/health'),
 
   overview: () => request<MarketOverview>('/market/overview'),
+
+  sectors: (kind: SectorKind, refresh = false, ai = true) =>
+    request<SectorHeatmapResponse>(
+      `/market/sectors?kind=${kind}&refresh=${refresh}&ai=${ai}`,
+    ),
+
+  sectorDetail: (kind: SectorKind, name: string, ai = true) =>
+    request<SectorDetailResponse>(
+      `/market/sectors/${kind}/${encodeURIComponent(name)}?ai=${ai}`,
+    ),
 
   autoBacktest: (days = 5) =>
     request<AutoBacktestResponse>(`/auto-backtest?days=${days}`),

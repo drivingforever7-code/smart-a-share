@@ -5,13 +5,11 @@ import {
   ControlOutlined,
   DatabaseOutlined,
   ExperimentOutlined,
-  FundOutlined,
   HistoryOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   RadarChartOutlined,
   RobotOutlined,
-  SearchOutlined,
   StarOutlined,
   ThunderboltOutlined,
 } from '@ant-design/icons'
@@ -26,7 +24,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'))
 const AutoBacktest = lazy(() => import('./pages/AutoBacktest'))
 const LimitBreakResearch = lazy(() => import('./pages/LimitBreakResearch'))
 const BoardPools = lazy(() => import('./pages/BoardPools'))
-const Screener = lazy(() => import('./pages/Screener'))
+const SectorHeatmap = lazy(() => import('./pages/SectorHeatmap'))
 const StockDetail = lazy(() => import('./pages/StockDetailV2'))
 const Backtest = lazy(() => import('./pages/StrategyLab'))
 const AiAnalysis = lazy(() => import('./pages/AiAnalysis'))
@@ -42,8 +40,6 @@ const items: MenuProps['items'] = [
   { key: 'autoBacktest', icon: <HistoryOutlined />, label: '自动回测' },
   { key: 'limitBreaks', icon: <ThunderboltOutlined />, label: '炸板研究' },
   { key: 'boardPools', icon: <AreaChartOutlined />, label: '连板与跌停' },
-  { key: 'screener', icon: <SearchOutlined />, label: '条件选股' },
-  { key: 'detail', icon: <FundOutlined />, label: '股票详情' },
   { key: 'ai', icon: <RobotOutlined />, label: 'AI联合分析' },
   { key: 'tradeReview', icon: <RobotOutlined />, label: '交易复盘' },
   { key: 'backtest', icon: <ExperimentOutlined />, label: '策略实验室' },
@@ -58,7 +54,7 @@ const titles: Record<PageKey, { title: string; subtitle: string }> = {
   autoBacktest: { title: '自动回测', subtitle: '跟踪榜单表现与每天的加仓、继续持有与清仓建议' },
   limitBreaks: { title: '炸板研究', subtitle: '记录每日炸板、回封概率排名与收盘复盘' },
   boardPools: { title: '连板与跌停', subtitle: '跟踪连板晋级与跌停修复概率，并按样本外结果持续校准' },
-  screener: { title: '条件选股', subtitle: '组合条件，找到符合你交易思路的股票' },
+  sectorHeatmap: { title: '板块热力图', subtitle: '实时跟踪行业与概念强度、资金方向和量化建议' },
   detail: { title: '股票详情', subtitle: '核对行情、评分依据和风险条件' },
   ai: { title: 'AI联合分析', subtitle: '多角色阅读同一份数据，给出多空证据与风险约束' },
   tradeReview: { title: '交易复盘', subtitle: '记录你的买卖并获得直接、可核对的 AI 锐评' },
@@ -76,7 +72,7 @@ function parseHash(): { page: PageKey; code: string } {
     'autoBacktest',
     'limitBreaks',
     'boardPools',
-    'screener',
+    'sectorHeatmap',
     'detail',
     'ai',
     'tradeReview',
@@ -94,6 +90,9 @@ export default function App() {
   const screens = Grid.useBreakpoint()
   const initial = useMemo(parseHash, [])
   const [page, setPage] = useState<PageKey>(initial.page)
+  const [detailOrigin, setDetailOrigin] = useState<PageKey>(
+    initial.page === 'detail' ? 'dashboard' : initial.page,
+  )
   const [selectedCode, setSelectedCode] = useState(initial.code)
   const [collapsed, setCollapsed] = useState(() =>
     window.matchMedia('(max-width: 991px)').matches,
@@ -130,6 +129,7 @@ export default function App() {
 
   const navigate = (next: PageKey, code?: string) => {
     const nextCode = code ?? selectedCode
+    if (next === 'detail' && page !== 'detail') setDetailOrigin(page)
     if (code) setSelectedCode(code)
     setPage(next)
     window.location.hash = ['detail', 'ai'].includes(next)
@@ -142,7 +142,7 @@ export default function App() {
     autoBacktest: <AutoBacktest onOpenStock={(code) => navigate('detail', code)} />,
     limitBreaks: <LimitBreakResearch onOpenStock={(code) => navigate('detail', code)} />,
     boardPools: <BoardPools onOpenStock={(code) => navigate('detail', code)} />,
-    screener: <Screener onOpenStock={(code) => navigate('detail', code)} />,
+    sectorHeatmap: <SectorHeatmap onOpenStock={(code) => navigate('detail', code)} />,
     detail: <StockDetail code={selectedCode} onCodeChange={(code) => navigate('detail', code)} />,
     ai: <AiAnalysis defaultCode={selectedCode} />,
     tradeReview: <TradeReview />,
@@ -175,7 +175,7 @@ export default function App() {
         <Menu
           theme="dark"
           mode="inline"
-          selectedKeys={[page]}
+          selectedKeys={[page === 'detail' ? detailOrigin : page]}
           items={items}
           onClick={({ key }) => navigate(key as PageKey)}
           className="main-menu"
