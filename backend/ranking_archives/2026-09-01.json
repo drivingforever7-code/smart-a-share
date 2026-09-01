@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-09-01",
+  "captured_at": "2026-09-01T12:38:51.213281+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-09-01",
+      "mode": "short",
+      "rank": 1,
+      "code": "603893",
+      "name": "瑞芯微",
+      "industry": null,
+      "discovery_price": 203.6,
+      "discovery_score": 69.6,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 3.49，成交活跃",
+        "当前规则风险可控",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-01",
+      "mode": "short",
+      "rank": 2,
+      "code": "002292",
+      "name": "奥飞娱乐",
+      "industry": null,
+      "discovery_price": 8.8,
+      "discovery_score": 69.2,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 2.38，成交活跃",
+        "当前规则风险可控",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-01",
+      "mode": "short",
+      "rank": 3,
+      "code": "600857",
+      "name": "宁波中百",
+      "industry": null,
+      "discovery_price": 20.76,
+      "discovery_score": 68.9,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.84，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-01",
+      "mode": "swing",
+      "rank": 1,
+      "code": "002648",
+      "name": "卫星化学",
+      "industry": null,
+      "discovery_price": 28.62,
+      "discovery_score": 73.9,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 10.96、PB 2.53，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-01",
+      "mode": "swing",
+      "rank": 2,
+      "code": "300483",
+      "name": "首华燃气",
+      "industry": null,
+      "discovery_price": 24.77,
+      "discovery_score": 73.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-01",
+      "mode": "swing",
+      "rank": 3,
+      "code": "603995",
+      "name": "甬金股份",
+      "industry": null,
+      "discovery_price": 25.35,
+      "discovery_score": 72.4,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 15.28、PB 1.55，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    }
+  ]
+}
