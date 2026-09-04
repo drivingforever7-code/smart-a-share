@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-09-04",
+  "captured_at": "2026-09-04T12:12:07.864087+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-09-04",
+      "mode": "short",
+      "rank": 1,
+      "code": "300363",
+      "name": "博腾股份",
+      "industry": null,
+      "discovery_price": 19.67,
+      "discovery_score": 69.5,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.56，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-04",
+      "mode": "short",
+      "rank": 2,
+      "code": "603067",
+      "name": "振华股份",
+      "industry": null,
+      "discovery_price": 36.95,
+      "discovery_score": 69.2,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 2.86，成交活跃",
+        "当前规则风险可控",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-04",
+      "mode": "short",
+      "rank": 3,
+      "code": "000739",
+      "name": "普洛药业",
+      "industry": null,
+      "discovery_price": 22.35,
+      "discovery_score": 69.1,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.76，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-04",
+      "mode": "swing",
+      "rank": 1,
+      "code": "600026",
+      "name": "中远海能",
+      "industry": null,
+      "discovery_price": 20.34,
+      "discovery_score": 75.3,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 16.58、PB 2.31，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-04",
+      "mode": "swing",
+      "rank": 2,
+      "code": "601233",
+      "name": "桐昆股份",
+      "industry": null,
+      "discovery_price": 26.0,
+      "discovery_score": 74.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 11.99、PB 1.46，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-04",
+      "mode": "swing",
+      "rank": 3,
+      "code": "002328",
+      "name": "新朋股份",
+      "industry": null,
+      "discovery_price": 9.96,
+      "discovery_score": 74.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 19.10、PB 2.20，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "换手率偏高，筹码可能不稳定",
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    }
+  ]
+}
