@@ -14,14 +14,14 @@ _lock=Lock()
 _cache: dict[str,tuple[float,dict]]={}
 
 
-def parse_tencent_quotes(text: str) -> dict[str,dict]:
+def parse_tencent_quotes(text: str, *, allow_post_close: bool = False) -> dict[str,dict]:
     result={}
     for code,body in re.findall(r'v_(?:sh|sz|bj)(\d{6})="([^"]*)"',text):
         fields=body.split('~')
         try:
             stamp=datetime.strptime(fields[30],'%Y%m%d%H%M%S').strftime('%Y-%m-%d %H:%M:%S')
             price=float(fields[3])
-            if price<=0 or verified_quote_date({'quote_time':stamp}) is None:continue
+            if price<=0 or verified_quote_date({'quote_time':stamp}, allow_post_close=allow_post_close) is None:continue
             result[code]={'code':code,'price':price,'quote_time':stamp,'source':'腾讯原始盘口时间'}
         except (IndexError,ValueError):
             continue

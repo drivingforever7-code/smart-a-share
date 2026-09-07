@@ -79,7 +79,8 @@ def test_intraday_does_not_capture_even_if_previous_close_is_available(monkeypat
         def raise_for_status(self):
             pass
     monkeypatch.setattr(service.requests, 'get', lambda *a, **kw: Response())
-    monkeypatch.setattr(service, 'parse_tencent_quotes', lambda _: {'000001': {'quote_time': '2026-09-04 15:00:00'}})
+    monkeypatch.setattr(service, 'parse_tencent_quotes', lambda _, **kw: {'000001': {'quote_time': '2026-09-04 15:00:00'}})
+
     monkeypatch.setattr(service, 'now_cn', lambda: datetime(2026, 9, 7, 11, 0, tzinfo=ZoneInfo('Asia/Shanghai')))
     assert service._close_date() is None
 
@@ -88,3 +89,28 @@ def test_refresh_is_single_flight(monkeypatch):
     monkeypatch.setitem(service._state, 'running', True)
     monkeypatch.setattr(service, 'Thread', lambda **kwargs: pytest.fail('不得启动第二个下载任务'))
     assert service.start_refresh()['running'] is True
+
+
+@pytest.mark.parametrize('daily_price,valid', [(3000, True), (2990, False)])
+def test_post_close_requires_matching_daily_close(monkeypatch, daily_price, valid):
+    class Response:
+        text = ''
+        def raise_for_status(self):
+            pass
+        def json(self):
+            return {'data': {'sh000001': {'day': [['2026-09-04', '3000', str(daily_price)]]}}}
+    monkeypatch.setattr(service.requests, 'get', lambda *a, **kw: Response())
+    monkeypatch.setattr(service, 'parse_tencent_quotes', lambda _, **kw: {'000001': {'price': 3000, 'quote_time': '2026-09-04 16:14:02'}})
+    monkeypatch.setattr(service, 'now_cn', lambda: datetime(2026, 9, 4, 16, 30, tzinfo=ZoneInfo('Asia/Shanghai')))
+    if valid:
+        assert service._close_date() == '2026-09-04'
+    else:
+        with pytest.raises(ValueError, match='收盘尚未一致'):
+            service._close_date()
+
+
+def test_legacy_timestamp_rule_remains_strict():
+    from app.research_quality import verified_quote_date
+    stamp = {'quote_time': '2026-09-04 16:14:02'}
+    assert verified_quote_date(stamp, close=True) is None
+    assert str(verified_quote_date(stamp, close=True, allow_post_close=True)) == '2026-09-04'

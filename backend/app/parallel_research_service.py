@@ -17,7 +17,7 @@ import requests
 from .annual_research import ResearchPolicy, feature_frame, rank_candidates
 from .config import DATA_DIR
 from .research_quality import verified_quote_date
-from .verified_quotes import fetch_verified_quotes, parse_tencent_quotes
+from .verified_quotes import parse_tencent_quotes
 
 ASSET = Path(__file__).parent / 'research_assets' / 'parallel_v1.json'
 STORE = DATA_DIR / 'parallel_research'
@@ -34,6 +34,17 @@ def now_cn():
 
 def read_asset():
     return json.loads(ASSET.read_text('utf-8'))
+
+
+def fetch_verified_quotes(codes):
+    """仅此研究接受盘后盘口；调用处还必须核对同日日线收盘。"""
+    if not codes:
+        return {}
+    symbols = [('sh' if c.startswith('6') else 'bj' if c.startswith(('4', '8', '9')) else 'sz') + c for c in codes]
+    response = requests.get('https://qt.gtimg.cn/q=' + ','.join(symbols), timeout=8)
+    response.raise_for_status()
+    response.encoding = 'gbk'
+    return parse_tencent_quotes(response.text, allow_post_close=True)
 
 
 def select_signals(frame: pd.DataFrame, policy: ResearchPolicy, checks: dict, expected: int):
@@ -110,11 +121,17 @@ def _close_date():
     response = requests.get('https://qt.gtimg.cn/q=sh000001', timeout=8)
     response.raise_for_status()
     response.encoding = 'gbk'
-    quote = parse_tencent_quotes(response.text).get('000001', {})
-    day = verified_quote_date(quote, close=True)
+    quote = parse_tencent_quotes(response.text, allow_post_close=True).get('000001', {})
+    day = verified_quote_date(quote, close=True, allow_post_close=True)
     current = now_cn()
     if day is None or day != current.date() or (current.hour, current.minute) < (15, 5):
         return None
+    response = requests.get(SOURCE, params={'param': f'sh000001,day,,{day.isoformat()},10,'}, timeout=15)
+    response.raise_for_status()
+    bars = response.json().get('data', {}).get('sh000001', {}).get('day', [])
+    matching = [r for r in bars if r[0] == day.isoformat()]
+    if not matching or abs(float(matching[-1][2]) / quote['price'] - 1) > .0001:
+        raise ValueError('指数盘后盘口与同日日线收盘尚未一致，等待数据源稳定')
     return day.isoformat()
 
 
@@ -177,7 +194,7 @@ def _run():
                 try:
                     verified = fetch_verified_quotes([code]).get(code, {})
                     actual = market_service.stock_analysis(code, mode)
-                    day = verified_quote_date(verified, close=True)
+                    day = verified_quote_date(verified, close=True, allow_post_close=True)
                     row = frame[frame.symbol == symbol].iloc[0]
                     time_ok = day is not None and day.isoformat() == target
                     price_ok = abs(float(verified.get('price', 0)) / float(row.close) - 1) <= .005
@@ -195,8 +212,10 @@ def _run():
                 verified_old = fetch_verified_quotes([i['code'] for i in candidates])
                 for item in candidates:
                     proof = verified_old.get(item['code'], {})
-                    day = verified_quote_date(proof, close=True)
-                    if day is not None and day.isoformat() == target and abs(float(item.get('price') or 0) / proof['price'] - 1) <= .005:
+                    day = verified_quote_date(proof, close=True, allow_post_close=True)
+                    symbol = ('sh' if item['code'].startswith('6') else 'bj' if item['code'].startswith(('4', '8', '9')) else 'sz') + item['code']
+                    daily_close = snapshot['close_prices'].get(symbol)
+                    if day is not None and day.isoformat() == target and daily_close and abs(daily_close / proof['price'] - 1) <= .005 and abs(float(item.get('price') or 0) / proof['price'] - 1) <= .005:
                         old.append({**{k: item.get(k) for k in ['code', 'name', 'price', 'score', 'confidence', 'recommendation', 'risks', 'reasons']}, 'quote_time': proof['quote_time']})
                     else:
                         old_note = '部分旧榜单缺少同日收盘核验，未纳入保存'

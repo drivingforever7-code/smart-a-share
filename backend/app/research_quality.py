@@ -9,7 +9,7 @@ LABEL_VERSION = 'verified_close_peak_v2'
 SHANGHAI = ZoneInfo('Asia/Shanghai')
 
 
-def verified_quote_date(meta: dict, *, close: bool = False) -> date | None:
+def verified_quote_date(meta: dict, *, close: bool = False, allow_post_close: bool = False) -> date | None:
     """只接受实际行情时间；拒绝日期替身、周末、未来和未收盘观察。"""
     value = str(meta.get('quote_time') or '').strip()
     if len(value) < 16:
@@ -25,6 +25,8 @@ def verified_quote_date(meta: dict, *, close: bool = False) -> date | None:
         return None
     # 行情时间必须落在交易时段；盘后抓取的时间不算行情时间。
     minutes = stamp.hour * 60 + stamp.minute
+    if allow_post_close and minutes >= 900:
+        return stamp.date()
     if close:
         if minutes != 15 * 60:
             return None
