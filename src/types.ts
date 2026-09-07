@@ -215,6 +215,7 @@ export interface DataStatus {
 }
 
 export type PageKey =
+  | 'parallelResearch'
   | 'dashboard'
   | 'autoBacktest'
   | 'limitBreaks'

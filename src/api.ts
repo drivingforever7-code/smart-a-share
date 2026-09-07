@@ -28,6 +28,7 @@ import type { AutoBacktestResponse, RankingStrategyVersionDetail } from './autoB
 import type { LimitBreakResponse } from './limitBreakTypes'
 import type { BoardPoolResponse } from './boardPoolTypes'
 import type { TradeReviewPayload, TradeReviewResult } from './tradeReviewTypes'
+import type { ParallelResearchData } from './parallelResearchTypes'
 import type { SectorDetailResponse, SectorHeatmapResponse, SectorKind } from './sectorTypes'
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? '/api'
@@ -68,6 +69,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const api = {
+  parallelResearch: (mode: ScoreMode, period: 'holdout' | 'year') =>
+    request<ParallelResearchData>(`/parallel-research?mode=${mode}&period=${period}`),
+  refreshParallelResearch: () => request<ParallelResearchData['state']>('/parallel-research/refresh', { method: 'POST' }),
   health: () => request<{ status: string; version: string }>('/health'),
 
   overview: () => request<MarketOverview>('/market/overview'),

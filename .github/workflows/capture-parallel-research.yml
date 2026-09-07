@@ -1,0 +1,78 @@
+name: Archive parallel research snapshots
+
+on:
+  schedule:
+    - cron: '25 7,9 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: parallel-research-archive
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Capture verified public snapshot
+        env:
+          BASE_URL: https://smart-a-share.onrender.com
+        run: |
+          python - <<'PY'
+          import json, os, time, urllib.request
+          from datetime import datetime
+          from pathlib import Path
+          from zoneinfo import ZoneInfo
+          base = os.environ['BASE_URL'] + '/api/parallel-research'
+          def fetch(suffix, method='GET'):
+              for attempt in range(5):
+                  try:
+                      request = urllib.request.Request(base + suffix, method=method)
+                      with urllib.request.urlopen(request, timeout=60) as response:
+                          return json.load(response)
+                  except Exception:
+                      if attempt == 4: raise
+                      time.sleep(15)
+          fetch('/refresh', 'POST')
+          for attempt in range(150):
+              result = fetch('/archive')
+              if not result['state']['running']: break
+              time.sleep(10)
+          else:
+              raise RuntimeError('Research did not finish within 25 minutes')
+          if result['state']['error']:
+              raise RuntimeError(result['state']['error'])
+          snapshot = result['snapshot']
+          today = datetime.now(ZoneInfo('Asia/Shanghai')).date().isoformat()
+          if not snapshot or snapshot['date'] != today:
+              print('No verified close for today; no historical snapshot relabelled as today.')
+          else:
+              assert snapshot['kind'] == 'forward'
+              for mode in ['short', 'swing']:
+                  assert len(snapshot['modes'][mode]['items']) <= 3
+                  assert snapshot['modes'][mode]['market']['coverage'] >= .9
+              folder = Path('backend/parallel_archives')
+              folder.mkdir(parents=True, exist_ok=True)
+              path = folder / (today + '.json')
+              if not path.exists():
+                  path.write_text(json.dumps(snapshot, ensure_ascii=False, allow_nan=False), encoding='utf-8')
+              print('Verified archive:', path)
+          PY
+      - name: Preserve public research archive
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if [ -d backend/parallel_archives ]; then
+            git add backend/parallel_archives
+            if ! git diff --cached --quiet; then
+              git commit -m 'data: archive parallel research snapshot'
+              git pull --rebase origin main
+              git push origin HEAD:main
+            fi
+          fi

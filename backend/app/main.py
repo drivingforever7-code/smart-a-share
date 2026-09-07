@@ -35,6 +35,7 @@ from .ai_schemas import TradeReviewRequest
 from .board_pool_service import BoardPoolDataError, board_pool_research, capture_board_pools
 from .trade_review_service import review_trade
 from .config import settings
+from .parallel_research_service import parallel_research, start_refresh as start_parallel_refresh, start_scheduler, latest_archive
 from .data_source import MarketDataError, ak, safe_float
 from .data_refresh_service import refresh_all_data
 from .database import init_database
@@ -77,7 +78,11 @@ async def lifespan(_: FastAPI):
     repair_unverified_training_samples()
     ensure_baseline_versions()
     initialize_strategy_catalog()
-    yield
+    parallel_stop = start_scheduler()
+    try:
+        yield
+    finally:
+        parallel_stop.set()
 
 
 app = FastAPI(
@@ -594,6 +599,24 @@ async def warmup_data():
 @app.post("/api/data/refresh/quotes", tags=["数据"])
 async def refresh_quotes():
     return await run_in_threadpool(market_service.refresh_quotes)
+
+
+@app.get("/api/parallel-research", tags=["并行研究"])
+async def parallel_research_view(
+    mode: Literal["short", "swing"] = "short",
+    period: Literal["holdout", "year"] = "holdout",
+):
+    return await run_in_threadpool(parallel_research, mode, period)
+
+
+@app.post("/api/parallel-research/refresh", tags=["并行研究"])
+async def parallel_research_refresh():
+    return start_parallel_refresh()
+
+
+@app.get("/api/parallel-research/archive", tags=["并行研究"])
+async def parallel_research_archive():
+    return await run_in_threadpool(latest_archive)
 
 
 # 云端部署时由 FastAPI 同时提供前端静态文件；本地开发仍可使用 Vite。

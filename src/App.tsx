@@ -22,6 +22,7 @@ import { api } from './api'
 
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const AutoBacktest = lazy(() => import('./pages/AutoBacktest'))
+const ParallelResearch = lazy(() => import('./pages/ParallelResearch'))
 const LimitBreakResearch = lazy(() => import('./pages/LimitBreakResearch'))
 const BoardPools = lazy(() => import('./pages/BoardPools'))
 const SectorHeatmap = lazy(() => import('./pages/SectorHeatmap'))
@@ -36,6 +37,7 @@ const Settings = lazy(() => import('./pages/Settings'))
 const { Header, Sider, Content } = Layout
 
 const items: MenuProps['items'] = [
+  { key: 'parallelResearch', icon: <ExperimentOutlined />, label: '新旧方案对比' },
   { key: 'dashboard', icon: <RadarChartOutlined />, label: '今日机会' },
   { key: 'autoBacktest', icon: <HistoryOutlined />, label: '自动回测' },
   { key: 'limitBreaks', icon: <ThunderboltOutlined />, label: '炸板研究' },
@@ -51,6 +53,7 @@ const items: MenuProps['items'] = [
 ]
 
 const titles: Record<PageKey, { title: string; subtitle: string }> = {
+  parallelResearch: { title: '新旧方案对比', subtitle: '新方案独立试运行，满足条件才入选，允许空榜' },
   dashboard: { title: '今日机会', subtitle: '从全市场信号中发现短线与波段机会' },
   autoBacktest: { title: '自动回测', subtitle: '跟踪榜单表现与每天的加仓、继续持有与清仓建议' },
   limitBreaks: { title: '炸板研究', subtitle: '记录每日炸板、回封概率排名与收盘复盘' },
@@ -69,6 +72,7 @@ function parseHash(): { page: PageKey; code: string } {
   const hash = window.location.hash.replace(/^#\/?/, '')
   const [path, query = ''] = hash.split('?')
   const validPages: PageKey[] = [
+    'parallelResearch',
     'dashboard',
     'autoBacktest',
     'limitBreaks',
@@ -139,6 +143,7 @@ export default function App() {
   }
 
   const pageContent = {
+    parallelResearch: <ParallelResearch onOpenStock={(code) => navigate('detail', code)} />,
     dashboard: <Dashboard onOpenStock={(code) => navigate('detail', code)} />,
     autoBacktest: <AutoBacktest onOpenStock={(code) => navigate('detail', code)} />,
     limitBreaks: <LimitBreakResearch onOpenStock={(code) => navigate('detail', code)} />,
