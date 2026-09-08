@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-09-07",
+  "captured_at": "2026-09-08T00:31:59.941338+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-09-07",
+      "mode": "short",
+      "rank": 1,
+      "code": "688057",
+      "name": "金达莱",
+      "industry": null,
+      "discovery_price": 18.98,
+      "discovery_score": 71.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.10，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-07",
+      "mode": "short",
+      "rank": 2,
+      "code": "003033",
+      "name": "征和工业",
+      "industry": null,
+      "discovery_price": 69.64,
+      "discovery_score": 70.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.15，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-07",
+      "mode": "short",
+      "rank": 3,
+      "code": "300865",
+      "name": "大宏立",
+      "industry": null,
+      "discovery_price": 34.58,
+      "discovery_score": 68.2,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.51，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-07",
+      "mode": "swing",
+      "rank": 1,
+      "code": "000703",
+      "name": "恒逸石化",
+      "industry": null,
+      "discovery_price": 17.69,
+      "discovery_score": 72.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 11.39、PB 2.27，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-07",
+      "mode": "swing",
+      "rank": 2,
+      "code": "002432",
+      "name": "九安医疗",
+      "industry": null,
+      "discovery_price": 69.6,
+      "discovery_score": 71.8,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 7.34、PB 1.40，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-07",
+      "mode": "swing",
+      "rank": 3,
+      "code": "300864",
+      "name": "南大环境",
+      "industry": null,
+      "discovery_price": 29.23,
+      "discovery_score": 71.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽",
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    }
+  ]
+}
