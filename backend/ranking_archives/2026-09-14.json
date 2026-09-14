@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-09-14",
+  "captured_at": "2026-09-14T14:15:45.479883+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-09-14",
+      "mode": "short",
+      "rank": 1,
+      "code": "300454",
+      "name": "深信服",
+      "industry": null,
+      "discovery_price": 134.26,
+      "discovery_score": 69.9,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.04，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-14",
+      "mode": "short",
+      "rank": 2,
+      "code": "003013",
+      "name": "地铁设计",
+      "industry": null,
+      "discovery_price": 19.59,
+      "discovery_score": 69.1,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "上涨动能较强且未明显过热",
+        "量比 1.37，成交活跃"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-14",
+      "mode": "short",
+      "rank": 3,
+      "code": "600654",
+      "name": "中安科",
+      "industry": null,
+      "discovery_price": 3.23,
+      "discovery_score": 67.7,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 2.83，成交活跃",
+        "当前规则风险可控",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-14",
+      "mode": "swing",
+      "rank": 1,
+      "code": "000703",
+      "name": "恒逸石化",
+      "industry": null,
+      "discovery_price": 17.07,
+      "discovery_score": 76.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 11.83、PB 2.35，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-14",
+      "mode": "swing",
+      "rank": 2,
+      "code": "600428",
+      "name": "中远海特",
+      "industry": null,
+      "discovery_price": 11.34,
+      "discovery_score": 73.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 13.38、PB 1.83，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-14",
+      "mode": "swing",
+      "rank": 3,
+      "code": "002479",
+      "name": "富春环保",
+      "industry": null,
+      "discovery_price": 6.06,
+      "discovery_score": 72.6,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 15.52、PB 1.19，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    }
+  ]
+}
