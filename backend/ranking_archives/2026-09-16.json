@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-09-16",
+  "captured_at": "2026-09-16T12:42:10.980545+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-09-16",
+      "mode": "short",
+      "rank": 1,
+      "code": "603236",
+      "name": "移远通信",
+      "industry": null,
+      "discovery_price": 69.74,
+      "discovery_score": 67.6,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.52，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-16",
+      "mode": "short",
+      "rank": 2,
+      "code": "300314",
+      "name": "戴维医疗",
+      "industry": null,
+      "discovery_price": 11.57,
+      "discovery_score": 66.4,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.73，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-16",
+      "mode": "short",
+      "rank": 3,
+      "code": "688596",
+      "name": "正帆科技",
+      "industry": null,
+      "discovery_price": 64.84,
+      "discovery_score": 66.2,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.32，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-16",
+      "mode": "swing",
+      "rank": 1,
+      "code": "601918",
+      "name": "新集能源",
+      "industry": null,
+      "discovery_price": 10.5,
+      "discovery_score": 73.9,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 11.18、PB 1.52，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-16",
+      "mode": "swing",
+      "rank": 2,
+      "code": "000703",
+      "name": "恒逸石化",
+      "industry": null,
+      "discovery_price": 17.48,
+      "discovery_score": 73.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 12.11、PB 2.41，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-16",
+      "mode": "swing",
+      "rank": 3,
+      "code": "002479",
+      "name": "富春环保",
+      "industry": null,
+      "discovery_price": 5.83,
+      "discovery_score": 72.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 14.93、PB 1.14，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    }
+  ]
+}
