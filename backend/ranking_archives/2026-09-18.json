@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-09-18",
+  "captured_at": "2026-09-18T12:19:21.605935+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-09-18",
+      "mode": "short",
+      "rank": 1,
+      "code": "002981",
+      "name": "朝阳科技",
+      "industry": null,
+      "discovery_price": 25.73,
+      "discovery_score": 70.7,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.42，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-18",
+      "mode": "short",
+      "rank": 2,
+      "code": "002292",
+      "name": "奥飞娱乐",
+      "industry": null,
+      "discovery_price": 8.88,
+      "discovery_score": 70.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.03，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-18",
+      "mode": "short",
+      "rank": 3,
+      "code": "002724",
+      "name": "海洋王",
+      "industry": null,
+      "discovery_price": 7.13,
+      "discovery_score": 68.6,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 2.69，成交活跃",
+        "接近阶段新高，存在突破特征",
+        "当前规则风险可控"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-18",
+      "mode": "swing",
+      "rank": 1,
+      "code": "920038",
+      "name": "森合高科",
+      "industry": null,
+      "discovery_price": 38.6,
+      "discovery_score": 73.3,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 14.46、PB 2.82，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-18",
+      "mode": "swing",
+      "rank": 2,
+      "code": "002443",
+      "name": "金洲管道",
+      "industry": null,
+      "discovery_price": 12.5,
+      "discovery_score": 73.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-18",
+      "mode": "swing",
+      "rank": 3,
+      "code": "601083",
+      "name": "锦江航运",
+      "industry": null,
+      "discovery_price": 12.56,
+      "discovery_score": 71.6,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 11.15、PB 1.76，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    }
+  ]
+}
