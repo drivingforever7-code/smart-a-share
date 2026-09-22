@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-09-22",
+  "captured_at": "2026-09-22T12:51:11.907736+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-09-22",
+      "mode": "short",
+      "rank": 1,
+      "code": "688373",
+      "name": "盟科药业-U",
+      "industry": null,
+      "discovery_price": 6.15,
+      "discovery_score": 75.7,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.20，成交活跃",
+        "上涨动能较强且未明显过热"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-22",
+      "mode": "short",
+      "rank": 2,
+      "code": "001258",
+      "name": "立新能源",
+      "industry": null,
+      "discovery_price": 11.71,
+      "discovery_score": 72.9,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.12，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-22",
+      "mode": "short",
+      "rank": 3,
+      "code": "300071",
+      "name": "福石控股",
+      "industry": null,
+      "discovery_price": 4.33,
+      "discovery_score": 71.2,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.25，成交活跃",
+        "上涨动能较强且未明显过热"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-22",
+      "mode": "swing",
+      "rank": 1,
+      "code": "000703",
+      "name": "恒逸石化",
+      "industry": null,
+      "discovery_price": 16.81,
+      "discovery_score": 76.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 11.65、PB 2.61，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-22",
+      "mode": "swing",
+      "rank": 2,
+      "code": "601918",
+      "name": "新集能源",
+      "industry": null,
+      "discovery_price": 10.95,
+      "discovery_score": 75.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 11.66、PB 1.59，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-22",
+      "mode": "swing",
+      "rank": 3,
+      "code": "002440",
+      "name": "闰土股份",
+      "industry": null,
+      "discovery_price": 12.94,
+      "discovery_score": 73.7,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 12.69、PB 1.40，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    }
+  ]
+}
