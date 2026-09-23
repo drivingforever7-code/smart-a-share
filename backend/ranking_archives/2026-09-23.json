@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-09-23",
+  "captured_at": "2026-09-23T12:54:43.433333+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-09-23",
+      "mode": "short",
+      "rank": 1,
+      "code": "002951",
+      "name": "金时科技",
+      "industry": null,
+      "discovery_price": 16.83,
+      "discovery_score": 70.3,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 4.79，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-09-23",
+      "mode": "short",
+      "rank": 2,
+      "code": "688105",
+      "name": "诺唯赞",
+      "industry": null,
+      "discovery_price": 27.59,
+      "discovery_score": 69.0,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.74，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-09-23",
+      "mode": "short",
+      "rank": 3,
+      "code": "300587",
+      "name": "天铁科技",
+      "industry": null,
+      "discovery_price": 5.14,
+      "discovery_score": 68.9,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.61，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-09-23",
+      "mode": "swing",
+      "rank": 1,
+      "code": "000703",
+      "name": "恒逸石化",
+      "industry": null,
+      "discovery_price": 17.39,
+      "discovery_score": 73.6,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 12.05、PB 2.70，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-23",
+      "mode": "swing",
+      "rank": 2,
+      "code": "600026",
+      "name": "中远海能",
+      "industry": null,
+      "discovery_price": 21.08,
+      "discovery_score": 72.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 17.18、PB 2.40，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-09-23",
+      "mode": "swing",
+      "rank": 3,
+      "code": "002440",
+      "name": "闰土股份",
+      "industry": null,
+      "discovery_price": 13.06,
+      "discovery_score": 71.3,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 12.80、PB 1.41，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    }
+  ]
+}
