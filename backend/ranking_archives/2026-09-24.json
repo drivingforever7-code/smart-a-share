@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-09-24",
+  "captured_at": "2026-09-24T12:48:46.558949+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-09-24",
+      "mode": "short",
+      "rank": 1,
+      "code": "920519",
+      "name": "XD万德股",
+      "industry": null,
+      "discovery_price": 11.1,
+      "discovery_score": 69.2,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.15，成交活跃",
+        "上涨动能较强且未明显过热"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-24",
+      "mode": "short",
+      "rank": 2,
+      "code": "603955",
+      "name": "大千生态",
+      "industry": null,
+      "discovery_price": 25.74,
+      "discovery_score": 67.4,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.73，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-24",
+      "mode": "short",
+      "rank": 3,
+      "code": "600755",
+      "name": "厦门国贸",
+      "industry": null,
+      "discovery_price": 6.02,
+      "discovery_score": 67.4,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.51，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-24",
+      "mode": "swing",
+      "rank": 1,
+      "code": "601918",
+      "name": "新集能源",
+      "industry": null,
+      "discovery_price": 11.15,
+      "discovery_score": 74.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 11.87、PB 1.62，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-24",
+      "mode": "swing",
+      "rank": 2,
+      "code": "600026",
+      "name": "中远海能",
+      "industry": null,
+      "discovery_price": 21.4,
+      "discovery_score": 74.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 17.44、PB 2.43，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-24",
+      "mode": "swing",
+      "rank": 3,
+      "code": "600583",
+      "name": "海油工程",
+      "industry": null,
+      "discovery_price": 6.52,
+      "discovery_score": 72.3,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 13.88、PB 1.00，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    }
+  ]
+}
