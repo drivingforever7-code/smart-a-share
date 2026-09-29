@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-09-29",
+  "captured_at": "2026-09-29T14:10:47.799948+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-09-29",
+      "mode": "short",
+      "rank": 1,
+      "code": "300675",
+      "name": "建科院",
+      "industry": null,
+      "discovery_price": 14.28,
+      "discovery_score": 72.3,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 3.63，成交活跃",
+        "上涨动能较强且未明显过热"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-29",
+      "mode": "short",
+      "rank": 2,
+      "code": "603797",
+      "name": "联泰环保",
+      "industry": null,
+      "discovery_price": 5.36,
+      "discovery_score": 70.6,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.74，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-29",
+      "mode": "short",
+      "rank": 3,
+      "code": "688225",
+      "name": "亚信安全",
+      "industry": null,
+      "discovery_price": 16.28,
+      "discovery_score": 70.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.64，成交活跃",
+        "上涨动能较强且未明显过热"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-29",
+      "mode": "swing",
+      "rank": 1,
+      "code": "600428",
+      "name": "中远海特",
+      "industry": null,
+      "discovery_price": 10.42,
+      "discovery_score": 72.4,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 12.29、PB 1.68，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-29",
+      "mode": "swing",
+      "rank": 2,
+      "code": "600256",
+      "name": "广汇能源",
+      "industry": null,
+      "discovery_price": 6.68,
+      "discovery_score": 72.4,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-29",
+      "mode": "swing",
+      "rank": 3,
+      "code": "002003",
+      "name": "伟星股份",
+      "industry": null,
+      "discovery_price": 11.39,
+      "discovery_score": 71.2,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 19.67、PB 2.99，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    }
+  ]
+}
