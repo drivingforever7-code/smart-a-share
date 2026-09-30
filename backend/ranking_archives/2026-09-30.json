@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-09-30",
+  "captured_at": "2026-09-30T13:55:46.067386+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-09-30",
+      "mode": "short",
+      "rank": 1,
+      "code": "300759",
+      "name": "康龙化成",
+      "industry": null,
+      "discovery_price": 44.97,
+      "discovery_score": 68.0,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.43，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-30",
+      "mode": "short",
+      "rank": 2,
+      "code": "603980",
+      "name": "吉华集团",
+      "industry": null,
+      "discovery_price": 9.06,
+      "discovery_score": 67.9,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.33，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-30",
+      "mode": "short",
+      "rank": 3,
+      "code": "603968",
+      "name": "醋化股份",
+      "industry": null,
+      "discovery_price": 11.5,
+      "discovery_score": 67.7,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.82，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-30",
+      "mode": "swing",
+      "rank": 1,
+      "code": "002440",
+      "name": "闰土股份",
+      "industry": null,
+      "discovery_price": 13.26,
+      "discovery_score": 76.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 13.00、PB 1.44，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-30",
+      "mode": "swing",
+      "rank": 2,
+      "code": "600026",
+      "name": "中远海能",
+      "industry": null,
+      "discovery_price": 20.56,
+      "discovery_score": 74.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 16.76、PB 2.34，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-09-30",
+      "mode": "swing",
+      "rank": 3,
+      "code": "601975",
+      "name": "招商南油",
+      "industry": null,
+      "discovery_price": 4.52,
+      "discovery_score": 74.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 13.62、PB 1.74，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    }
+  ]
+}
