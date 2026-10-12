@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-10-12",
+  "captured_at": "2026-10-12T16:50:32.063927+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-10-12",
+      "mode": "short",
+      "rank": 1,
+      "code": "000635",
+      "name": "英 力 特",
+      "industry": null,
+      "discovery_price": 8.07,
+      "discovery_score": 70.3,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 3.10，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-12",
+      "mode": "short",
+      "rank": 2,
+      "code": "300556",
+      "name": "丝路视觉",
+      "industry": null,
+      "discovery_price": 16.87,
+      "discovery_score": 70.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.10，成交活跃",
+        "上涨动能较强且未明显过热"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-12",
+      "mode": "short",
+      "rank": 3,
+      "code": "600573",
+      "name": "惠泉啤酒",
+      "industry": null,
+      "discovery_price": 12.23,
+      "discovery_score": 69.7,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.59，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-12",
+      "mode": "swing",
+      "rank": 1,
+      "code": "601975",
+      "name": "招商南油",
+      "industry": null,
+      "discovery_price": 4.38,
+      "discovery_score": 73.6,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 13.20、PB 1.68，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-12",
+      "mode": "swing",
+      "rank": 2,
+      "code": "601083",
+      "name": "锦江航运",
+      "industry": null,
+      "discovery_price": 13.39,
+      "discovery_score": 72.7,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 11.89、PB 1.87，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-12",
+      "mode": "swing",
+      "rank": 3,
+      "code": "002440",
+      "name": "闰土股份",
+      "industry": null,
+      "discovery_price": 11.93,
+      "discovery_score": 72.3,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 11.70、PB 1.29，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽",
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    }
+  ]
+}
