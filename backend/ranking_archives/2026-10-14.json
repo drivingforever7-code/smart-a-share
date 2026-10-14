@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-10-14",
+  "captured_at": "2026-10-14T12:58:25.998281+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-10-14",
+      "mode": "short",
+      "rank": 1,
+      "code": "600333",
+      "name": "长春燃气",
+      "industry": null,
+      "discovery_price": 7.0,
+      "discovery_score": 72.4,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.26，成交活跃",
+        "上涨动能较强且未明显过热"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-10-14",
+      "mode": "short",
+      "rank": 2,
+      "code": "001225",
+      "name": "和泰机电",
+      "industry": null,
+      "discovery_price": 35.0,
+      "discovery_score": 72.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 2.15，成交活跃",
+        "上涨动能较强且未明显过热",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-10-14",
+      "mode": "short",
+      "rank": 3,
+      "code": "300987",
+      "name": "川网传媒",
+      "industry": null,
+      "discovery_price": 15.69,
+      "discovery_score": 70.3,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.86，成交活跃",
+        "短期动能一般，需要等待进一步确认"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-10-14",
+      "mode": "swing",
+      "rank": 1,
+      "code": "600026",
+      "name": "中远海能",
+      "industry": null,
+      "discovery_price": 23.25,
+      "discovery_score": 74.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 18.95、PB 2.64，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-10-14",
+      "mode": "swing",
+      "rank": 2,
+      "code": "601975",
+      "name": "招商南油",
+      "industry": null,
+      "discovery_price": 4.51,
+      "discovery_score": 74.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 13.59、PB 1.73，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-10-14",
+      "mode": "swing",
+      "rank": 3,
+      "code": "603565",
+      "name": "中谷物流",
+      "industry": null,
+      "discovery_price": 12.7,
+      "discovery_score": 72.3,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 13.25、PB 2.43，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    }
+  ]
+}
