@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-10-15",
+  "captured_at": "2026-10-15T12:45:25.225341+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-10-15",
+      "mode": "short",
+      "rank": 1,
+      "code": "601999",
+      "name": "出版传媒",
+      "industry": null,
+      "discovery_price": 7.5,
+      "discovery_score": 66.7,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 2.33，成交活跃",
+        "接近阶段新高，存在突破特征",
+        "当前规则风险可控"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-10-15",
+      "mode": "short",
+      "rank": 2,
+      "code": "301251",
+      "name": "威尔高",
+      "industry": null,
+      "discovery_price": 82.72,
+      "discovery_score": 66.6,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 1.64，成交活跃",
+        "接近阶段新高，存在突破特征",
+        "当前规则风险可控"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-10-15",
+      "mode": "short",
+      "rank": 3,
+      "code": "002395",
+      "name": "双象股份",
+      "industry": null,
+      "discovery_price": 14.0,
+      "discovery_score": 66.4,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.73，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-10-15",
+      "mode": "swing",
+      "rank": 1,
+      "code": "601857",
+      "name": "中国石油",
+      "industry": null,
+      "discovery_price": 12.59,
+      "discovery_score": 71.7,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 13.09、PB 1.45，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-10-15",
+      "mode": "swing",
+      "rank": 2,
+      "code": "603995",
+      "name": "甬金股份",
+      "industry": null,
+      "discovery_price": 25.45,
+      "discovery_score": 71.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 15.34、PB 1.59，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    },
+    {
+      "discovery_date": "2026-10-15",
+      "mode": "swing",
+      "rank": 3,
+      "code": "002412",
+      "name": "汉森制药",
+      "industry": null,
+      "discovery_price": 8.46,
+      "discovery_score": 70.9,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 18.03、PB 1.82，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）"
+    }
+  ]
+}
