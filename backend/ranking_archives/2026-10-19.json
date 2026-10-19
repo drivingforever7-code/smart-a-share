@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-10-19",
+  "captured_at": "2026-10-19T14:51:28.045955+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-10-19",
+      "mode": "short",
+      "rank": 1,
+      "code": "600967",
+      "name": "内蒙一机",
+      "industry": null,
+      "discovery_price": 14.5,
+      "discovery_score": 70.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.60，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-10-19",
+      "mode": "short",
+      "rank": 2,
+      "code": "002265",
+      "name": "建设工业",
+      "industry": null,
+      "discovery_price": 20.52,
+      "discovery_score": 69.2,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.04，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-10-19",
+      "mode": "short",
+      "rank": 3,
+      "code": "600825",
+      "name": "新华传媒",
+      "industry": null,
+      "discovery_price": 15.58,
+      "discovery_score": 68.9,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "上涨动能较强且未明显过热",
+        "量比 11.04，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽",
+        "换手率偏高，筹码可能不稳定"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-10-19",
+      "mode": "swing",
+      "rank": 1,
+      "code": "603995",
+      "name": "甬金股份",
+      "industry": null,
+      "discovery_price": 26.18,
+      "discovery_score": 73.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 15.78、PB 1.63，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-10-19",
+      "mode": "swing",
+      "rank": 2,
+      "code": "600938",
+      "name": "中国海油",
+      "industry": null,
+      "discovery_price": 35.4,
+      "discovery_score": 72.8,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 12.16、PB 2.06，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-10-19",
+      "mode": "swing",
+      "rank": 3,
+      "code": "600026",
+      "name": "中远海能",
+      "industry": null,
+      "discovery_price": 19.8,
+      "discovery_score": 72.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 16.14、PB 2.25，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    }
+  ]
+}
