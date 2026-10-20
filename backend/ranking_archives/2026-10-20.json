@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-10-20",
+  "captured_at": "2026-10-20T12:53:53.943749+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-10-20",
+      "mode": "short",
+      "rank": 1,
+      "code": "002695",
+      "name": "煌上煌",
+      "industry": null,
+      "discovery_price": 10.87,
+      "discovery_score": 68.6,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.82，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-10-20",
+      "mode": "short",
+      "rank": 2,
+      "code": "603755",
+      "name": "日辰股份",
+      "industry": null,
+      "discovery_price": 30.09,
+      "discovery_score": 68.3,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.94，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-10-20",
+      "mode": "short",
+      "rank": 3,
+      "code": "688292",
+      "name": "浩瀚深度",
+      "industry": null,
+      "discovery_price": 20.84,
+      "discovery_score": 67.6,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.61，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-10-20",
+      "mode": "swing",
+      "rank": 1,
+      "code": "600026",
+      "name": "中远海能",
+      "industry": null,
+      "discovery_price": 19.42,
+      "discovery_score": 74.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 15.83、PB 2.21，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-20",
+      "mode": "swing",
+      "rank": 2,
+      "code": "600356",
+      "name": "恒丰纸业",
+      "industry": null,
+      "discovery_price": 10.19,
+      "discovery_score": 71.9,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 15.64、PB 1.09，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-20",
+      "mode": "swing",
+      "rank": 3,
+      "code": "600256",
+      "name": "广汇能源",
+      "industry": null,
+      "discovery_price": 7.05,
+      "discovery_score": 71.3,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    }
+  ]
+}
