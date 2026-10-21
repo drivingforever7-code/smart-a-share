@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-10-21",
+  "captured_at": "2026-10-21T13:10:23.557114+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-10-21",
+      "mode": "short",
+      "rank": 1,
+      "code": "002695",
+      "name": "煌上煌",
+      "industry": null,
+      "discovery_price": 10.95,
+      "discovery_score": 71.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.63，成交活跃",
+        "上涨动能较强且未明显过热"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-10-21",
+      "mode": "short",
+      "rank": 2,
+      "code": "301169",
+      "name": "零点有数",
+      "industry": null,
+      "discovery_price": 50.65,
+      "discovery_score": 69.4,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.56，成交活跃",
+        "上涨动能较强且未明显过热"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-10-21",
+      "mode": "short",
+      "rank": 3,
+      "code": "603976",
+      "name": "正川股份",
+      "industry": null,
+      "discovery_price": 33.2,
+      "discovery_score": 68.9,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.39，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-10-21",
+      "mode": "swing",
+      "rank": 1,
+      "code": "600026",
+      "name": "中远海能",
+      "industry": null,
+      "discovery_price": 19.36,
+      "discovery_score": 74.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 15.78、PB 2.20，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-10-21",
+      "mode": "swing",
+      "rank": 2,
+      "code": "603995",
+      "name": "甬金股份",
+      "industry": null,
+      "discovery_price": 26.16,
+      "discovery_score": 73.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 15.76、PB 1.63，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-10-21",
+      "mode": "swing",
+      "rank": 3,
+      "code": "002412",
+      "name": "汉森制药",
+      "industry": null,
+      "discovery_price": 8.13,
+      "discovery_score": 71.3,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 17.32、PB 1.75，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    }
+  ]
+}
