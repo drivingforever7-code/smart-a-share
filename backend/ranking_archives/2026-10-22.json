@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-10-22",
+  "captured_at": "2026-10-22T13:10:06.930498+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-10-22",
+      "mode": "short",
+      "rank": 1,
+      "code": "300138",
+      "name": "晨光生物",
+      "industry": null,
+      "discovery_price": 12.76,
+      "discovery_score": 68.7,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.91，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-10-22",
+      "mode": "short",
+      "rank": 2,
+      "code": "603949",
+      "name": "雪龙集团",
+      "industry": null,
+      "discovery_price": 14.65,
+      "discovery_score": 68.4,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.98，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-10-22",
+      "mode": "short",
+      "rank": 3,
+      "code": "605089",
+      "name": "XD味知香",
+      "industry": null,
+      "discovery_price": 23.75,
+      "discovery_score": 67.5,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.97，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-10-22",
+      "mode": "swing",
+      "rank": 1,
+      "code": "002832",
+      "name": "比音勒芬",
+      "industry": null,
+      "discovery_price": 26.8,
+      "discovery_score": 72.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-22",
+      "mode": "swing",
+      "rank": 2,
+      "code": "002833",
+      "name": "弘亚数控",
+      "industry": null,
+      "discovery_price": 18.85,
+      "discovery_score": 70.9,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 18.26、PB 2.88，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-22",
+      "mode": "swing",
+      "rank": 3,
+      "code": "603995",
+      "name": "甬金股份",
+      "industry": null,
+      "discovery_price": 23.8,
+      "discovery_score": 70.8,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 13.99、PB 1.42，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽",
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    }
+  ]
+}
