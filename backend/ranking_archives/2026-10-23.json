@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-10-23",
+  "captured_at": "2026-10-23T12:48:06.035808+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-10-23",
+      "mode": "short",
+      "rank": 1,
+      "code": "600271",
+      "name": "航天信息",
+      "industry": null,
+      "discovery_price": 7.69,
+      "discovery_score": 68.7,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 2.56，成交活跃",
+        "当前规则风险可控",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-23",
+      "mode": "short",
+      "rank": 2,
+      "code": "002833",
+      "name": "弘亚数控",
+      "industry": null,
+      "discovery_price": 19.4,
+      "discovery_score": 68.4,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.46，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-23",
+      "mode": "short",
+      "rank": 3,
+      "code": "002983",
+      "name": "芯瑞达",
+      "industry": null,
+      "discovery_price": 24.01,
+      "discovery_score": 68.1,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 3.96，成交活跃",
+        "接近阶段新高，存在突破特征",
+        "当前规则风险可控"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-23",
+      "mode": "swing",
+      "rank": 1,
+      "code": "300244",
+      "name": "迪安诊断",
+      "industry": null,
+      "discovery_price": 21.66,
+      "discovery_score": 71.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽",
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-23",
+      "mode": "swing",
+      "rank": 2,
+      "code": "600026",
+      "name": "中远海能",
+      "industry": null,
+      "discovery_price": 18.39,
+      "discovery_score": 70.6,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 14.99、PB 2.16，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-23",
+      "mode": "swing",
+      "rank": 3,
+      "code": "603995",
+      "name": "甬金股份",
+      "industry": null,
+      "discovery_price": 23.8,
+      "discovery_score": 70.5,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 13.99、PB 1.44，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    }
+  ]
+}
