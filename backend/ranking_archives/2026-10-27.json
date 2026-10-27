@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-10-27",
+  "captured_at": "2026-10-27T13:29:05.213346+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-10-27",
+      "mode": "short",
+      "rank": 1,
+      "code": "688569",
+      "name": "铁科轨道",
+      "industry": null,
+      "discovery_price": 20.85,
+      "discovery_score": 68.8,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.98，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-27",
+      "mode": "short",
+      "rank": 2,
+      "code": "688575",
+      "name": "亚辉龙",
+      "industry": null,
+      "discovery_price": 11.42,
+      "discovery_score": 68.7,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.14，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-27",
+      "mode": "short",
+      "rank": 3,
+      "code": "000972",
+      "name": "中基健康",
+      "industry": null,
+      "discovery_price": 3.93,
+      "discovery_score": 67.4,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.95，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-27",
+      "mode": "swing",
+      "rank": 1,
+      "code": "600026",
+      "name": "中远海能",
+      "industry": null,
+      "discovery_price": 19.48,
+      "discovery_score": 73.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 15.88、PB 2.29，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-27",
+      "mode": "swing",
+      "rank": 2,
+      "code": "600256",
+      "name": "广汇能源",
+      "industry": null,
+      "discovery_price": 6.77,
+      "discovery_score": 72.2,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 13.93、PB 1.63，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-27",
+      "mode": "swing",
+      "rank": 3,
+      "code": "001246",
+      "name": "力勤资源",
+      "industry": null,
+      "discovery_price": 30.11,
+      "discovery_score": 71.2,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 12.47、PB 2.99，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    }
+  ]
+}
