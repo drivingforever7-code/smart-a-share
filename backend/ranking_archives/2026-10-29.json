@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-10-29",
+  "captured_at": "2026-10-29T14:38:16.901493+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-10-29",
+      "mode": "short",
+      "rank": 1,
+      "code": "920220",
+      "name": "朗信电气",
+      "industry": null,
+      "discovery_price": 56.0,
+      "discovery_score": 70.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "上涨动能较强且未明显过热",
+        "量比 2.26，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽",
+        "换手率偏高，筹码可能不稳定"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-29",
+      "mode": "short",
+      "rank": 2,
+      "code": "601886",
+      "name": "江河集团",
+      "industry": null,
+      "discovery_price": 11.82,
+      "discovery_score": 69.9,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.52，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-29",
+      "mode": "short",
+      "rank": 3,
+      "code": "920943",
+      "name": "优机股份",
+      "industry": null,
+      "discovery_price": 14.0,
+      "discovery_score": 68.6,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.67，成交活跃",
+        "上涨动能较强且未明显过热"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-29",
+      "mode": "swing",
+      "rank": 1,
+      "code": "600256",
+      "name": "广汇能源",
+      "industry": null,
+      "discovery_price": 6.77,
+      "discovery_score": 71.9,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 13.93、PB 1.63，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-29",
+      "mode": "swing",
+      "rank": 2,
+      "code": "300592",
+      "name": "华凯易佰",
+      "industry": null,
+      "discovery_price": 15.76,
+      "discovery_score": 70.9,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 15.97、PB 2.52，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-10-29",
+      "mode": "swing",
+      "rank": 3,
+      "code": "601857",
+      "name": "中国石油",
+      "industry": null,
+      "discovery_price": 13.69,
+      "discovery_score": 70.8,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 13.52、PB 1.54，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    }
+  ]
+}
