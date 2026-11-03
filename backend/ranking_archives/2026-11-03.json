@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-11-03",
+  "captured_at": "2026-11-03T15:27:13.108191+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-11-03",
+      "mode": "short",
+      "rank": 1,
+      "code": "600779",
+      "name": "水井坊",
+      "industry": null,
+      "discovery_price": 29.39,
+      "discovery_score": 71.6,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 5.19，成交活跃",
+        "当前规则风险可控",
+        "上涨动能较强且未明显过热"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-11-03",
+      "mode": "short",
+      "rank": 2,
+      "code": "300845",
+      "name": "捷安高科",
+      "industry": null,
+      "discovery_price": 13.94,
+      "discovery_score": 67.7,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.30，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-11-03",
+      "mode": "short",
+      "rank": 3,
+      "code": "920087",
+      "name": "秋乐种业",
+      "industry": null,
+      "discovery_price": 11.79,
+      "discovery_score": 67.6,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 1.97，成交活跃",
+        "上涨动能较强且未明显过热",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-11-03",
+      "mode": "swing",
+      "rank": 1,
+      "code": "600256",
+      "name": "广汇能源",
+      "industry": null,
+      "discovery_price": 6.93,
+      "discovery_score": 73.3,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 14.26、PB 1.67，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-11-03",
+      "mode": "swing",
+      "rank": 2,
+      "code": "601857",
+      "name": "中国石油",
+      "industry": null,
+      "discovery_price": 14.0,
+      "discovery_score": 73.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 13.83、PB 1.57，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-11-03",
+      "mode": "swing",
+      "rank": 3,
+      "code": "601886",
+      "name": "江河集团",
+      "industry": null,
+      "discovery_price": 11.5,
+      "discovery_score": 73.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 13.83、PB 1.79，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    }
+  ]
+}
