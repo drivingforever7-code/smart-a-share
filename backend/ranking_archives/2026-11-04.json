@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-11-04",
+  "captured_at": "2026-11-04T15:43:48.104306+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-11-04",
+      "mode": "short",
+      "rank": 1,
+      "code": "920289",
+      "name": "华汇智能",
+      "industry": null,
+      "discovery_price": 22.83,
+      "discovery_score": 65.6,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "接近阶段新高，存在突破特征",
+        "量比 1.58，成交活跃"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-11-04",
+      "mode": "short",
+      "rank": 2,
+      "code": "600851",
+      "name": "海欣股份",
+      "industry": null,
+      "discovery_price": 9.05,
+      "discovery_score": 65.1,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.43，成交活跃",
+        "短期动能一般，需要等待进一步确认"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-11-04",
+      "mode": "short",
+      "rank": 3,
+      "code": "601595",
+      "name": "上海电影",
+      "industry": null,
+      "discovery_price": 31.11,
+      "discovery_score": 64.7,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.26，成交活跃",
+        "依据盘中和阶段涨幅估算，打开详情后补充均线"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-11-04",
+      "mode": "swing",
+      "rank": 1,
+      "code": "600256",
+      "name": "广汇能源",
+      "industry": null,
+      "discovery_price": 7.02,
+      "discovery_score": 73.5,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 14.45、PB 1.70，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-04",
+      "mode": "swing",
+      "rank": 2,
+      "code": "601811",
+      "name": "新华文轩",
+      "industry": null,
+      "discovery_price": 17.78,
+      "discovery_score": 72.7,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 14.97、PB 1.39，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-04",
+      "mode": "swing",
+      "rank": 3,
+      "code": "601900",
+      "name": "南方传媒",
+      "industry": null,
+      "discovery_price": 15.42,
+      "discovery_score": 72.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 10.70、PB 1.44，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    }
+  ]
+}
