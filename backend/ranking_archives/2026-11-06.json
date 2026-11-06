@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-11-06",
+  "captured_at": "2026-11-06T15:13:48.339365+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-11-06",
+      "mode": "short",
+      "rank": 1,
+      "code": "002275",
+      "name": "桂林三金",
+      "industry": null,
+      "discovery_price": 18.2,
+      "discovery_score": 67.6,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "上涨动能较强且未明显过热",
+        "接近阶段新高，存在突破特征",
+        "当前规则风险可控"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-11-06",
+      "mode": "short",
+      "rank": 2,
+      "code": "600637",
+      "name": "东方明珠",
+      "industry": null,
+      "discovery_price": 8.08,
+      "discovery_score": 66.3,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 2.37，成交活跃",
+        "当前规则风险可控",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-11-06",
+      "mode": "short",
+      "rank": 3,
+      "code": "000498",
+      "name": "山东路桥",
+      "industry": null,
+      "discovery_price": 6.63,
+      "discovery_score": 66.2,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.43，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-11-06",
+      "mode": "swing",
+      "rank": 1,
+      "code": "000690",
+      "name": "宝新能源",
+      "industry": null,
+      "discovery_price": 5.73,
+      "discovery_score": 72.6,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 12.98、PB 0.95，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-11-06",
+      "mode": "swing",
+      "rank": 2,
+      "code": "601083",
+      "name": "锦江航运",
+      "industry": null,
+      "discovery_price": 14.19,
+      "discovery_score": 71.4,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 11.91、PB 1.96，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-11-06",
+      "mode": "swing",
+      "rank": 3,
+      "code": "601939",
+      "name": "建设银行",
+      "industry": null,
+      "discovery_price": 11.91,
+      "discovery_score": 71.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 8.76、PB 0.85，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    }
+  ]
+}
