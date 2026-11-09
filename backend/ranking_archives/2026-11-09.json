@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-11-09",
+  "captured_at": "2026-11-09T17:46:25.913672+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-11-09",
+      "mode": "short",
+      "rank": 1,
+      "code": "601599",
+      "name": "浙文影业",
+      "industry": null,
+      "discovery_price": 5.38,
+      "discovery_score": 73.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "价格运行在日内相对强势区域",
+        "量比 5.51，成交活跃",
+        "上涨动能较强且未明显过热"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽",
+        "换手率偏高，筹码可能不稳定"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 东方财富"
+    },
+    {
+      "discovery_date": "2026-11-09",
+      "mode": "short",
+      "rank": 2,
+      "code": "688298",
+      "name": "东方生物",
+      "industry": null,
+      "discovery_price": 19.05,
+      "discovery_score": 71.4,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.33，成交活跃",
+        "价格运行在日内相对强势区域"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 东方财富"
+    },
+    {
+      "discovery_date": "2026-11-09",
+      "mode": "short",
+      "rank": 3,
+      "code": "600368",
+      "name": "五洲交通",
+      "industry": null,
+      "discovery_price": 4.36,
+      "discovery_score": 71.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.53，成交活跃",
+        "价格运行在日内相对强势区域"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 东方财富"
+    },
+    {
+      "discovery_date": "2026-11-09",
+      "mode": "swing",
+      "rank": 1,
+      "code": "600256",
+      "name": "广汇能源",
+      "industry": null,
+      "discovery_price": 6.9,
+      "discovery_score": 71.4,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 11.93、PB 1.67，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 东方财富"
+    },
+    {
+      "discovery_date": "2026-11-09",
+      "mode": "swing",
+      "rank": 2,
+      "code": "601886",
+      "name": "江河集团",
+      "industry": null,
+      "discovery_price": 11.86,
+      "discovery_score": 71.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 12.77、PB 1.85，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 东方财富"
+    },
+    {
+      "discovery_date": "2026-11-09",
+      "mode": "swing",
+      "rank": 3,
+      "code": "601083",
+      "name": "锦江航运",
+      "industry": null,
+      "discovery_price": 13.91,
+      "discovery_score": 70.6,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 11.01、PB 1.92，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 东方财富"
+    }
+  ]
+}
