@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-11-10",
+  "captured_at": "2026-11-10T15:47:47.908271+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-11-10",
+      "mode": "short",
+      "rank": 1,
+      "code": "600278",
+      "name": "东方创业",
+      "industry": null,
+      "discovery_price": 8.19,
+      "discovery_score": 70.7,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 2.55，成交活跃",
+        "接近阶段新高，存在突破特征",
+        "当前规则风险可控"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 东方财富（内存缓存）；后台"
+    },
+    {
+      "discovery_date": "2026-11-10",
+      "mode": "short",
+      "rank": 2,
+      "code": "300111",
+      "name": "向日葵",
+      "industry": null,
+      "discovery_price": 3.55,
+      "discovery_score": 70.6,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "价格运行在日内相对强势区域",
+        "量比 1.38，成交活跃"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 东方财富（内存缓存）；后台"
+    },
+    {
+      "discovery_date": "2026-11-10",
+      "mode": "short",
+      "rank": 3,
+      "code": "600792",
+      "name": "云煤能源",
+      "industry": null,
+      "discovery_price": 4.3,
+      "discovery_score": 70.4,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 2.48，成交活跃",
+        "价格运行在日内相对强势区域",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 东方财富（内存缓存）；后台"
+    },
+    {
+      "discovery_date": "2026-11-10",
+      "mode": "swing",
+      "rank": 1,
+      "code": "001246",
+      "name": "力勤资源",
+      "industry": null,
+      "discovery_price": 29.93,
+      "discovery_score": 70.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 11.69、PB 2.91，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 东方财富（内存缓存）；后台"
+    },
+    {
+      "discovery_date": "2026-11-10",
+      "mode": "swing",
+      "rank": 2,
+      "code": "300307",
+      "name": "慈星股份",
+      "industry": null,
+      "discovery_price": 9.15,
+      "discovery_score": 69.8,
+      "recommendation": "建议观察",
+      "confidence": 60.0,
+      "reasons": [
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 东方财富（内存缓存）；后台"
+    },
+    {
+      "discovery_date": "2026-11-10",
+      "mode": "swing",
+      "rank": 3,
+      "code": "601900",
+      "name": "南方传媒",
+      "industry": null,
+      "discovery_price": 15.0,
+      "discovery_score": 69.6,
+      "recommendation": "建议观察",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 9.20、PB 1.40，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 东方财富（内存缓存）；后台"
+    }
+  ]
+}
