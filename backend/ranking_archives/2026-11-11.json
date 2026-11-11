@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-11-11",
+  "captured_at": "2026-11-11T15:35:51.522371+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-11-11",
+      "mode": "short",
+      "rank": 1,
+      "code": "603286",
+      "name": "日盈电子",
+      "industry": null,
+      "discovery_price": 62.51,
+      "discovery_score": 72.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.89，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-11",
+      "mode": "short",
+      "rank": 2,
+      "code": "688078",
+      "name": "龙软科技",
+      "industry": null,
+      "discovery_price": 33.33,
+      "discovery_score": 67.1,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.25，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-11",
+      "mode": "short",
+      "rank": 3,
+      "code": "603657",
+      "name": "春光科技",
+      "industry": null,
+      "discovery_price": 35.35,
+      "discovery_score": 64.6,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.30，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-11",
+      "mode": "swing",
+      "rank": 1,
+      "code": "001246",
+      "name": "力勤资源",
+      "industry": null,
+      "discovery_price": 29.62,
+      "discovery_score": 70.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 12.38、PB 2.88，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-11",
+      "mode": "swing",
+      "rank": 2,
+      "code": "601811",
+      "name": "新华文轩",
+      "industry": null,
+      "discovery_price": 17.95,
+      "discovery_score": 70.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 15.12、PB 1.43，估值相对温和",
+        "中期风险未见明显异常",
+        "阶段涨幅偏强，详情页可补充中期均线"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-11",
+      "mode": "swing",
+      "rank": 3,
+      "code": "601900",
+      "name": "南方传媒",
+      "industry": null,
+      "discovery_price": 15.14,
+      "discovery_score": 69.8,
+      "recommendation": "建议观察",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 10.51、PB 1.42，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    }
+  ]
+}
