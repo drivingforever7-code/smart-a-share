@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-11-13",
+  "captured_at": "2026-11-13T15:39:59.472887+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-11-13",
+      "mode": "short",
+      "rank": 1,
+      "code": "002623",
+      "name": "亚玛顿",
+      "industry": null,
+      "discovery_price": 26.25,
+      "discovery_score": 71.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "上涨动能较强且未明显过热",
+        "量比 8.78，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽",
+        "换手率偏高，筹码可能不稳定"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-11-13",
+      "mode": "short",
+      "rank": 2,
+      "code": "688135",
+      "name": "利扬芯片",
+      "industry": null,
+      "discovery_price": 34.59,
+      "discovery_score": 68.4,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "上涨动能较强且未明显过热",
+        "量比 1.20，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-11-13",
+      "mode": "short",
+      "rank": 3,
+      "code": "002100",
+      "name": "天康生物",
+      "industry": null,
+      "discovery_price": 8.59,
+      "discovery_score": 68.2,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.14，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（60 秒缓存）；"
+    },
+    {
+      "discovery_date": "2026-11-13",
+      "mode": "swing",
+      "rank": 1,
+      "code": "601169",
+      "name": "北京银行",
+      "industry": null,
+      "discovery_price": 6.16,
+      "discovery_score": 71.7,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 6.09、PB 0.45，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-13",
+      "mode": "swing",
+      "rank": 2,
+      "code": "000690",
+      "name": "宝新能源",
+      "industry": null,
+      "discovery_price": 5.69,
+      "discovery_score": 71.4,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 12.89、PB 0.95，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-13",
+      "mode": "swing",
+      "rank": 3,
+      "code": "601939",
+      "name": "建设银行",
+      "industry": null,
+      "discovery_price": 12.11,
+      "discovery_score": 71.2,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 8.90、PB 0.86，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    }
+  ]
+}
