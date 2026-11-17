@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-11-17",
+  "captured_at": "2026-11-17T17:03:40.765847+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-11-17",
+      "mode": "short",
+      "rank": 1,
+      "code": "601083",
+      "name": "锦江航运",
+      "industry": null,
+      "discovery_price": 13.89,
+      "discovery_score": 72.8,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "价格运行在日内相对强势区域",
+        "量比 1.74，成交活跃"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 东方财富"
+    },
+    {
+      "discovery_date": "2026-11-17",
+      "mode": "short",
+      "rank": 2,
+      "code": "600993",
+      "name": "马应龙",
+      "industry": null,
+      "discovery_price": 26.2,
+      "discovery_score": 72.7,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 3.13，成交活跃",
+        "价格运行在日内相对强势区域"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 东方财富"
+    },
+    {
+      "discovery_date": "2026-11-17",
+      "mode": "short",
+      "rank": 3,
+      "code": "002058",
+      "name": "紫竹高科",
+      "industry": null,
+      "discovery_price": 23.35,
+      "discovery_score": 72.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "价格运行在日内相对强势区域",
+        "量比 2.10，成交活跃"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 东方财富"
+    },
+    {
+      "discovery_date": "2026-11-17",
+      "mode": "swing",
+      "rank": 1,
+      "code": "000690",
+      "name": "宝新能源",
+      "industry": null,
+      "discovery_price": 5.83,
+      "discovery_score": 73.4,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 12.57、PB 0.97，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 东方财富"
+    },
+    {
+      "discovery_date": "2026-11-17",
+      "mode": "swing",
+      "rank": 2,
+      "code": "601169",
+      "name": "北京银行",
+      "industry": null,
+      "discovery_price": 6.31,
+      "discovery_score": 73.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 4.48、PB 0.46，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 东方财富"
+    },
+    {
+      "discovery_date": "2026-11-17",
+      "mode": "swing",
+      "rank": 3,
+      "code": "601083",
+      "name": "锦江航运",
+      "industry": null,
+      "discovery_price": 13.89,
+      "discovery_score": 72.2,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 10.99、PB 1.92，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 东方财富"
+    }
+  ]
+}
