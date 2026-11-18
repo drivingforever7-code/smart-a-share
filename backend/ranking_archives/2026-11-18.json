@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-11-18",
+  "captured_at": "2026-11-18T16:34:33.211894+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-11-18",
+      "mode": "short",
+      "rank": 1,
+      "code": "603600",
+      "name": "永艺股份",
+      "industry": null,
+      "discovery_price": 12.08,
+      "discovery_score": 68.2,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.68，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-18",
+      "mode": "short",
+      "rank": 2,
+      "code": "300121",
+      "name": "阳谷华泰",
+      "industry": null,
+      "discovery_price": 11.11,
+      "discovery_score": 66.5,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.16，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-18",
+      "mode": "short",
+      "rank": 3,
+      "code": "002557",
+      "name": "洽洽食品",
+      "industry": null,
+      "discovery_price": 20.96,
+      "discovery_score": 64.9,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.13，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-18",
+      "mode": "swing",
+      "rank": 1,
+      "code": "000690",
+      "name": "宝新能源",
+      "industry": null,
+      "discovery_price": 5.88,
+      "discovery_score": 74.2,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 13.32、PB 0.98，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-18",
+      "mode": "swing",
+      "rank": 2,
+      "code": "600566",
+      "name": "济川药业",
+      "industry": null,
+      "discovery_price": 31.58,
+      "discovery_score": 72.9,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 16.03、PB 2.07，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-18",
+      "mode": "swing",
+      "rank": 3,
+      "code": "601939",
+      "name": "建设银行",
+      "industry": null,
+      "discovery_price": 12.31,
+      "discovery_score": 71.6,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 9.05、PB 0.88，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    }
+  ]
+}
