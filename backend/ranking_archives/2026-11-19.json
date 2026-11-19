@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-11-19",
+  "captured_at": "2026-11-19T16:40:18.137425+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-11-19",
+      "mode": "short",
+      "rank": 1,
+      "code": "002983",
+      "name": "芯瑞达",
+      "industry": null,
+      "discovery_price": 24.89,
+      "discovery_score": 70.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 2.01，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-19",
+      "mode": "short",
+      "rank": 2,
+      "code": "002685",
+      "name": "华东重机",
+      "industry": null,
+      "discovery_price": 7.67,
+      "discovery_score": 69.0,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "上涨动能较强且未明显过热",
+        "量比 6.48，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽",
+        "换手率偏高，筹码可能不稳定"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-19",
+      "mode": "short",
+      "rank": 3,
+      "code": "603587",
+      "name": "地素时尚",
+      "industry": null,
+      "discovery_price": 15.99,
+      "discovery_score": 67.3,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.29，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-19",
+      "mode": "swing",
+      "rank": 1,
+      "code": "001872",
+      "name": "招商港口",
+      "industry": null,
+      "discovery_price": 27.55,
+      "discovery_score": 71.8,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 13.75、PB 1.04，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-19",
+      "mode": "swing",
+      "rank": 2,
+      "code": "002293",
+      "name": "罗莱生活",
+      "industry": null,
+      "discovery_price": 13.24,
+      "discovery_score": 71.8,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 18.04、PB 2.74，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-19",
+      "mode": "swing",
+      "rank": 3,
+      "code": "601083",
+      "name": "锦江航运",
+      "industry": null,
+      "discovery_price": 13.75,
+      "discovery_score": 71.7,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 11.54、PB 1.96，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    }
+  ]
+}
