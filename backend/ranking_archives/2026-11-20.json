@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-11-20",
+  "captured_at": "2026-11-20T16:15:26.066396+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-11-20",
+      "mode": "short",
+      "rank": 1,
+      "code": "000158",
+      "name": "常山北明",
+      "industry": null,
+      "discovery_price": 13.52,
+      "discovery_score": 68.2,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 2.62，成交活跃",
+        "上涨动能较强且未明显过热",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-20",
+      "mode": "short",
+      "rank": 2,
+      "code": "601083",
+      "name": "锦江航运",
+      "industry": null,
+      "discovery_price": 14.22,
+      "discovery_score": 65.4,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.40，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-20",
+      "mode": "short",
+      "rank": 3,
+      "code": "002157",
+      "name": "正邦科技",
+      "industry": null,
+      "discovery_price": 2.98,
+      "discovery_score": 65.3,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "量比 2.32，成交活跃",
+        "当前规则风险可控",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-20",
+      "mode": "swing",
+      "rank": 1,
+      "code": "601328",
+      "name": "交通银行",
+      "industry": null,
+      "discovery_price": 8.98,
+      "discovery_score": 73.4,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 7.94、PB 0.67，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-20",
+      "mode": "swing",
+      "rank": 2,
+      "code": "600674",
+      "name": "川投能源",
+      "industry": null,
+      "discovery_price": 19.14,
+      "discovery_score": 72.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 18.89、PB 2.00，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-20",
+      "mode": "swing",
+      "rank": 3,
+      "code": "601169",
+      "name": "北京银行",
+      "industry": null,
+      "discovery_price": 6.27,
+      "discovery_score": 72.0,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 6.20、PB 0.46，估值相对温和",
+        "成交活跃且量价结构较健康",
+        "中期风险未见明显异常"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    }
+  ]
+}
