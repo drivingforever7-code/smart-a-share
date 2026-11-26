@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "trade_date": "2026-11-26",
+  "captured_at": "2026-11-26T17:48:55.665619+00:00",
+  "items": [
+    {
+      "discovery_date": "2026-11-26",
+      "mode": "short",
+      "rank": 1,
+      "code": "600400",
+      "name": "红豆股份",
+      "industry": null,
+      "discovery_price": 3.7,
+      "discovery_score": 67.8,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.33，成交活跃",
+        "上涨动能较强且未明显过热"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-26",
+      "mode": "short",
+      "rank": 2,
+      "code": "603898",
+      "name": "好莱客",
+      "industry": null,
+      "discovery_price": 14.93,
+      "discovery_score": 67.1,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "当前规则风险可控",
+        "量比 1.53，成交活跃",
+        "接近阶段新高，存在突破特征"
+      ],
+      "risks": [],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-26",
+      "mode": "short",
+      "rank": 3,
+      "code": "605488",
+      "name": "福莱新材",
+      "industry": null,
+      "discovery_price": 51.89,
+      "discovery_score": 66.2,
+      "recommendation": "建议观察",
+      "confidence": 70.0,
+      "reasons": [
+        "上涨动能较强且未明显过热",
+        "接近阶段新高，存在突破特征",
+        "当前规则风险可控"
+      ],
+      "risks": [
+        "日内振幅较大，止损空间需要放宽"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-26",
+      "mode": "swing",
+      "rank": 1,
+      "code": "601939",
+      "name": "建设银行",
+      "industry": null,
+      "discovery_price": 12.73,
+      "discovery_score": 70.5,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 9.36、PB 0.91，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-26",
+      "mode": "swing",
+      "rank": 2,
+      "code": "600177",
+      "name": "雅戈尔",
+      "industry": null,
+      "discovery_price": 9.16,
+      "discovery_score": 70.2,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 13.32、PB 0.98，估值相对温和",
+        "中期风险未见明显异常",
+        "成交活跃且量价结构较健康"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    },
+    {
+      "discovery_date": "2026-11-26",
+      "mode": "swing",
+      "rank": 3,
+      "code": "601328",
+      "name": "交通银行",
+      "industry": null,
+      "discovery_price": 9.27,
+      "discovery_score": 70.1,
+      "recommendation": "建议小仓位试买",
+      "confidence": 60.0,
+      "reasons": [
+        "PE 8.20、PB 0.69，估值相对温和",
+        "中期风险未见明显异常",
+        "价格位置适合继续观察买点"
+      ],
+      "risks": [
+        "财务成长数据尚未补齐，波段评分置信度受限"
+      ],
+      "quote_time": null,
+      "source": "交易日历确认；AKShare / 腾讯证券（备用）"
+    }
+  ]
+}
